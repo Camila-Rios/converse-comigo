@@ -1,131 +1,175 @@
-<!-- Simulador WhatsApp - Página de Conversão
-Single-file HTML + TailwindCSS + JS
-- Simula chat com mensagens aparecendo em sequência
-- "Digitando..." indicator
-- Prévia (imagem) escolhida a dedo (placeholder)
-- Áudio da modelo (botão play)
-- Gera chave PIX e QR (usa api.qrserver.com para imagem QR)
-- Tenta não levar pro checkout: primeiro opção PIX; se não pagar -> checkout
-
-Substitua os placeholders (imagem, audio, checkout URL, dados da conta) conforme necessário.
--->
-
 <!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Chat - Prévia Privada</title>
+  <title>Chat - Prévia Privada (Simulador WhatsApp)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Pequenas estilizações para parecer WhatsApp */
-    body { background: linear-gradient(180deg,#0f172a 0%, #071133 100%); }
-    .chat-frame { max-width: 420px; width:100%; height:90vh; border-radius:16px; overflow:hidden; box-shadow:0 10px 30px rgba(2,6,23,.6); }
-    .messages { height: calc(90vh - 140px); overflow:auto; padding:16px; }
-    .bubble { display:inline-block; padding:10px 14px; border-radius:16px; max-width:78%; line-height:1.25; }
-    .from-me { background:#DCF8C6; color:#082; border-bottom-right-radius:4px; }
-    .from-her { background:#ffffff11; color:#fff; border-bottom-left-radius:4px; }
-    .typing { font-style:italic; opacity:.9; }
-    .topbar { background:linear-gradient(90deg,#0ea5a0,#06b6d4); }
+    /* Base */
+    :root{
+      --wa-green:#25D366;
+      --wa-dark:#0b3b2e;
+      --bubble-me:#dcf8c6;
+      --bubble-her:#ffffff18;
+      --bg:#e9edef;
+    }
+    html,body{height:100%;}
+    body{background:linear-gradient(180deg,#071322 0%,#021018 100%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;}
+
+    /* Container */
+    .frame{width:100%;max-width:420px;height:92vh;border-radius:18px;overflow:hidden;box-shadow:0 30px 60px rgba(2,6,23,.6);border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg,#001b17,#063031);display:flex;flex-direction:column}
+
+    /* Top bar - WhatsApp style */
+    .top{display:flex;align-items:center;gap:12px;padding:12px 14px;background:linear-gradient(90deg,var(--wa-dark),#073b2e);color:#fff}
+    .avatar{width:44px;height:44px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,.08)}
+    .top .meta{line-height:1}
+    .top .meta .name{font-weight:600}
+    .top .meta .status{font-size:12px;opacity:.9}
+
+    /* Messages area */
+    .messages{flex:1;padding:16px;overflow:auto;background-image:linear-gradient(to bottom, rgba(255,255,255,0.01), rgba(255,255,255,0.005));backdrop-filter: blur(0.6px)}
+
+    .msg-row{display:flex;margin-bottom:10px;align-items:flex-end}
+    .msg-row.me{justify-content:flex-end}
+    .bubble{display:inline-block;padding:10px 14px;border-radius:18px;max-width:78%;line-height:1.3;font-size:14px;box-shadow:0 2px 0 rgba(0,0,0,0.06);position:relative}
+    .bubble.me{background:var(--bubble-me);color:#0b3b2e;border-bottom-right-radius:6px}
+    .bubble.her{background:rgba(255,255,255,0.08);color:#fff;border-bottom-left-radius:6px}
+    .bubble img{border-radius:12px;display:block}
+
+    .time{font-size:11px;opacity:.6;margin-left:8px}
+
+    /* Typing */
+    .typing{display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:18px;background:rgba(255,255,255,0.06);width:120px}
+    .dot{width:6px;height:6px;background:#fff;border-radius:50%;opacity:.9;animation:blink 1.2s infinite}
+    .dot:nth-child(2){animation-delay:.15s}
+    .dot:nth-child(3){animation-delay:.3s}
+    @keyframes blink{0%{transform:translateY(0);opacity:.25}50%{transform:translateY(-4px);opacity:1}100%{transform:translateY(0);opacity:.25}}
+
+    /* Composer */
+    .composer{display:flex;gap:10px;padding:12px;background:linear-gradient(180deg,rgba(0,0,0,0.25),rgba(255,255,255,0.02));align-items:center}
+    .fake-input{flex:1;background:#0b2b24;color:#fff;padding:10px 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.03);font-size:14px}
+    .btn{padding:9px 14px;border-radius:999px;font-weight:600}
+    .btn-primary{background:var(--wa-green);color:#06331f}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#fff}
+
+    /* Modal (glass) */
+    .modal-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:60}
+    .modal{width:100%;max-width:880px;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,0.04);backdrop-filter: blur(6px)}
+    .modal-grid{display:grid;grid-template-columns:1fr 360px;gap:14px}
+    .preview-img{width:100%;height:100%;object-fit:cover;border-radius:10px}
+
+    /* PIX card */
+    .pix-card{padding:12px;border-radius:10px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.04)}
+    .pix-qr{width:150px;height:150px;border-radius:8px;background:rgba(255,255,255,0.02);display:block}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace}
+
+    /* small responsive */
+    @media (max-width:880px){
+      .modal-grid{grid-template-columns:1fr}
+      .frame{max-width:100%;height:92vh}
+    }
+
+    /* subtle entry animation for bubbles */
+    .bubble{transform:translateY(6px);opacity:0;animation:enter .28s forwards}
+    @keyframes enter{to{transform:none;opacity:1}}
+
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
-  <div class="chat-frame bg-gradient-to-b from-neutral-900 to-neutral-800 w-full">
-    <!-- Top bar (profile) -->
-    <div class="topbar flex items-center gap-3 p-4 text-white">
-      <img id="modelAvatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop&crop=faces" alt="modelo" class="w-12 h-12 rounded-full object-cover border-2 border-white/40">
-      <div>
-        <div class="font-semibold">Camila ✨</div>
-        <div class="text-sm opacity-90">Online • Última vez há 2 min</div>
+
+  <div class="frame" role="region" aria-label="Simulador WhatsApp - Prévia VIP">
+    <!-- Top -->
+    <div class="top">
+      <div class="avatar"><img id="modelAvatarTop" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop&crop=faces" alt="Camila" class="w-full h-full object-cover"></div>
+      <div class="meta">
+        <div class="name">Camila ✨</div>
+        <div class="status">online • última vez há 2 min</div>
       </div>
       <div class="ml-auto text-right">
-        <div class="text-xs opacity-80">VIP • R$19,90</div>
-        <button id="openPreviewBtn" class="mt-1 bg-white/10 hover:bg-white/20 px-3 py-1 rounded text-xs">Prévia</button>
+        <div class="text-xs text-white/90">VIP • R$19,90</div>
+        <button id="openPreviewBtn" class="mt-2 btn btn-ghost text-xs">Prévia</button>
       </div>
     </div>
 
     <!-- Messages -->
-    <div id="messages" class="messages text-sm text-white">
-      <!-- mensagens injetadas via JS -->
-    </div>
+    <div id="messages" class="messages" aria-live="polite"></div>
 
-    <!-- Composer / bottom area -->
-    <div class="px-4 py-3 bg-neutral-900/60 flex items-center gap-3">
-      <button id="playAudio" class="bg-white/10 hover:bg-white/20 px-3 py-2 rounded">▶️ Áudio da Camila</button>
-      <div class="flex-1">
-        <input id="fakeInput" type="text" placeholder="Escreva uma mensagem..." readonly class="w-full bg-neutral-800/60 placeholder:text-neutral-300 px-3 py-2 rounded" />
-      </div>
-      <button id="startPixFlow" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded">Quero VIP</button>
+    <!-- Composer -->
+    <div class="composer">
+      <button id="playAudio" class="btn btn-ghost" aria-label="Tocar áudio">▶️ Áudio</button>
+      <input id="fakeInput" class="fake-input" placeholder="Escreva uma mensagem..." readonly aria-hidden="true">
+      <button id="startPixFlow" class="btn btn-primary">Quero VIP</button>
     </div>
   </div>
 
-  <!-- Modal preview + PIX -->
-  <div id="modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4">
-    <div class="bg-white/5 backdrop-blur-md rounded-xl max-w-3xl w-full overflow-hidden">
-      <div class="flex items-center justify-between p-4 border-b border-white/10">
+  <!-- Modal (hidden by default) -->
+  <div id="modal" class="modal-wrap hidden" role="dialog" aria-modal="true" aria-label="Prévia e pagamento">
+    <div class="modal">
+      <div class="flex items-center justify-between mb-3">
         <div class="flex items-center gap-3">
-          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop&crop=faces" alt="modelo" class="w-12 h-12 rounded-full object-cover border-2 border-white/20">
+          <div class="avatar" style="width:44px;height:44px"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop&crop=faces" alt="Camila" class="w-full h-full object-cover rounded-full"></div>
           <div>
             <div class="font-semibold">Camila</div>
-            <div class="text-xs opacity-80">Prévia escolhida a dedo</div>
+            <div class="text-xs text-white/80">Prévia escolhida a dedo</div>
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <button id="closeModal" class="text-sm px-3 py-1 rounded bg-white/5">Fechar</button>
+          <button id="closeModal" class="btn btn-ghost">Fechar</button>
         </div>
       </div>
-      <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Preview image -->
+
+      <div class="modal-grid">
         <div class="rounded overflow-hidden">
-          <img id="previewImage" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=800&auto=format&fit=crop" alt="prévia" class="w-full object-cover h-64">
+          <img id="previewImage" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=800&auto=format&fit=crop" alt="Prévia" class="preview-img">
         </div>
 
-        <!-- PIX / pagamento -->
-        <div class="text-sm text-white flex flex-col gap-3">
-          <div class="bg-neutral-900/40 p-3 rounded">
-            <div class="font-semibold">Pagar via PIX (recomendado)</div>
-            <div class="text-xs opacity-80">R$19,90 • Chave única gerada</div>
-          </div>
-
-          <div id="pixArea" class="p-3 bg-neutral-900/30 rounded flex flex-col gap-3">
-            <div class="flex items-center gap-3">
-              <div class="flex-1">
-                <div class="text-xs opacity-80">Chave PIX</div>
-                <div id="pixKey" class="font-mono break-all">--</div>
+        <div class="flex flex-col gap-3">
+          <div class="pix-card">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-semibold">Pagar via PIX (recomendado)</div>
+                <div class="text-xs text-white/80">R$19,90 • chave única gerada</div>
               </div>
-              <div class="flex flex-col gap-2">
-                <button id="copyKey" class="px-3 py-1 bg-white/5 rounded text-sm">Copiar</button>
-                <a id="downloadQR" download="pix-qr.png" class="px-3 py-1 bg-white/5 rounded text-sm inline-block">Baixar QR</a>
+              <div class="text-xs text-white/70">Seguro • Instantâneo</div>
+            </div>
+
+            <div class="mt-3 flex gap-3 items-start">
+              <img id="pixQR" src="" alt="QR PIX" class="pix-qr" />
+              <div class="flex-1">
+                <div class="text-xs text-white/80">Chave PIX</div>
+                <div id="pixKey" class="mono break-words text-sm mt-1 text-white">--</div>
+
+                <div class="mt-3 flex gap-2">
+                  <button id="copyKey" class="btn btn-ghost">Copiar</button>
+                  <a id="downloadQR" download="pix-qr.png" class="btn btn-ghost" role="button">Baixar QR</a>
+                </div>
+
+                <div class="mt-3">
+                  <button id="paidBtn" class="btn btn-primary">Já paguei</button>
+                  <button id="noPixBtn" class="btn btn-ghost ml-2">Não tenho PIX</button>
+                </div>
+
+                <div id="pixStatus" class="text-xs text-white/70 mt-3">Status: aguardando pagamento...</div>
               </div>
             </div>
 
-            <div class="flex items-center gap-3">
-              <img id="pixQR" src="" alt="QR PIX" class="w-36 h-36 bg-white/5 rounded" />
-              <div class="flex-1">
-                <div class="text-xs opacity-80">Após pagar, clique em "Já paguei"</div>
-                <button id="paidBtn" class="mt-3 px-4 py-2 rounded bg-emerald-500 hover:bg-emerald-600 text-white">Já paguei</button>
-                <button id="noPixBtn" class="mt-2 px-4 py-2 rounded bg-amber-500 hover:bg-amber-600 text-white">Não tenho PIX</button>
-              </div>
-            </div>
-
-            <div id="pixStatus" class="text-xs opacity-80">Status: aguardando pagamento...</div>
           </div>
 
-          <div class="p-3">
-            <div class="text-xs opacity-80">Se não conseguir pagar com PIX, você pode finalizar no checkout:</div>
-            <a id="checkoutLink" href="#" class="inline-block mt-2 px-4 py-2 bg-blue-600 rounded text-white">Ir para checkout</a>
-          </div>
+          <div class="text-xs text-white/80">Se não conseguir pagar com PIX, finalize no checkout:</div>
+          <a id="checkoutLink" href="#" class="btn btn-primary text-sm inline-block">Ir para checkout</a>
+
         </div>
       </div>
 
     </div>
   </div>
 
-  <!-- Hidden audio element (substitua src pelo áudio real) -->
+  <!-- Hidden audio element -->
   <audio id="modelAudio" src="https://www.w3schools.com/html/horse.mp3"></audio>
 
 <script>
-// Sequência de mensagens (simulação)
+// --- Dados de demonstração (troque conforme necessário) ---
 const messagesData = [
   {from:'her', text:'Oi, amorzinho 😘 já escolhi a prévia perfeita pra você.'},
   {from:'her', text:'Tá afim de ver agora mesmo? Posso liberar por R$19,90.'},
@@ -136,38 +180,53 @@ const messagesData = [
 const messagesEl = document.getElementById('messages');
 let idx = 0;
 
-function appendBubble(from, html){
-  const wrap = document.createElement('div');
-  wrap.className = 'mb-3 flex';
-  if(from === 'me') wrap.style.justifyContent = 'flex-end';
+function createRow(from){
+  const row = document.createElement('div');
+  row.className = 'msg-row ' + (from==='me' ? 'me' : '');
+  return row;
+}
+
+function appendBubble(from, html, opts={time:true}){
+  const row = createRow(from);
   const bubble = document.createElement('div');
-  bubble.className = 'bubble ' + (from==='me' ? 'from-me' : 'from-her');
+  bubble.className = 'bubble ' + (from==='me'? 'me':'' ) + (from==='her' ? ' her':'');
   bubble.innerHTML = html;
-  wrap.appendChild(bubble);
-  messagesEl.appendChild(wrap);
+
+  // timestamp
+  if(opts.time){
+    const t = document.createElement('div');
+    t.className = 'time';
+    const now = new Date();
+    t.textContent = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    bubble.appendChild(t);
+  }
+
+  row.appendChild(bubble);
+  messagesEl.appendChild(row);
   messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
 function showTyping(){
+  const row = createRow('her');
   const t = document.createElement('div');
-  t.className = 'mb-3 flex from-her';
-  t.innerHTML = '<div class="bubble from-her typing">digitando...</div>';
-  messagesEl.appendChild(t);
+  t.className = 'typing';
+  t.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  row.appendChild(t);
+  messagesEl.appendChild(row);
   messagesEl.scrollTop = messagesEl.scrollHeight;
-  return t;
+  return row;
 }
 
 function runSequence(){
   if(idx >= messagesData.length) return;
   const item = messagesData[idx++];
   const typingEl = showTyping();
-  const delay = 900 + Math.random()*1600;
+  const delay = 700 + Math.random()*1300;
   setTimeout(()=>{
     typingEl.remove();
     appendBubble(item.from, item.text);
-    // se for última mensagem de 'her', abrir modal automático
     if(idx === messagesData.length){
-      setTimeout(()=> document.getElementById('openPreviewBtn').click(), 800);
+      setTimeout(()=> document.getElementById('openPreviewBtn').click(), 700);
     }
     runSequence();
   }, delay);
@@ -175,30 +234,29 @@ function runSequence(){
 
 runSequence();
 
-// Modal flow
+// --- Modal flow ---
 const modal = document.getElementById('modal');
-document.getElementById('openPreviewBtn').addEventListener('click', ()=>{
+const openPreviewBtn = document.getElementById('openPreviewBtn');
+const closeModal = document.getElementById('closeModal');
+openPreviewBtn.addEventListener('click', ()=>{
   modal.classList.remove('hidden');
-  // gerar PIX quando abrir
   generatePIX();
 });
-document.getElementById('closeModal').addEventListener('click', ()=> modal.classList.add('hidden'));
+closeModal.addEventListener('click', ()=> modal.classList.add('hidden'));
 
-// Audio
+// --- Audio ---
 const audio = document.getElementById('modelAudio');
-document.getElementById('playAudio').addEventListener('click', ()=>{
-  audio.play();
-});
+const playAudio = document.getElementById('playAudio');
+playAudio.addEventListener('click', ()=>{ audio.play(); playAudio.blur(); });
 
-// PIX generation
+// --- PIX generation ---
 function generateRandomKey(){
-  // Gera uma chave pix fictícia (email-like) - substitua por chave real se quiser
-  const names = ['camila.vip','camila.exclusiva','contato.camila'];
+  const names = ['camila.vip','camila.exclusiva','contato.camila','camila.oficial'];
   return names[Math.floor(Math.random()*names.length)] + (Math.floor(Math.random()*900)+100) + '@exemplo.com';
 }
 
 function buildPixPayload(key, amount, txid){
-  // Payload simples para QR; não é um payload EMV completo, mas serve pra demo
+  // Simples; para produção use payload EMV ou gateway
   return `PAY?key=${key}&amount=${amount}&txid=${txid}`;
 }
 
@@ -216,52 +274,62 @@ function generatePIX(){
   currentTxId = txid;
   pixKeyEl.textContent = key;
   const payload = buildPixPayload(key, amount, txid);
-  // Gerar QR via API pública (placeholder) - pode substituir por QR do seu gateway
   const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(payload);
   pixQREl.src = qrUrl;
   downloadQR.href = qrUrl;
 }
 
 // Copy key
-document.getElementById('copyKey').addEventListener('click', ()=>{
+const copyKeyBtn = document.getElementById('copyKey');
+copyKeyBtn.addEventListener('click', ()=>{
   navigator.clipboard.writeText(currentPixKey).then(()=>{
-    alert('Chave PIX copiada: ' + currentPixKey);
-  });
+    toast('Chave PIX copiada');
+  }).catch(()=>{ toast('Não foi possível copiar'); });
 });
 
-// Paid button -> simulate verifying payment
+// Paid button (simulação)
 const pixStatus = document.getElementById('pixStatus');
-document.getElementById('paidBtn').addEventListener('click', ()=>{
+const paidBtn = document.getElementById('paidBtn');
+paidBtn.addEventListener('click', ()=>{
   pixStatus.textContent = 'Verificando pagamento...';
-  // simulacao de verificação: 60% chance pago
   setTimeout(()=>{
-    const paid = Math.random() < 0.6;
+    const paid = Math.random() < 0.62; // 62% chance
     if(paid){
       pixStatus.textContent = 'Pagamento confirmado ✅ Liberando prévia...';
-      // libera download / exibe conteúdo exclusivo
       setTimeout(()=>{
         appendBubble('her','Prontinho, amor! Aqui está a prévia exclusiva ❤️');
         appendBubble('her', '<img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=600&auto=format&fit=crop" class="rounded max-w-full"/>');
         modal.classList.add('hidden');
-      },800);
+      },700);
     } else {
-      pixStatus.textContent = 'Pagamento não encontrado. Se preferir, finalize no checkout.';
-      // mostrar checkout CTA
+      pixStatus.textContent = 'Pagamento não encontrado. Você pode finalizar no checkout.';
       document.getElementById('checkoutLink').classList.remove('hidden');
     }
-  }, 1100);
+  },1200);
 });
 
-// No PIX -> levar para checkout
-document.getElementById('noPixBtn').addEventListener('click', ()=>{
-  // exemplo: ir para checkout externo
+// No PIX -> checkout
+const noPixBtn = document.getElementById('noPixBtn');
+noPixBtn.addEventListener('click', ()=>{
   const checkoutUrl = 'https://seu-checkout-exemplo.com/checkout?product=vip19_90';
-  // abrir em nova aba
-  window.open(checkoutUrl, '_blank');
+  window.open(checkoutUrl,'_blank');
 });
 
 // Checkout link
 document.getElementById('checkoutLink').href = 'https://seu-checkout-exemplo.com/checkout?product=vip19_90';
+
+// Small toast helper
+function toast(text){
+  const t = document.createElement('div');
+  t.textContent = text;
+  t.style.position='fixed';
+  t.style.left='50%'; t.style.transform='translateX(-50%)';
+  t.style.bottom='28px'; t.style.padding='10px 14px'; t.style.borderRadius='999px';
+  t.style.background='rgba(0,0,0,0.6)'; t.style.color='#fff'; t.style.zIndex=9999; t.style.fontSize='13px';
+  document.body.appendChild(t);
+  setTimeout(()=> t.style.opacity = '0',1800);
+  setTimeout(()=> t.remove(),2300);
+}
 
 </script>
 </body>
