@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Simulador WhatsApp — Interativo (Realista)</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/imask"></script>
   <style>
     :root{--wa-green:#25D366;}
     html,body{height:100%}
@@ -53,6 +54,9 @@
     .preview-img{width:100%;height:100%;object-fit:cover;border-radius:10px}
     .pix-card{padding:12px;border-radius:10px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.04)}
     .pix-qr{width:150px;height:150px;border-radius:8px;background:rgba(255,255,255,0.02);display:block}
+    .form-input{display:block;width:100%;border-radius:8px;border:1px solid rgba(255,255,255,0.1);padding:10px 12px;background:rgba(0,0,0,0.3);color:white;margin-bottom:10px;}
+    .form-input:focus{outline:none;border-color:#25D366;}
+    .hidden{display:none!important;}
     @media(max-width:880px){
       .modal-grid{grid-template-columns:1fr}
       .modal{max-height:95vh;padding:12px;}
@@ -108,9 +112,7 @@
             <div class="text-xs text-white/80">Prévia escolhida a dedo</div>
           </div>
         </div>
-        <div class="flex items-center gap-2">
-          <button id="closeModal" class="btn btn-ghost">Fechar</button>
-        </div>
+        <button id="closeModal" class="btn btn-ghost">Fechar</button>
       </div>
 
       <div class="modal-grid">
@@ -119,7 +121,20 @@
         </div>
 
         <div class="flex flex-col gap-3">
-          <div class="pix-card">
+          <!-- Formulário de dados do cliente -->
+          <div id="customerFormSection" class="pix-card">
+            <h3 class="font-semibold mb-3">Seus dados para pagamento</h3>
+            <form id="customer-form">
+              <input type="text" id="name" placeholder="Nome completo" class="form-input" required>
+              <input type="email" id="email" placeholder="E-mail" class="form-input" required>
+              <input type="tel" id="phone_number" placeholder="Telefone" class="form-input" required>
+              <input type="text" id="pix_cpf" placeholder="CPF" class="form-input" required>
+            </form>
+            <button id="generatePixBtn" class="btn btn-primary w-full mt-3">Gerar PIX</button>
+          </div>
+
+          <!-- Seção PIX (inicialmente oculta) -->
+          <div id="pixSection" class="pix-card hidden">
             <div class="flex items-center justify-between">
               <div>
                 <div class="font-semibold">Pagar via PIX (recomendado)</div>
@@ -131,47 +146,59 @@
             <div class="mt-3 flex gap-3 items-start">
               <img id="pixQR" src="" alt="QR PIX" class="pix-qr" />
               <div class="flex-1">
-                <div class="text-xs text-white/80">Chave PIX</div>
-                <div id="pixKey" class="mono break-words text-sm mt-1 text-white">--</div>
+                <div class="text-xs text-white/80">Código PIX Copia e Cola</div>
+                <textarea id="pixCopyPaste" class="form-input text-xs" rows="3" readonly></textarea>
 
                 <div class="mt-3 flex gap-2">
-                  <button id="copyKey" class="btn btn-ghost">Copiar</button>
-                  <a id="downloadQR" download="pix-qr.png" class="btn btn-ghost">Baixar QR</a>
+                  <button id="copyPixButton" class="btn btn-ghost">Copiar Código</button>
                 </div>
 
                 <div class="mt-3">
-                  <button id="paidBtn" class="btn btn-primary">Já paguei</button>
-                  <button id="noPixBtn" class="btn btn-ghost ml-2">Não tenho PIX</button>
+                  <button id="checkPaymentBtn" class="btn btn-primary">Verificar Pagamento</button>
                 </div>
 
-                <div id="pixStatus" class="text-xs text-white/70 mt-3">Status: aguardando pagamento...</div>
+                <div id="pixStatus" class="text-xs mt-3">
+                  <div class="text-yellow-400">Status: Aguardando pagamento...</div>
+                  <div class="text-white/60 text-xs mt-1">Pague via PIX e clique em "Verificar Pagamento"</div>
+                </div>
               </div>
             </div>
-
           </div>
 
-          <div class="text-xs text-white/80">Se não conseguir pagar com PIX, finalize no checkout:</div>
-          <a id="checkoutLink" href="#" class="btn btn-primary text-sm inline-block">Ir para checkout</a>
-
+          <div class="text-xs text-white/80 text-center">Pagamento 100% seguro via TriboPay</div>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- Shared audio element (substitua src pelo seu MP3 real) -->
+  <!-- Shared audio element -->
   <audio id="sharedAudio" src="https://www.w3schools.com/html/horse.mp3"></audio>
 
 <script>
 /* -----------------------------------------
-   Simulador WhatsApp Interativo (Quick Replies + Audio Inline)
-   - Quick replies: botões que viram a resposta do usuário
-   - Audio plays inline (sharedAudio), no redirect
-   - Conversa guiada: caminhos 'sim' e 'não'
+   CONFIGURAÇÃO DA TRIBOPAY
 ------------------------------------------*/
+const TRIBOPAY_CONFIG = {
+  productInfo: {
+    productName: "Camila Rios - Conteúdo VIP",
+    productPrice: 19.90,
+    productImage: "./img/perfil.jpeg",
+    productHash: "zfjslqxawh", // Substitua pelo hash real
+    offerHash: "tllcpnze5p"    // Substitua pelo hash real
+  },
+  API_ENDPOINT: "https://api.tribopay.com.br/api",
+  API_TOKEN: "BCBnDREbCWL7MPgXSTEnzNmpduXGRVI2pg3dGKGTLL965jzySwoKR4R484jm" // Substitua pelo token real
+};
 
+/* -----------------------------------------
+   Simulador WhatsApp Interativo
+------------------------------------------*/
 const messagesEl = document.getElementById('messages');
 const sharedAudio = document.getElementById('sharedAudio');
+
+// Variáveis globais para controle do PIX
+let currentTransactionHash = null;
+let paymentCheckInterval = null;
 
 // small helper: append a message bubble
 function appendBubble(from, innerHTML, opts={withReplies: null, timestamp:true}) {
@@ -182,7 +209,6 @@ function appendBubble(from, innerHTML, opts={withReplies: null, timestamp:true})
   bubble.innerHTML = innerHTML;
   row.appendChild(bubble);
 
-  // timestamp
   if(opts.timestamp) {
     const ts = document.createElement('span');
     ts.className = 'timestamp';
@@ -194,7 +220,6 @@ function appendBubble(from, innerHTML, opts={withReplies: null, timestamp:true})
   messagesEl.appendChild(row);
   messagesEl.scrollTop = messagesEl.scrollHeight;
 
-  // quick replies (array of {text, payload})
   if(Array.isArray(opts.withReplies) && opts.withReplies.length){
     const repliesWrap = document.createElement('div');
     repliesWrap.className = 'quick-replies';
@@ -203,7 +228,6 @@ function appendBubble(from, innerHTML, opts={withReplies: null, timestamp:true})
       btn.className = 'quick-reply';
       btn.textContent = r.text;
       btn.addEventListener('click', ()=> {
-        // remove quick replies and simulate user reply
         repliesWrap.remove();
         userReply(r.text, r.payload);
       });
@@ -229,34 +253,28 @@ function showTyping(min=500, max=1200){
   return new Promise(res => setTimeout(()=> { row.remove(); res(); }, delay));
 }
 
-// play audio for a specific bubble's play button
+// play audio functions (mantidas do código original)
 function bindPlayButtons(){
-  // Find all unbound play buttons
   document.querySelectorAll('.play-btn').forEach(btn => {
     if(btn.dataset.bound === 'true') return;
     btn.dataset.bound = 'true';
     btn.addEventListener('click', async (e)=>{
       const isPlaying = btn.classList.contains('playing');
-      // stop any current playback first
       stopAllPlaying();
       if(isPlaying){
-        // was playing, so now stop
         sharedAudio.pause();
         btn.classList.remove('playing');
         btn.innerHTML = '▶';
         removeWave(btn);
         return;
       }
-      // start playing sharedAudio from 0
       try {
         sharedAudio.currentTime = 0;
-      } catch(e){ /* ignore */ }
+      } catch(e){ }
       btn.classList.add('playing');
       btn.innerHTML = '▮▮';
       addWave(btn);
-      // visual: show progress (simple)
       sharedAudio.play().catch(err => {
-        // fallback: open in new tab if autoplay blocked (rare)
         console.warn('playback failed', err);
         window.open(sharedAudio.src, '_blank');
         btn.classList.remove('playing');
@@ -271,6 +289,7 @@ function bindPlayButtons(){
     });
   });
 }
+
 function stopAllPlaying(){
   document.querySelectorAll('.play-btn.playing').forEach(btn => {
     btn.classList.remove('playing');
@@ -279,6 +298,7 @@ function stopAllPlaying(){
   });
   try { sharedAudio.pause(); } catch(e) {}
 }
+
 function addWave(btn){
   if(btn.querySelector('.wave')) return;
   const wave = document.createElement('span');
@@ -286,6 +306,7 @@ function addWave(btn){
   wave.innerHTML = '<span></span><span></span><span></span><span></span><span></span>';
   btn.appendChild(wave);
 }
+
 function removeWave(btn){
   const w = btn.querySelector('.wave');
   if(w) w.remove();
@@ -294,14 +315,11 @@ function removeWave(btn){
 /* -----------------------
    Conversation flow
    -----------------------*/
-
-// initial sequence: model greets, sends audio message, then quick replies
 async function initialSequence(){
   await showTyping(400,900);
   appendBubble('her', 'Oii amorzinho 💋 acabei de gravar um áudio só pra você.');
   await showTyping(300,700);
 
-  // audio bubble content (play button + meta)
   const audioHtml = `
     <div class="message-audio" aria-hidden="false">
       <div class="play-btn" role="button" aria-label="Tocar áudio">▶</div>
@@ -312,12 +330,9 @@ async function initialSequence(){
     </div>
   `;
   appendBubble('her', audioHtml);
-
-  // bind play btns
   bindPlayButtons();
 
   await showTyping(500,1000);
-  // present quick replies (strategy: guide to conversion)
   appendBubble('her', 'Você prefere que eu mande a prévia agora ou quer um trechinho grátis primeiro?', {
     withReplies: [
       {text: 'Quero ver agora 🔥', payload: 'want_now'},
@@ -328,12 +343,9 @@ async function initialSequence(){
   bindPlayButtons();
 }
 
-// handle user's quick-reply selection (payload optional)
 async function userReply(text, payload){
-  // show user's bubble (green)
   appendBubble('me', text);
 
-  // small delay then model response based on payload
   if(payload === 'want_now'){
     await showTyping(400,900);
     appendBubble('her', 'Ain que delícia 😈 vou liberar a prévia completa por R$19,90. Quer pagar via PIX (mais rápido) ou prefere checkout?');
@@ -348,7 +360,6 @@ async function userReply(text, payload){
     await showTyping(400,900);
     appendBubble('her', 'Ok, vou mandar um trechinho pra você agora ❤');
     await showTyping(400,900);
-    // send short teaser image + small audio again
     appendBubble('her', '<img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=600&auto=format&fit=crop" class="rounded max-w-full"/>');
     await showTyping(400,900);
     appendBubble('her', 'Curtiu? Quer a versão completa por R$19,90?', {
@@ -367,19 +378,17 @@ async function userReply(text, payload){
       ]
     });
   } else if(payload === 'pix_flow'){
-    // open modal payment (PIX)
     await showTyping(300,700);
     appendBubble('her', 'Perfeito! Vou abrir as opções de pagamento — escolhe PIX que é instantâneo e eu libero na hora.');
     openModal();
   } else if(payload === 'checkout_flow'){
     await showTyping(300,700);
     appendBubble('her', 'Beleza — abrindo o checkout seguro pra você finalizar.');
-    window.open(checkoutUrl, '_blank');
+    window.open('https://tribopay.com.br', '_blank');
   } else if(payload === 'end'){
     await showTyping(300,700);
     appendBubble('her', 'Beleza, fico por aqui. Me chama quando quiser ❤️');
   } else {
-    // fallback: generic response and offer options
     await showTyping(300,700);
     appendBubble('her', 'Haha adorei! Quer que eu libere a prévia completa por R$19,90?', {
       withReplies: [
@@ -388,81 +397,285 @@ async function userReply(text, payload){
       ]
     });
   }
-
-  // re-bind any remaining play buttons
   bindPlayButtons();
 }
 
 /* ----------------------
-   Modal + PIX logic
+   Modal + PIX REAL
    ----------------------*/
-
 const modalEl = document.getElementById('modal');
 const closeModalBtn = document.getElementById('closeModal');
-closeModalBtn.addEventListener('click', ()=> modalEl.classList.add('hidden'));
+const customerFormSection = document.getElementById('customerFormSection');
+const pixSection = document.getElementById('pixSection');
+const generatePixBtn = document.getElementById('generatePixBtn');
+const checkPaymentBtn = document.getElementById('checkPaymentBtn');
+const copyPixButton = document.getElementById('copyPixButton');
+const pixStatus = document.getElementById('pixStatus');
+
+closeModalBtn.addEventListener('click', closeModal);
 
 function openModal(){ 
-  modalEl.classList.remove('hidden'); 
-  generatePIX(); 
+  modalEl.classList.remove('hidden');
+  resetPaymentUI();
   
-  // Fecha o modal ao clicar fora dele
   modalEl.addEventListener('click', function(e) {
     if (e.target === modalEl) {
-      modalEl.classList.add('hidden');
+      closeModal();
     }
   });
 }
 
-// PIX utils (demo)
-function generateRandomKey(){
-  const names = ['camila.vip','camila.exclusiva','contato.camila','camila.oficial'];
-  return names[Math.floor(Math.random()*names.length)] + (Math.floor(Math.random()*900)+100) + '@exemplo.com';
+function closeModal() {
+  modalEl.classList.add('hidden');
+  if (paymentCheckInterval) {
+    clearInterval(paymentCheckInterval);
+    paymentCheckInterval = null;
+  }
 }
-function buildPixPayload(key, amount, txid){ return `PAY?key=${key}&amount=${amount}&txid=${txid}`; }
 
-const pixKeyEl = document.getElementById('pixKey');
-const pixQREl = document.getElementById('pixQR');
-const downloadQR = document.getElementById('downloadQR');
-let currentPixKey = '';
-let currentTxId = '';
-const checkoutUrl = 'https://seu-checkout-exemplo.com/checkout?product=vip19_90';
-
-function generatePIX(){
-  const key = generateRandomKey();
-  const amount = '19.90';
-  const txid = 'VIP' + Math.floor(Math.random()*900000+100000);
-  currentPixKey = key; currentTxId = txid;
-  pixKeyEl.textContent = key;
-  const payload = buildPixPayload(key, amount, txid);
-  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(payload);
-  pixQREl.src = qrUrl;
-  downloadQR.href = qrUrl;
+function resetPaymentUI() {
+  customerFormSection.classList.remove('hidden');
+  pixSection.classList.add('hidden');
+  currentTransactionHash = null;
+  document.getElementById('customer-form').reset();
 }
-document.getElementById('copyKey').addEventListener('click', ()=> navigator.clipboard.writeText(currentPixKey).then(()=> toast('Chave PIX copiada')));
-document.getElementById('paidBtn').addEventListener('click', ()=> {
-  const pixStatus = document.getElementById('pixStatus');
-  pixStatus.textContent = 'Verificando pagamento...';
-  setTimeout(()=> {
-    const paid = Math.random() < 0.62;
-    if(paid){
-      pixStatus.textContent = 'Pagamento confirmado ✅ Liberando prévia...';
-      setTimeout(()=> {
-        appendBubble('her','Prontinho! Aqui está a prévia exclusiva ❤️');
-        appendBubble('her','<img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=600&auto=format&fit=crop" class="rounded max-w-full"/>');
-        modalEl.classList.add('hidden');
-      },700);
-    } else {
-      pixStatus.textContent = 'Pagamento não encontrado. Você pode finalizar no checkout.';
-      document.getElementById('checkoutLink').classList.remove('hidden');
-    }
-  },1200);
-});
-document.getElementById('noPixBtn').addEventListener('click', ()=> window.open(checkoutUrl,'_blank'));
-document.getElementById('checkoutLink').href = checkoutUrl;
 
 /* ----------------------
-   Helpers: toast
+   INTEGRAÇÃO TRIBOPAY REAL
    ----------------------*/
+
+// Gerar PIX
+generatePixBtn.addEventListener('click', async () => {
+  const form = document.getElementById('customer-form');
+  if (!form.checkValidity()) {
+    alert('Por favor, preencha todos os campos corretamente.');
+    return form.reportValidity();
+  }
+
+  generatePixBtn.textContent = 'Gerando PIX...';
+  generatePixBtn.disabled = true;
+
+  const customerData = {
+    name: document.getElementById('name').value,
+    email: document.getElementById('email').value,
+    phone_number: document.getElementById('phone_number').value.replace(/\D/g, ''),
+    document: document.getElementById('pix_cpf').value.replace(/\D/g, ''),
+    street_name: "Não informado",
+    number: "s/n",
+    complement: "",
+    neighborhood: "Não informado",
+    city: "Não informado",
+    state: "NI",
+    zip_code: "00000000"
+  };
+
+  const paymentPayload = {
+    amount: Math.round(TRIBOPAY_CONFIG.productInfo.productPrice * 100),
+    offer_hash: TRIBOPAY_CONFIG.productInfo.offerHash,
+    payment_method: 'pix',
+    customer: customerData,
+    cart: [{
+      product_hash: TRIBOPAY_CONFIG.productInfo.productHash,
+      title: TRIBOPAY_CONFIG.productInfo.productName,
+      price: Math.round(TRIBOPAY_CONFIG.productInfo.productPrice * 100),
+      quantity: 1,
+      operation_type: 1,
+      tangible: false
+    }],
+    installments: 1,
+    expire_in_days: 1,
+    transaction_origin: 'api'
+  };
+
+  try {
+    // Criar transação
+    const response = await fetch(`${TRIBOPAY_CONFIG.API_ENDPOINT}/public/v1/transactions?api_token=${TRIBOPAY_CONFIG.API_TOKEN}`, {
+      method: 'POST',
+      headers: { 
+        'Accept': 'application/json', 
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify(paymentPayload)
+    });
+
+    const text = await response.text();
+    let result;
+    try { 
+      result = JSON.parse(text); 
+    } catch { 
+      result = { raw: text }; 
+    }
+
+    if (!response.ok) {
+      const msg = result?.message || 'Ocorreu um erro ao gerar o PIX.';
+      const errs = result?.errors ? '\n' + Object.values(result.errors).map(e => e[0]).join('\n') : '';
+      throw new Error(msg + errs);
+    }
+
+    const hash = result?.hash || result?.data?.hash || result?.transaction_hash || result?.id;
+    if (!hash) throw new Error('Transação criada, mas sem hash na resposta.');
+
+    currentTransactionHash = hash;
+
+    // Buscar dados do PIX
+    const transactionResponse = await fetchTransactionByHash(hash);
+    if (!transactionResponse.ok) throw new Error('Não foi possível obter os dados do PIX.');
+
+    const data = transactionResponse.json.data || transactionResponse.json;
+    const pixData = data.pix || {};
+    const copyPaste = (pixData.pix_qr_code || pixData.qr_code || pixData.copy_paste || pixData.code || '').trim();
+
+    if (!copyPaste) throw new Error('Código PIX não disponível.');
+
+    // Mostrar UI do PIX
+    document.getElementById('pixCopyPaste').value = copyPaste;
+    
+    // Gerar QR Code visual
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(copyPaste)}`;
+    document.getElementById('pixQR').src = qrUrl;
+
+    customerFormSection.classList.add('hidden');
+    pixSection.classList.remove('hidden');
+
+    // Iniciar verificação automática
+    startPaymentChecking();
+
+  } catch (error) {
+    console.error('Erro ao gerar PIX:', error);
+    alert(`Erro: ${error.message || 'Falha na comunicação com o servidor.'}`);
+    generatePixBtn.textContent = 'Gerar PIX';
+    generatePixBtn.disabled = false;
+  }
+});
+
+// Verificar pagamento
+checkPaymentBtn.addEventListener('click', checkPaymentStatus);
+
+// Copiar código PIX
+copyPixButton.addEventListener('click', async () => {
+  const text = document.getElementById('pixCopyPaste').value.trim();
+  if (!text) { 
+    alert('Código PIX não disponível.'); 
+    return; 
+  }
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.focus(); 
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+    copyPixButton.textContent = 'Copiado!';
+    setTimeout(() => { copyPixButton.textContent = 'Copiar Código'; }, 2000);
+  } catch (e) {
+    console.error(e);
+    copyPixButton.textContent = 'Falhou ao copiar';
+    setTimeout(() => { copyPixButton.textContent = 'Copiar Código'; }, 2000);
+  }
+});
+
+/* ----------------------
+   FUNÇÕES DA API TRIBOPAY
+   ----------------------*/
+async function fetchTransactionByHash(hash) {
+  const url = `${TRIBOPAY_CONFIG.API_ENDPOINT}/public/v1/transactions/${hash}?api_token=${TRIBOPAY_CONFIG.API_TOKEN}`;
+  const response = await fetch(url, { 
+    headers: { 
+      'Accept': 'application/json' 
+    } 
+  });
+  
+  const text = await response.text();
+  let json;
+  try { 
+    json = JSON.parse(text); 
+  } catch { 
+    json = { raw: text }; 
+  }
+  
+  return { 
+    ok: response.ok, 
+    status: response.status, 
+    json: json 
+  };
+}
+
+async function checkPaymentStatus() {
+  if (!currentTransactionHash) return;
+
+  checkPaymentBtn.textContent = 'Verificando...';
+  checkPaymentBtn.disabled = true;
+
+  try {
+    const { ok, json } = await fetchTransactionByHash(currentTransactionHash);
+    
+    if (!ok) {
+      throw new Error('Falha ao verificar pagamento');
+    }
+
+    const data = json.data || json;
+    const status = String(data.payment_status || data.status || '').toLowerCase();
+
+    if (status === 'paid' || status === 'approved') {
+      // Pagamento confirmado
+      pixStatus.innerHTML = '<div class="text-green-400">✅ Pagamento confirmado! Liberando conteúdo...</div>';
+      
+      setTimeout(() => {
+        closeModal();
+        appendBubble('her', 'Prontinho! Pagamento confirmado ✅ Aqui está a prévia exclusiva ❤️');
+        appendBubble('her', '<img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=600&auto=format&fit=crop" class="rounded max-w-full"/>');
+        appendBubble('her', 'Obrigada pelo apoio! Se quiser mais conteúdo especial, é só me chamar 😘');
+      }, 1500);
+
+      if (paymentCheckInterval) {
+        clearInterval(paymentCheckInterval);
+        paymentCheckInterval = null;
+      }
+
+    } else if (status === 'waiting_payment' || status === 'pending') {
+      pixStatus.innerHTML = '<div class="text-yellow-400">⏳ Aguardando pagamento...</div>';
+      checkPaymentBtn.textContent = 'Verificar Pagamento';
+      checkPaymentBtn.disabled = false;
+    } else {
+      pixStatus.innerHTML = `<div class="text-red-400">❌ Status: ${status}</div>`;
+      checkPaymentBtn.textContent = 'Verificar Pagamento';
+      checkPaymentBtn.disabled = false;
+    }
+
+  } catch (error) {
+    console.error('Erro ao verificar pagamento:', error);
+    pixStatus.innerHTML = '<div class="text-red-400">❌ Erro ao verificar pagamento</div>';
+    checkPaymentBtn.textContent = 'Verificar Pagamento';
+    checkPaymentBtn.disabled = false;
+  }
+}
+
+function startPaymentChecking() {
+  // Verificar a cada 10 segundos
+  paymentCheckInterval = setInterval(checkPaymentStatus, 10000);
+}
+
+/* ----------------------
+   INICIALIZAÇÃO
+   ----------------------*/
+document.addEventListener('DOMContentLoaded', () => {
+  // Aplicar máscaras
+  IMask(document.getElementById('phone_number'), { mask: '(00) 00000-0000' });
+  IMask(document.getElementById('pix_cpf'), { mask: '000.000.000-00' });
+  
+  // Iniciar conversa
+  initialSequence();
+});
+
+// Helper: toast notification
 function toast(text){
   const t = document.createElement('div');
   t.textContent = text;
@@ -473,11 +686,6 @@ function toast(text){
   setTimeout(()=> t.style.opacity = '0',1800);
   setTimeout(()=> t.remove(),2300);
 }
-
-/* ----------------------
-   Start
-   ----------------------*/
-initialSequence();
 
 </script>
 </body>
