@@ -3,107 +3,80 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Chat - Prévia Privada (Simulador WhatsApp)</title>
+  <title>Simulador WhatsApp — Interativo (Realista)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Base */
-    :root{
-      --wa-green:#25D366;
-      --wa-dark:#0b3b2e;
-      --bubble-me:#dcf8c6;
-      --bubble-her:#ffffff18;
-      --bg:#e9edef;
-    }
-    html,body{height:100%;}
-    body{background:linear-gradient(180deg,#071322 0%,#021018 100%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;}
-
-    /* Container */
-    .frame{width:100%;max-width:420px;height:92vh;border-radius:18px;overflow:hidden;box-shadow:0 30px 60px rgba(2,6,23,.6);border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg,#001b17,#063031);display:flex;flex-direction:column}
-
-    /* Top bar - WhatsApp style */
-    .top{display:flex;align-items:center;gap:12px;padding:12px 14px;background:linear-gradient(90deg,var(--wa-dark),#073b2e);color:#fff}
+    :root{--wa-green:#25D366;}
+    html,body{height:100%}
+    body{background:linear-gradient(180deg,#071322 0%,#021018 100%);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:#fff}
+    .frame{max-width:420px;height:92vh;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.03);box-shadow:0 30px 60px rgba(2,6,23,.6);background:linear-gradient(180deg,#001b17,#063031)}
+    .top{display:flex;align-items:center;gap:12px;padding:12px 14px;background:linear-gradient(90deg,#063b2e,#0b3b2e)}
     .avatar{width:44px;height:44px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,.08)}
-    .top .meta{line-height:1}
-    .top .meta .name{font-weight:600}
-    .top .meta .status{font-size:12px;opacity:.9}
-
-    /* Messages area */
-    .messages{flex:1;padding:16px;overflow:auto;background-image:linear-gradient(to bottom, rgba(255,255,255,0.01), rgba(255,255,255,0.005));backdrop-filter: blur(0.6px)}
-
+    .meta .name{font-weight:600}
+    .messages{flex:1;padding:16px;overflow:auto;background-image:linear-gradient(to bottom, rgba(255,255,255,0.01), rgba(255,255,255,0.005));}
     .msg-row{display:flex;margin-bottom:10px;align-items:flex-end}
     .msg-row.me{justify-content:flex-end}
-    .bubble{display:inline-block;padding:10px 14px;border-radius:18px;max-width:78%;line-height:1.3;font-size:14px;box-shadow:0 2px 0 rgba(0,0,0,0.06);position:relative}
-    .bubble.me{background:var(--bubble-me);color:#0b3b2e;border-bottom-right-radius:6px}
+    .bubble{display:inline-block;padding:10px 14px;border-radius:18px;max-width:78%;line-height:1.3;font-size:14px;position:relative}
+    .bubble.me{background:#dcf8c6;color:#06331f;border-bottom-right-radius:6px}
     .bubble.her{background:rgba(255,255,255,0.08);color:#fff;border-bottom-left-radius:6px}
-    .bubble img{border-radius:12px;display:block}
-
-    .time{font-size:11px;opacity:.6;margin-left:8px}
-
-    /* Typing */
     .typing{display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:18px;background:rgba(255,255,255,0.06);width:120px}
-    .dot{width:6px;height:6px;background:#fff;border-radius:50%;opacity:.9;animation:blink 1.2s infinite}
-    .dot:nth-child(2){animation-delay:.15s}
-    .dot:nth-child(3){animation-delay:.3s}
+    .dot{width:6px;height:6px;background:#fff;border-radius:50%;animation:blink 1.2s infinite}
+    .dot:nth-child(2){animation-delay:.12s}.dot:nth-child(3){animation-delay:.24s}
     @keyframes blink{0%{transform:translateY(0);opacity:.25}50%{transform:translateY(-4px);opacity:1}100%{transform:translateY(0);opacity:.25}}
-
-    /* Composer */
     .composer{display:flex;gap:10px;padding:12px;background:linear-gradient(180deg,rgba(0,0,0,0.25),rgba(255,255,255,0.02));align-items:center}
-    .fake-input{flex:1;background:#0b2b24;color:#fff;padding:10px 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.03);font-size:14px}
     .btn{padding:9px 14px;border-radius:999px;font-weight:600}
     .btn-primary{background:var(--wa-green);color:#06331f}
     .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#fff}
-
-    /* Modal (glass) */
+    .message-audio{display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(0,0,0,0.12);border-radius:12px}
+    .play-btn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,0.06);cursor:pointer;user-select:none}
+    .play-btn.playing{background:linear-gradient(90deg,#25d366,#00a884);color:#032c22}
+    .audio-meta{display:flex;flex-direction:column}
+    .small{font-size:12px;opacity:.85}
+    .quick-replies{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+    .quick-reply{background:rgba(255,255,255,0.06);padding:8px 10px;border-radius:999px;cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
+    .quick-reply:hover{background:rgba(255,255,255,0.09)}
     .modal-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:60}
     .modal{width:100%;max-width:880px;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,0.04);backdrop-filter: blur(6px)}
     .modal-grid{display:grid;grid-template-columns:1fr 360px;gap:14px}
     .preview-img{width:100%;height:100%;object-fit:cover;border-radius:10px}
-
-    /* PIX card */
     .pix-card{padding:12px;border-radius:10px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.04)}
     .pix-qr{width:150px;height:150px;border-radius:8px;background:rgba(255,255,255,0.02);display:block}
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace}
-
-    /* small responsive */
-    @media (max-width:880px){
-      .modal-grid{grid-template-columns:1fr}
-      .frame{max-width:100%;height:92vh}
-    }
-
-    /* subtle entry animation for bubbles */
+    @media(max-width:880px){.modal-grid{grid-template-columns:1fr}}
     .bubble{transform:translateY(6px);opacity:0;animation:enter .28s forwards}
     @keyframes enter{to{transform:none;opacity:1}}
-
+    .timestamp{font-size:11px;opacity:.7;margin-left:8px;display:block;margin-top:6px}
+    /* small wave animation for playing state */
+    .wave{width:36px;height:16px;display:inline-block;position:relative}
+    .wave span{position:absolute;bottom:0;left:0;width:4px;height:6px;background:#fff;opacity:.7;border-radius:2px;animation:wave 800ms infinite ease-in-out}
+    .wave span:nth-child(2){left:6px;animation-delay:100ms}
+    .wave span:nth-child(3){left:12px;animation-delay:200ms}
+    .wave span:nth-child(4){left:18px;animation-delay:300ms}
+    .wave span:nth-child(5){left:24px;animation-delay:400ms}
+    @keyframes wave{0%{height:6px;opacity:.6}50%{height:14px;opacity:1}100%{height:6px;opacity:.6}}
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
 
-  <div class="frame" role="region" aria-label="Simulador WhatsApp - Prévia VIP">
-    <!-- Top -->
+  <div class="frame" role="region" aria-label="Simulador WhatsApp - Interativo">
     <div class="top">
       <div class="avatar"><img id="modelAvatarTop" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop&crop=faces" alt="Camila" class="w-full h-full object-cover"></div>
       <div class="meta">
         <div class="name">Camila ✨</div>
-        <div class="status">online • última vez há 2 min</div>
+        <div class="small">online • última vez há 2 min</div>
       </div>
       <div class="ml-auto text-right">
-        <div class="text-xs text-white/90">VIP • R$19,90</div>
-        <button id="openPreviewBtn" class="mt-2 btn btn-ghost text-xs">Prévia</button>
+        <div class="text-xs">VIP • R$19,90</div>
       </div>
     </div>
 
-    <!-- Messages -->
     <div id="messages" class="messages" aria-live="polite"></div>
 
-    <!-- Composer -->
-    <div class="composer">
-      <button id="playAudio" class="btn btn-ghost" aria-label="Tocar áudio">▶️ Áudio</button>
-      <input id="fakeInput" class="fake-input" placeholder="Escreva uma mensagem..." readonly aria-hidden="true">
-      <button id="startPixFlow" class="btn btn-primary">Quero VIP</button>
+    <div class="composer" id="composerStatic">
+      <div class="small text-white/80">Responda usando os botões que aparecem nas mensagens.</div>
     </div>
   </div>
 
-  <!-- Modal (hidden by default) -->
+  <!-- Modal -->
   <div id="modal" class="modal-wrap hidden" role="dialog" aria-modal="true" aria-label="Prévia e pagamento">
     <div class="modal">
       <div class="flex items-center justify-between mb-3">
@@ -142,7 +115,7 @@
 
                 <div class="mt-3 flex gap-2">
                   <button id="copyKey" class="btn btn-ghost">Copiar</button>
-                  <a id="downloadQR" download="pix-qr.png" class="btn btn-ghost" role="button">Baixar QR</a>
+                  <a id="downloadQR" download="pix-qr.png" class="btn btn-ghost">Baixar QR</a>
                 </div>
 
                 <div class="mt-3">
@@ -165,141 +138,287 @@
     </div>
   </div>
 
-  <!-- Hidden audio element -->
-  <audio id="modelAudio" src="https://www.w3schools.com/html/horse.mp3"></audio>
+  <!-- Shared audio element (substitua src pelo seu MP3 real) -->
+  <audio id="sharedAudio" src="https://www.w3schools.com/html/horse.mp3"></audio>
 
 <script>
-// --- Dados de demonstração (troque conforme necessário) ---
-const messagesData = [
-  {from:'her', text:'Oi, amorzinho 😘 já escolhi a prévia perfeita pra você.'},
-  {from:'her', text:'Tá afim de ver agora mesmo? Posso liberar por R$19,90.'},
-  {from:'her', text:'Se quiser posso mandar um áudio exclusivo também.'},
-  {from:'me', text:'Quero ver agora.'}
-];
+/* -----------------------------------------
+   Simulador WhatsApp Interativo (Quick Replies + Audio Inline)
+   - Quick replies: botões que viram a resposta do usuário
+   - Audio plays inline (sharedAudio), no redirect
+   - Conversa guiada: caminhos 'sim' e 'não'
+------------------------------------------*/
 
 const messagesEl = document.getElementById('messages');
-let idx = 0;
+const sharedAudio = document.getElementById('sharedAudio');
 
-function createRow(from){
+// small helper: append a message bubble
+function appendBubble(from, innerHTML, opts={withReplies: null, timestamp:true}) {
   const row = document.createElement('div');
   row.className = 'msg-row ' + (from==='me' ? 'me' : '');
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble ' + (from==='me' ? 'me' : 'her');
+  bubble.innerHTML = innerHTML;
+  row.appendChild(bubble);
+
+  // timestamp
+  if(opts.timestamp) {
+    const ts = document.createElement('span');
+    ts.className = 'timestamp';
+    const now = new Date();
+    ts.textContent = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    bubble.appendChild(ts);
+  }
+
+  messagesEl.appendChild(row);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+
+  // quick replies (array of {text, payload})
+  if(Array.isArray(opts.withReplies) && opts.withReplies.length){
+    const repliesWrap = document.createElement('div');
+    repliesWrap.className = 'quick-replies';
+    opts.withReplies.forEach(r=>{
+      const btn = document.createElement('button');
+      btn.className = 'quick-reply';
+      btn.textContent = r.text;
+      btn.addEventListener('click', ()=> {
+        // remove quick replies and simulate user reply
+        repliesWrap.remove();
+        userReply(r.text, r.payload);
+      });
+      repliesWrap.appendChild(btn);
+    });
+    bubble.appendChild(repliesWrap);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
   return row;
 }
 
-function appendBubble(from, html, opts={time:true}){
-  const row = createRow(from);
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble ' + (from==='me'? 'me':'' ) + (from==='her' ? ' her':'');
-  bubble.innerHTML = html;
-
-  // timestamp
-  if(opts.time){
-    const t = document.createElement('div');
-    t.className = 'time';
-    const now = new Date();
-    t.textContent = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-    bubble.appendChild(t);
-  }
-
-  row.appendChild(bubble);
-  messagesEl.appendChild(row);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
-
-function showTyping(){
-  const row = createRow('her');
+// typing indicator
+function showTyping(min=500, max=1200){
+  const row = document.createElement('div');
+  row.className = 'msg-row';
   const t = document.createElement('div');
   t.className = 'typing';
   t.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
   row.appendChild(t);
   messagesEl.appendChild(row);
   messagesEl.scrollTop = messagesEl.scrollHeight;
-  return row;
+  const delay = min + Math.random()*(max-min);
+  return new Promise(res => setTimeout(()=> { row.remove(); res(); }, delay));
 }
 
-function runSequence(){
-  if(idx >= messagesData.length) return;
-  const item = messagesData[idx++];
-  const typingEl = showTyping();
-  const delay = 700 + Math.random()*1300;
-  setTimeout(()=>{
-    typingEl.remove();
-    appendBubble(item.from, item.text);
-    if(idx === messagesData.length){
-      setTimeout(()=> document.getElementById('openPreviewBtn').click(), 700);
-    }
-    runSequence();
-  }, delay);
+// play audio for a specific bubble's play button
+function bindPlayButtons(){
+  // Find all unbound play buttons
+  document.querySelectorAll('.play-btn').forEach(btn => {
+    if(btn.dataset.bound === 'true') return;
+    btn.dataset.bound = 'true';
+    btn.addEventListener('click', async (e)=>{
+      const isPlaying = btn.classList.contains('playing');
+      // stop any current playback first
+      stopAllPlaying();
+      if(isPlaying){
+        // was playing, so now stop
+        sharedAudio.pause();
+        btn.classList.remove('playing');
+        btn.innerHTML = '▶';
+        removeWave(btn);
+        return;
+      }
+      // start playing sharedAudio from 0
+      try {
+        sharedAudio.currentTime = 0;
+      } catch(e){ /* ignore */ }
+      btn.classList.add('playing');
+      btn.innerHTML = '▮▮';
+      addWave(btn);
+      // visual: show progress (simple)
+      sharedAudio.play().catch(err => {
+        // fallback: open in new tab if autoplay blocked (rare)
+        console.warn('playback failed', err);
+        window.open(sharedAudio.src, '_blank');
+        btn.classList.remove('playing');
+        btn.innerHTML = '▶';
+        removeWave(btn);
+      });
+      sharedAudio.onended = () => {
+        btn.classList.remove('playing');
+        btn.innerHTML = '▶';
+        removeWave(btn);
+      };
+    });
+  });
+}
+function stopAllPlaying(){
+  document.querySelectorAll('.play-btn.playing').forEach(btn => {
+    btn.classList.remove('playing');
+    btn.innerHTML = '▶';
+    removeWave(btn);
+  });
+  try { sharedAudio.pause(); } catch(e) {}
+}
+function addWave(btn){
+  if(btn.querySelector('.wave')) return;
+  const wave = document.createElement('span');
+  wave.className = 'wave';
+  wave.innerHTML = '<span></span><span></span><span></span><span></span><span></span>';
+  btn.appendChild(wave);
+}
+function removeWave(btn){
+  const w = btn.querySelector('.wave');
+  if(w) w.remove();
 }
 
-runSequence();
+/* -----------------------
+   Conversation flow
+   -----------------------*/
 
-// --- Modal flow ---
-const modal = document.getElementById('modal');
-const openPreviewBtn = document.getElementById('openPreviewBtn');
-const closeModal = document.getElementById('closeModal');
-openPreviewBtn.addEventListener('click', ()=>{
-  modal.classList.remove('hidden');
-  generatePIX();
-});
-closeModal.addEventListener('click', ()=> modal.classList.add('hidden'));
+// initial sequence: model greets, sends audio message, then quick replies
+async function initialSequence(){
+  await showTyping(400,900);
+  appendBubble('her', 'Oii amorzinho 💋 acabei de gravar um áudio só pra você.');
+  await showTyping(300,700);
 
-// --- Audio ---
-const audio = document.getElementById('modelAudio');
-const playAudio = document.getElementById('playAudio');
-playAudio.addEventListener('click', ()=>{ audio.play(); playAudio.blur(); });
+  // audio bubble content (play button + meta)
+  const audioHtml = `
+    <div class="message-audio" aria-hidden="false">
+      <div class="play-btn" role="button" aria-label="Tocar áudio">▶</div>
+      <div class="audio-meta">
+        <div class="small font-semibold">Áudio de Camila • 0:12</div>
+        <div class="small text-white/70">Toque para ouvir</div>
+      </div>
+    </div>
+  `;
+  appendBubble('her', audioHtml);
 
-// --- PIX generation ---
+  // bind play btns
+  bindPlayButtons();
+
+  await showTyping(500,1000);
+  // present quick replies (strategy: guide to conversion)
+  appendBubble('her', 'Você prefere que eu mande a prévia agora ou quer um trechinho grátis primeiro?', {
+    withReplies: [
+      {text: 'Quero ver agora 🔥', payload: 'want_now'},
+      {text: 'Quero só um trechinho', payload: 'trecho'},
+      {text: 'Depois / Não', payload: 'no'}
+    ]
+  });
+  bindPlayButtons();
+}
+
+// handle user's quick-reply selection (payload optional)
+async function userReply(text, payload){
+  // show user's bubble (green)
+  appendBubble('me', text);
+
+  // small delay then model response based on payload
+  if(payload === 'want_now'){
+    await showTyping(400,900);
+    appendBubble('her', 'Ain que delícia 😈 vou liberar a prévia completa por R$19,90. Quer pagar via PIX (mais rápido) ou prefere checkout?');
+    await showTyping(300,700);
+    appendBubble('her', 'Escolha uma opção:', {
+      withReplies: [
+        {text: 'PIX — Quero VIP', payload: 'pix_flow'},
+        {text: 'Ir para checkout', payload: 'checkout_flow'}
+      ]
+    });
+  } else if(payload === 'trecho'){
+    await showTyping(400,900);
+    appendBubble('her', 'Ok, vou mandar um trechinho pra você agora ❤');
+    await showTyping(400,900);
+    // send short teaser image + small audio again
+    appendBubble('her', '<img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=600&auto=format&fit=crop" class="rounded max-w-full"/>');
+    await showTyping(400,900);
+    appendBubble('her', 'Curtiu? Quer a versão completa por R$19,90?', {
+      withReplies: [
+        {text: 'Quero sim 🔥', payload: 'want_now'},
+        {text: 'Ainda não', payload: 'no'}
+      ]
+    });
+  } else if(payload === 'no'){
+    await showTyping(400,900);
+    appendBubble('her', 'Tranquilo 😏 se mudar de ideia me chama aqui. Posso te lembrar mais tarde?');
+    appendBubble('her', 'Enquanto isso, posso mandar um mini trechinho grátis para te convencer 😉', {
+      withReplies: [
+        {text: 'Manda o trechinho', payload: 'trecho'},
+        {text: 'Não, obrigada', payload: 'end'}
+      ]
+    });
+  } else if(payload === 'pix_flow'){
+    // open modal payment (PIX)
+    await showTyping(300,700);
+    appendBubble('her', 'Perfeito! Vou abrir as opções de pagamento — escolhe PIX que é instantâneo e eu libero na hora.');
+    openModal();
+  } else if(payload === 'checkout_flow'){
+    await showTyping(300,700);
+    appendBubble('her', 'Beleza — abrindo o checkout seguro pra você finalizar.');
+    window.open(checkoutUrl, '_blank');
+  } else if(payload === 'end'){
+    await showTyping(300,700);
+    appendBubble('her', 'Beleza, fico por aqui. Me chama quando quiser ❤️');
+  } else {
+    // fallback: generic response and offer options
+    await showTyping(300,700);
+    appendBubble('her', 'Haha adorei! Quer que eu libere a prévia completa por R$19,90?', {
+      withReplies: [
+        {text: 'Sim, libera', payload: 'pix_flow'},
+        {text: 'Não agora', payload: 'no'}
+      ]
+    });
+  }
+
+  // re-bind any remaining play buttons
+  bindPlayButtons();
+}
+
+/* ----------------------
+   Modal + PIX logic
+   ----------------------*/
+
+const modalEl = document.getElementById('modal');
+const closeModalBtn = document.getElementById('closeModal');
+closeModalBtn.addEventListener('click', ()=> modalEl.classList.add('hidden'));
+
+function openModal(){ modalEl.classList.remove('hidden'); generatePIX(); }
+
+// PIX utils (demo)
 function generateRandomKey(){
   const names = ['camila.vip','camila.exclusiva','contato.camila','camila.oficial'];
   return names[Math.floor(Math.random()*names.length)] + (Math.floor(Math.random()*900)+100) + '@exemplo.com';
 }
-
-function buildPixPayload(key, amount, txid){
-  // Simples; para produção use payload EMV ou gateway
-  return `PAY?key=${key}&amount=${amount}&txid=${txid}`;
-}
+function buildPixPayload(key, amount, txid){ return `PAY?key=${key}&amount=${amount}&txid=${txid}`; }
 
 const pixKeyEl = document.getElementById('pixKey');
 const pixQREl = document.getElementById('pixQR');
 const downloadQR = document.getElementById('downloadQR');
 let currentPixKey = '';
 let currentTxId = '';
+const checkoutUrl = 'https://seu-checkout-exemplo.com/checkout?product=vip19_90';
 
 function generatePIX(){
   const key = generateRandomKey();
   const amount = '19.90';
   const txid = 'VIP' + Math.floor(Math.random()*900000+100000);
-  currentPixKey = key;
-  currentTxId = txid;
+  currentPixKey = key; currentTxId = txid;
   pixKeyEl.textContent = key;
   const payload = buildPixPayload(key, amount, txid);
   const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(payload);
   pixQREl.src = qrUrl;
   downloadQR.href = qrUrl;
 }
-
-// Copy key
-const copyKeyBtn = document.getElementById('copyKey');
-copyKeyBtn.addEventListener('click', ()=>{
-  navigator.clipboard.writeText(currentPixKey).then(()=>{
-    toast('Chave PIX copiada');
-  }).catch(()=>{ toast('Não foi possível copiar'); });
-});
-
-// Paid button (simulação)
-const pixStatus = document.getElementById('pixStatus');
-const paidBtn = document.getElementById('paidBtn');
-paidBtn.addEventListener('click', ()=>{
+document.getElementById('copyKey').addEventListener('click', ()=> navigator.clipboard.writeText(currentPixKey).then(()=> toast('Chave PIX copiada')));
+document.getElementById('paidBtn').addEventListener('click', ()=> {
+  const pixStatus = document.getElementById('pixStatus');
   pixStatus.textContent = 'Verificando pagamento...';
-  setTimeout(()=>{
-    const paid = Math.random() < 0.62; // 62% chance
+  setTimeout(()=> {
+    const paid = Math.random() < 0.62;
     if(paid){
       pixStatus.textContent = 'Pagamento confirmado ✅ Liberando prévia...';
-      setTimeout(()=>{
-        appendBubble('her','Prontinho, amor! Aqui está a prévia exclusiva ❤️');
-        appendBubble('her', '<img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=600&auto=format&fit=crop" class="rounded max-w-full"/>');
-        modal.classList.add('hidden');
+      setTimeout(()=> {
+        appendBubble('her','Prontinho! Aqui está a prévia exclusiva ❤️');
+        appendBubble('her','<img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=600&auto=format&fit=crop" class="rounded max-w-full"/>');
+        modalEl.classList.add('hidden');
       },700);
     } else {
       pixStatus.textContent = 'Pagamento não encontrado. Você pode finalizar no checkout.';
@@ -307,29 +426,27 @@ paidBtn.addEventListener('click', ()=>{
     }
   },1200);
 });
+document.getElementById('noPixBtn').addEventListener('click', ()=> window.open(checkoutUrl,'_blank'));
+document.getElementById('checkoutLink').href = checkoutUrl;
 
-// No PIX -> checkout
-const noPixBtn = document.getElementById('noPixBtn');
-noPixBtn.addEventListener('click', ()=>{
-  const checkoutUrl = 'https://seu-checkout-exemplo.com/checkout?product=vip19_90';
-  window.open(checkoutUrl,'_blank');
-});
-
-// Checkout link
-document.getElementById('checkoutLink').href = 'https://seu-checkout-exemplo.com/checkout?product=vip19_90';
-
-// Small toast helper
+/* ----------------------
+   Helpers: toast
+   ----------------------*/
 function toast(text){
   const t = document.createElement('div');
   t.textContent = text;
-  t.style.position='fixed';
-  t.style.left='50%'; t.style.transform='translateX(-50%)';
+  t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)';
   t.style.bottom='28px'; t.style.padding='10px 14px'; t.style.borderRadius='999px';
   t.style.background='rgba(0,0,0,0.6)'; t.style.color='#fff'; t.style.zIndex=9999; t.style.fontSize='13px';
   document.body.appendChild(t);
   setTimeout(()=> t.style.opacity = '0',1800);
   setTimeout(()=> t.remove(),2300);
 }
+
+/* ----------------------
+   Start
+   ----------------------*/
+initialSequence();
 
 </script>
 </body>
