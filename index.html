@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="pt-BR">
 <head>
@@ -9,8 +10,20 @@
     :root{--wa-green:#25D366;}
     html,body{height:100%}
     body{background:linear-gradient(180deg,#071322 0%,#021018 100%);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:#fff}
-    .frame{max-width:420px;height:92vh;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.03);box-shadow:0 30px 60px rgba(2,6,23,.6);background:linear-gradient(180deg,#001b17,#063031)}
-    .top{display:flex;align-items:center;gap:12px;padding:12px 14px;background:linear-gradient(90deg,#063b2e,#0b3b2e)}
+    .frame{width: 100%;
+  height: 100vh; /* full viewport height */
+  border-radius: 0; /* sem bordas arredondadas no mobile */
+  border: none;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;}
+    .top{position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 12px;
+  background: #075e54; /* verde WhatsApp */
+  display: flex;
+  align-items: center;}
     .avatar{width:44px;height:44px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,.08)}
     .meta .name{font-weight:600}
     .messages{flex:1;padding:16px;overflow:auto;background-image:linear-gradient(to bottom, rgba(255,255,255,0.01), rgba(255,255,255,0.005));}
