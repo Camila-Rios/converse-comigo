@@ -97,7 +97,7 @@
         <div class="small">• online</div>
       </div>
       <div class="ml-auto text-right">
-        <div class="text-xs">VIP • R$19,90</div>
+        <div class="text-xs">VIP • R$9,90</div>
       </div>
     </div>
 
@@ -145,7 +145,7 @@
             <div class="flex items-center justify-between">
               <div>
                 <div class="font-semibold">Pagar via PIX (recomendado)</div>
-                <div class="text-xs text-white/80">R$19,90 • chave única gerada</div>
+                <div class="text-xs text-white/80">R$9,90 • chave única gerada</div>
               </div>
               <div class="text-xs text-white/70">Seguro • Instantâneo</div>
             </div>
@@ -188,7 +188,7 @@
 const TRIBOPAY_CONFIG = {
   productInfo: {
     productName: "Camila Rios - Conteúdo VIP",
-    productPrice: 19.90,
+    productPrice: 9.90,
     productImage: "perfil.jpeg",
     productHash: "zfjslqxawh", // Substitua pelo hash real
     offerHash: "tllcpnze5p"    // Substitua pelo hash real
@@ -355,7 +355,7 @@ async function userReply(text, payload){
 
   if(payload === 'want_now'){
     await showTyping(400,900);
-    appendBubble('her', 'Ain que delícia 😈 vou liberar a prévia completa por R$19,90. Quer pagar via PIX (mais rápido) ou prefere checkout?');
+    appendBubble('her', 'Ain que delícia 😈 vou liberar a prévia completa por R$9,90. Quer pagar via PIX (mais rápido) ou prefere checkout?');
     await showTyping(300,700);
     appendBubble('her', 'Escolha uma opção:', {
       withReplies: [
@@ -369,7 +369,7 @@ async function userReply(text, payload){
     await showTyping(400,900);
     appendBubble('her', '<img src="previa2.jpg" class="rounded max-w-full"/>');
     await showTyping(400,900);
-    appendBubble('her', 'Curtiu? Quer a versão completa por R$19,90?', {
+    appendBubble('her', 'Curtiu? Quer a versão completa por R$9,90?', {
       withReplies: [
         {text: 'Quero sim 🔥', payload: 'want_now'},
         {text: 'Ainda não', payload: 'no'}
@@ -397,7 +397,7 @@ async function userReply(text, payload){
     appendBubble('her', 'Beleza, fico por aqui. Me chama quando quiser ❤️');
   } else {
     await showTyping(300,700);
-    appendBubble('her', 'Haha adorei! Quer que eu libere a prévia completa por R$19,90?', {
+    appendBubble('her', 'Haha adorei! Quer que eu libere a prévia completa por R$9,90?', {
       withReplies: [
         {text: 'Sim, libera', payload: 'pix_flow'},
         {text: 'Não agora', payload: 'no'}
