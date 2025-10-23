@@ -1,6 +1,13 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vem meu amor!!!</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/imask"></script>
+  
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -8,90 +15,690 @@
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "tsw4hetgak");
   </script>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Vem meu amor!!!</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/imask"></script>
+
   <style>
-    :root{--wa-green:#25D366;}
-    html,body{height:100%}
-    body{background:linear-gradient(180deg,#071322 0%,#021018 100%);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:#fff}
-    .frame{width: 100%;
-  height: 100vh; /* full viewport height */
-  border-radius: 0; /* sem bordas arredondadas no mobile */
-  border: none;
-  box-shadow: none;
-  display: flex;
-  flex-direction: column;}
-    .top{position: sticky;
-  top: 0;
-  z-index: 10;
-  padding: 12px;
-  background: #075e54; /* verde WhatsApp */
-  display: flex;
-  align-items: center;}
-    .avatar{width:44px;height:44px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,.08)}
-    .meta .name{font-weight:600}
-    .messages{flex:1;padding:16px;overflow:auto;background-image:linear-gradient(to bottom, rgba(255,255,255,0.01), rgba(255,255,255,0.005));}
-    .msg-row{display:flex;margin-bottom:10px;align-items:flex-end}
-    .msg-row.me{justify-content:flex-end}
-    .bubble{display:inline-block;padding:10px 14px;border-radius:18px;max-width:78%;line-height:1.3;font-size:14px;position:relative}
-    .bubble.me{background:#dcf8c6;color:#06331f;border-bottom-right-radius:6px}
-    .bubble.her{background:rgba(255,255,255,0.08);color:#fff;border-bottom-left-radius:6px}
-    .typing{display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:18px;background:rgba(255,255,255,0.06);width:120px}
-    .dot{width:6px;height:6px;background:#fff;border-radius:50%;animation:blink 1.2s infinite}
-    .dot:nth-child(2){animation-delay:.12s}.dot:nth-child(3){animation-delay:.24s}
-    @keyframes blink{0%{transform:translateY(0);opacity:.25}50%{transform:translateY(-4px);opacity:1}100%{transform:translateY(0);opacity:.25}}
-    .composer{display:flex;gap:10px;padding:12px;background:linear-gradient(180deg,rgba(0,0,0,0.25),rgba(255,255,255,0.02));align-items:center}
-    .btn{padding:9px 14px;border-radius:999px;font-weight:600}
-    .btn-primary{background:var(--wa-green);color:#06331f}
-    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#fff}
-    .message-audio{display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(0,0,0,0.12);border-radius:12px}
-    .play-btn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,0.06);cursor:pointer;user-select:none}
-    .play-btn.playing{background:linear-gradient(90deg,#25d366,#00a884);color:#032c22}
-    .audio-meta{display:flex;flex-direction:column}
-    .small{font-size:12px;opacity:.85}
-    .quick-replies{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-    .quick-reply{background:rgba(255,255,255,0.06);padding:8px 10px;border-radius:999px;cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
-    .quick-reply:hover{background:rgba(255,255,255,0.09)}
-    .modal-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:60;padding:16px;}
-    .modal{width:100%;max-width:880px;max-height:90vh;overflow-y:auto;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,0.04);backdrop-filter: blur(6px)}
-    .modal-grid{display:grid;grid-template-columns:1fr 360px;gap:14px}
-    .preview-img{width:100%;height:100%;object-fit:cover;border-radius:10px}
-    .pix-card{padding:12px;border-radius:10px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.04)}
-    .pix-qr{width:150px;height:150px;border-radius:8px;background:rgba(255,255,255,0.02);display:block}
-    .form-input{display:block;width:100%;border-radius:8px;border:1px solid rgba(255,255,255,0.1);padding:10px 12px;background:rgba(0,0,0,0.3);color:white;margin-bottom:10px;}
-    .form-input:focus{outline:none;border-color:#25D366;}
-    .hidden{display:none!important;}
-    @media(max-width:880px){
-      .modal-grid{grid-template-columns:1fr}
-      .modal{max-height:95vh;padding:12px;}
-      .modal-wrap{padding:8px;}
+    :root {
+      --wa-green: #25D366;
+      --primary-gradient: linear-gradient(135deg, #25D366 0%, #00a884 100%);
     }
-    @media(max-width:640px){
-      .modal-grid{grid-template-columns:1fr;gap:12px;}
-      .pix-card{padding:10px;}
-      .modal{max-height:98vh;}
+    
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
     }
-    .bubble{transform:translateY(6px);opacity:0;animation:enter .28s forwards}
-    @keyframes enter{to{transform:none;opacity:1}}
-    .timestamp{font-size:11px;opacity:.7;margin-left:8px;display:block;margin-top:6px}
-    /* small wave animation for playing state */
-    .wave{width:36px;height:16px;display:inline-block;position:relative}
-    .wave span{position:absolute;bottom:0;left:0;width:4px;height:6px;background:#fff;opacity:.7;border-radius:2px;animation:wave 800ms infinite ease-in-out}
-    .wave span:nth-child(2){left:6px;animation-delay:100ms}
-    .wave span:nth-child(3){left:12px;animation-delay:200ms}
-    .wave span:nth-child(4){left:18px;animation-delay:300ms}
-    .wave span:nth-child(5){left:24px;animation-delay:400ms}
-    @keyframes wave{0%{height:6px;opacity:.6}50%{height:14px;opacity:1}100%{height:6px;opacity:.6}}
+    
+    body {
+      background: linear-gradient(180deg, #071322 0%, #021018 100%);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+      color: #fff;
+    }
+    
+    .frame {
+      width: 100%;
+      height: 100vh;
+      border-radius: 0;
+      border: none;
+      box-shadow: none;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .top {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding: 12px;
+      background: #075e54;
+      display: flex;
+      align-items: center;
+      backdrop-filter: blur(10px);
+    }
+    
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .avatar:hover {
+      transform: scale(1.05);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .meta .name {
+      font-weight: 600;
+    }
+    
+    .messages {
+      flex: 1;
+      padding: 16px;
+      overflow: auto;
+      background-image: 
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.005)),
+        radial-gradient(circle at 20% 80%, rgba(37, 211, 102, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(7, 94, 84, 0.02) 0%, transparent 50%);
+    }
+    
+    .msg-row {
+      display: flex;
+      margin-bottom: 10px;
+      align-items: flex-end;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: messageSlideIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+    
+    @keyframes messageSlideIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .msg-row.me {
+      justify-content: flex-end;
+    }
+    
+    .bubble {
+      display: inline-block;
+      padding: 12px 16px;
+      border-radius: 18px;
+      max-width: 78%;
+      line-height: 1.4;
+      font-size: 14.5px;
+      position: relative;
+      transform: scale(0.9);
+      opacity: 0;
+      animation: bubblePopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      transition: all 0.3s ease;
+    }
+    
+    @keyframes bubblePopIn {
+      0% {
+        transform: scale(0.9) translateY(10px);
+        opacity: 0;
+      }
+      70% {
+        transform: scale(1.02);
+      }
+      100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    .bubble.me {
+      background: var(--primary-gradient);
+      color: #06331f;
+      border-bottom-right-radius: 6px;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+    }
+    
+    .bubble.her {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-bottom-left-radius: 6px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .bubble:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.25);
+    }
+    
+    .timestamp {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-left: 8px;
+      display: block;
+      margin-top: 6px;
+      transition: opacity 0.3s ease;
+    }
+    
+    .bubble:hover .timestamp {
+      opacity: 0.9;
+    }
+    
+    .typing {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.08);
+      width: 120px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .dot {
+      width: 7px;
+      height: 7px;
+      background: #fff;
+      border-radius: 50%;
+      animation: typingBounce 1.4s infinite ease-in-out;
+    }
+    
+    .dot:nth-child(2) {
+      animation-delay: 0.16s;
+    }
+    
+    .dot:nth-child(3) {
+      animation-delay: 0.32s;
+    }
+    
+    @keyframes typingBounce {
+      0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+      }
+      40% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
+    }
+    
+    .composer {
+      display: flex;
+      gap: 10px;
+      padding: 12px;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.02));
+      align-items: center;
+      backdrop-filter: blur(10px);
+    }
+    
+    .btn {
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .btn:hover::before {
+      left: 100%;
+    }
+    
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: #06331f;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+    }
+    
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+    
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-1px);
+    }
+    
+    .message-audio {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .message-audio::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary-gradient);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+    
+    .message-audio:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .message-audio:hover {
+      background: rgba(0, 0, 0, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .play-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .play-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s;
+    }
+    
+    .play-btn:hover::before {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .play-btn:hover {
+      transform: scale(1.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .play-btn.playing {
+      background: var(--primary-gradient);
+      color: #032c22;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+    }
+    
+    .audio-meta {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    
+    .small {
+      font-size: 12px;
+      opacity: 0.85;
+    }
+    
+    .quick-replies {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .quick-reply {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 13px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .quick-reply::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: left 0.5s;
+    }
+    
+    .quick-reply:hover::before {
+      left: 100%;
+    }
+    
+    .quick-reply:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .modal-wrap {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(2, 6, 23, 0.8);
+      z-index: 60;
+      padding: 16px;
+      opacity: 0;
+      animation: modalFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      backdrop-filter: blur(8px);
+    }
+    
+    @keyframes modalFadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+    
+    .modal {
+      width: 100%;
+      max-width: 880px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      transform: scale(0.9) translateY(20px);
+      animation: modalSlideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    
+    @keyframes modalSlideUp {
+      to {
+        transform: scale(1) translateY(0);
+      }
+    }
+    
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 20px;
+    }
+    
+    .preview-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+      transition: transform 0.5s ease;
+    }
+    
+    .preview-img:hover {
+      transform: scale(1.02);
+    }
+    
+    .pix-card {
+      padding: 16px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+    }
+    
+    .pix-qr {
+      width: 150px;
+      height: 150px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    
+    .pix-qr:hover {
+      transform: scale(1.05);
+    }
+    
+    .form-input {
+      display: block;
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 14px;
+      background: rgba(0, 0, 0, 0.3);
+      color: white;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: #25D366;
+      box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    .wave {
+      width: 36px;
+      height: 16px;
+      display: inline-block;
+      position: relative;
+    }
+    
+    .wave span {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 4px;
+      height: 6px;
+      background: #fff;
+      opacity: 0.7;
+      border-radius: 2px;
+      animation: wave 800ms infinite ease-in-out;
+    }
+    
+    .wave span:nth-child(2) {
+      left: 6px;
+      animation-delay: 100ms;
+    }
+    
+    .wave span:nth-child(3) {
+      left: 12px;
+      animation-delay: 200ms;
+    }
+    
+    .wave span:nth-child(4) {
+      left: 18px;
+      animation-delay: 300ms;
+    }
+    
+    .wave span:nth-child(5) {
+      left: 24px;
+      animation-delay: 400ms;
+    }
+    
+    @keyframes wave {
+      0% {
+        height: 6px;
+        opacity: 0.6;
+      }
+      50% {
+        height: 14px;
+        opacity: 1;
+      }
+      100% {
+        height: 6px;
+        opacity: 0.6;
+      }
+    }
+    
+    /* Novos estilos para as melhorias */
+    .audio-loading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      margin-bottom: 8px;
+    }
+    
+    .loading-dots {
+      display: flex;
+      gap: 4px;
+    }
+    
+    .loading-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #25D366;
+      animation: loadingPulse 1.4s infinite ease-in-out;
+    }
+    
+    .loading-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    .loading-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    
+    @keyframes loadingPulse {
+      0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+      }
+      40% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
+    }
+    
+    .audio-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: controlsSlideIn 0.5s ease 0.3s forwards;
+    }
+    
+    @keyframes controlsSlideIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .control-btn {
+      padding: 6px 12px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .control-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-1px);
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: var(--primary-gradient);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+    
+    .secret-message-indicator {
+      display: inline-block;
+      padding: 2px 6px;
+      background: rgba(37, 211, 102, 0.2);
+      border-radius: 8px;
+      font-size: 10px;
+      margin-left: 6px;
+      animation: pulseGlow 2s infinite;
+    }
+    
+    @keyframes pulseGlow {
+      0%, 100% {
+        box-shadow: 0 0 5px rgba(37, 211, 102, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 15px rgba(37, 211, 102, 0.6);
+      }
+    }
+    
+    /* Media Queries */
+    @media (max-width: 880px) {
+      .modal-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .modal {
+        max-height: 95vh;
+        padding: 16px;
+      }
+      
+      .modal-wrap {
+        padding: 8px;
+      }
+    }
+    
+    @media (max-width: 640px) {
+      .modal-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      
+      .pix-card {
+        padding: 12px;
+      }
+      
+      .modal {
+        max-height: 98vh;
+        border-radius: 16px;
+      }
+      
+      .bubble {
+        max-width: 85%;
+        padding: 10px 14px;
+      }
+    }
   </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
 
+<body class="flex items-center justify-center min-h-screen p-4">
   <div class="frame" role="region" aria-label="Simulador WhatsApp - Interativo">
     <div class="top">
-      <div class="avatar"><img id="modelAvatarTop" src="perfil.jpeg" alt="Camila" class="w-full h-full object-cover"></div>
+      <div class="avatar">
+        <img id="modelAvatarTop" src="perfil.jpeg" alt="Camila" class="w-full h-full object-cover">
+      </div>
       <div class="meta">
         <div class="name">Camila ✨</div>
         <div class="small">• online</div>
@@ -108,12 +715,13 @@
     </div>
   </div>
 
-  <!-- Modal -->
   <div id="modal" class="modal-wrap hidden" role="dialog" aria-modal="true" aria-label="Prévia e pagamento">
     <div class="modal">
-      <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-3">
-          <div class="avatar" style="width:44px;height:44px"><img src="perfil.jpeg" alt="Camila" class="w-full h-full object-cover rounded-full"></div>
+          <div class="avatar" style="width:44px;height:44px">
+            <img src="perfil.jpeg" alt="Camila" class="w-full h-full object-cover rounded-full">
+          </div>
           <div>
             <div class="font-semibold">Camila</div>
             <div class="text-xs text-white/80">Prévia escolhida a dedo</div>
@@ -127,22 +735,9 @@
           <img id="previewImage" src="previa.jpg" alt="Prévia" class="preview-img">
         </div>
 
-        <div class="flex flex-col gap-3">
-          <!-- Formulário de dados do cliente -->
-          <div id="customerFormSection" class="pix-card">
-            <h3 class="font-semibold mb-3">Seus dados para pagamento</h3>
-            <form id="customer-form">
-              <input type="text" id="name" placeholder="Nome completo" class="form-input" required>
-              <input type="email" id="email" placeholder="E-mail" class="form-input" required>
-              <input type="tel" id="phone_number" placeholder="Telefone" class="form-input" required>
-              <input type="text" id="pix_cpf" placeholder="CPF" class="form-input" required>
-            </form>
-            <button id="generatePixBtn" class="btn btn-primary w-full mt-3">Gerar PIX</button>
-          </div>
-
-          <!-- Seção PIX (inicialmente oculta) -->
-          <div id="pixSection" class="pix-card hidden">
-            <div class="flex items-center justify-between">
+        <div class="flex flex-col gap-4">
+          <div id="pixSection" class="pix-card">
+            <div class="flex items-center justify-between mb-3">
               <div>
                 <div class="font-semibold">Pagar via PIX (recomendado)</div>
                 <div class="text-xs text-white/80">R$9,90 • chave única gerada</div>
@@ -150,22 +745,22 @@
               <div class="text-xs text-white/70">Seguro • Instantâneo</div>
             </div>
 
-            <div class="mt-3 flex gap-3 items-start">
+            <div class="flex gap-4 items-start">
               <img id="pixQR" src="" alt="QR PIX" class="pix-qr" />
               <div class="flex-1">
-                <div class="text-xs text-white/80">Código PIX Copia e Cola</div>
+                <div class="text-xs text-white/80 mb-2">Código PIX Copia e Cola</div>
                 <textarea id="pixCopyPaste" class="form-input text-xs" rows="3" readonly></textarea>
 
-                <div class="mt-3 flex gap-2">
-                  <button id="copyPixButton" class="btn btn-ghost">Copiar Código</button>
+                <div class="flex gap-2 mt-3">
+                  <button id="copyPixButton" class="btn btn-ghost flex-1">Copiar Código</button>
                 </div>
 
-                <div class="mt-3">
-                  <button id="checkPaymentBtn" class="btn btn-primary">Verificar Pagamento</button>
+                <div class="mt-4">
+                  <button id="checkPaymentBtn" class="btn btn-primary w-full">Verificar Pagamento</button>
                 </div>
 
-                <div id="pixStatus" class="text-xs mt-3">
-                  <div class="text-yellow-400">Status: Aguardando pagamento...</div>
+                <div id="pixStatus" class="text-xs mt-4">
+                  <div class="text-yellow-400">Status: Gerando PIX...</div>
                   <div class="text-white/60 text-xs mt-1">Pague via PIX e clique em "Verificar Pagamento"</div>
                 </div>
               </div>
@@ -178,522 +773,558 @@
     </div>
   </div>
 
-  <!-- Shared audio element -->
-  <audio id="sharedAudio" src="audio.mp3"></audio>
+  <audio id="sharedAudio" src="audio-humano-natural.mp3"></audio>
 
-<script>
-/* -----------------------------------------
-   CONFIGURAÇÃO DA TRIBOPAY
-------------------------------------------*/
-const TRIBOPAY_CONFIG = {
-  productInfo: {
-    productName: "Camila Rios - Conteúdo VIP",
-    productPrice: 9.90,
-    productImage: "perfil.jpeg",
-    productHash: "zfjslqxawh", // Substitua pelo hash real
-    offerHash: "tllcpnze5p"    // Substitua pelo hash real
-  },
-  API_ENDPOINT: "https://api.tribopay.com.br/api",
-  API_TOKEN: "BCBnDREbCWL7MPgXSTEnzNppduXGRVI2pg3dGKGTLL965jzySwoKR4R484jm" // Substitua pelo token real
-};
-
-/* -----------------------------------------
-   Simulador WhatsApp Interativo
-------------------------------------------*/
-const messagesEl = document.getElementById('messages');
-const sharedAudio = document.getElementById('sharedAudio');
-
-// Variáveis globais para controle do PIX
-let currentTransactionHash = null;
-let paymentCheckInterval = null;
-
-// small helper: append a message bubble
-function appendBubble(from, innerHTML, opts={withReplies: null, timestamp:true}) {
-  const row = document.createElement('div');
-  row.className = 'msg-row ' + (from==='me' ? 'me' : '');
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble ' + (from==='me' ? 'me' : 'her');
-  bubble.innerHTML = innerHTML;
-  row.appendChild(bubble);
-
-  if(opts.timestamp) {
-    const ts = document.createElement('span');
-    ts.className = 'timestamp';
-    const now = new Date();
-    ts.textContent = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-    bubble.appendChild(ts);
-  }
-
-  messagesEl.appendChild(row);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-
-  if(Array.isArray(opts.withReplies) && opts.withReplies.length){
-    const repliesWrap = document.createElement('div');
-    repliesWrap.className = 'quick-replies';
-    opts.withReplies.forEach(r=>{
-      const btn = document.createElement('button');
-      btn.className = 'quick-reply';
-      btn.textContent = r.text;
-      btn.addEventListener('click', ()=> {
-        repliesWrap.remove();
-        userReply(r.text, r.payload);
-      });
-      repliesWrap.appendChild(btn);
-    });
-    bubble.appendChild(repliesWrap);
-    messagesEl.scrollTop = messagesEl.scrollHeight;
-  }
-  return row;
-}
-
-// typing indicator
-function showTyping(min=500, max=1200){
-  const row = document.createElement('div');
-  row.className = 'msg-row';
-  const t = document.createElement('div');
-  t.className = 'typing';
-  t.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
-  row.appendChild(t);
-  messagesEl.appendChild(row);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-  const delay = min + Math.random()*(max-min);
-  return new Promise(res => setTimeout(()=> { row.remove(); res(); }, delay));
-}
-
-// play audio functions (mantidas do código original)
-function bindPlayButtons(){
-  document.querySelectorAll('.play-btn').forEach(btn => {
-    if(btn.dataset.bound === 'true') return;
-    btn.dataset.bound = 'true';
-    btn.addEventListener('click', async (e)=>{
-      const isPlaying = btn.classList.contains('playing');
-      stopAllPlaying();
-      if(isPlaying){
-        sharedAudio.pause();
-        btn.classList.remove('playing');
-        btn.innerHTML = '▶';
-        removeWave(btn);
-        return;
-      }
-      try {
-        sharedAudio.currentTime = 0;
-      } catch(e){ }
-      btn.classList.add('playing');
-      btn.innerHTML = '▮▮';
-      addWave(btn);
-      sharedAudio.play().catch(err => {
-        console.warn('playback failed', err);
-        window.open(sharedAudio.src, '_blank');
-        btn.classList.remove('playing');
-        btn.innerHTML = '▶';
-        removeWave(btn);
-      });
-      sharedAudio.onended = () => {
-        btn.classList.remove('playing');
-        btn.innerHTML = '▶';
-        removeWave(btn);
-      };
-    });
-  });
-}
-
-function stopAllPlaying(){
-  document.querySelectorAll('.play-btn.playing').forEach(btn => {
-    btn.classList.remove('playing');
-    btn.innerHTML = '▶';
-    removeWave(btn);
-  });
-  try { sharedAudio.pause(); } catch(e) {}
-}
-
-function addWave(btn){
-  if(btn.querySelector('.wave')) return;
-  const wave = document.createElement('span');
-  wave.className = 'wave';
-  wave.innerHTML = '<span></span><span></span><span></span><span></span><span></span>';
-  btn.appendChild(wave);
-}
-
-function removeWave(btn){
-  const w = btn.querySelector('.wave');
-  if(w) w.remove();
-}
-
-/* -----------------------
-   Conversation flow
-   -----------------------*/
-async function initialSequence(){
-  await showTyping(400,900);
-  appendBubble('her', 'Oii amorzinho 💋 acabei de gravar um áudio só pra você.');
-  await showTyping(300,700);
-
-  const audioHtml = `
-    <div class="message-audio" aria-hidden="false">
-      <div class="play-btn" role="button" aria-label="Tocar áudio">▶</div>
-      <div class="audio-meta">
-        <div class="small font-semibold">Áudio de Camila • 0:12</div>
-        <div class="small text-white/70">Toque para ouvir</div>
-      </div>
-    </div>
-  `;
-  appendBubble('her', audioHtml);
-  bindPlayButtons();
-
-  await showTyping(500,1000);
-  appendBubble('her', 'Você prefere que eu mande a prévia agora ou quer um trechinho grátis primeiro?', {
-    withReplies: [
-      {text: 'Quero ver agora 🔥', payload: 'want_now'},
-      {text: 'Quero só um trechinho', payload: 'trecho'},
-      {text: 'Depois / Não', payload: 'no'}
-    ]
-  });
-  bindPlayButtons();
-}
-
-async function userReply(text, payload){
-  appendBubble('me', text);
-
-  if(payload === 'want_now'){
-    await showTyping(400,900);
-    appendBubble('her', 'Ain que delícia 😈 vou liberar a prévia completa por R$9,90. Quer pagar via PIX (mais rápido) ou prefere checkout?');
-    await showTyping(300,700);
-    appendBubble('her', 'Escolha uma opção:', {
-      withReplies: [
-        {text: 'PIX — Quero VIP', payload: 'pix_flow'},
-        {text: 'Ir para checkout', payload: 'checkout_flow'}
-      ]
-    });
-  } else if(payload === 'trecho'){
-    await showTyping(400,900);
-    appendBubble('her', 'Ok, vou mandar um trechinho pra você agora ❤');
-    await showTyping(400,900);
-    appendBubble('her', '<img src="previa2.jpg" class="rounded max-w-full"/>');
-    await showTyping(400,900);
-    appendBubble('her', 'Curtiu? Quer a versão completa por R$9,90?', {
-      withReplies: [
-        {text: 'Quero sim 🔥', payload: 'want_now'},
-        {text: 'Ainda não', payload: 'no'}
-      ]
-    });
-  } else if(payload === 'no'){
-    await showTyping(400,900);
-    appendBubble('her', 'Tranquilo 😏 se mudar de ideia me chama aqui. Posso te lembrar mais tarde?');
-    appendBubble('her', 'Enquanto isso, posso mandar um mini trechinho grátis para te convencer 😉', {
-      withReplies: [
-        {text: 'Manda o trechinho', payload: 'trecho'},
-        {text: 'Não, obrigada', payload: 'end'}
-      ]
-    });
-  } else if(payload === 'pix_flow'){
-    await showTyping(300,700);
-    appendBubble('her', 'Perfeito! Vou abrir as opções de pagamento — escolhe PIX que é instantâneo e eu libero na hora.');
-    openModal();
-  } else if(payload === 'checkout_flow'){
-    await showTyping(300,700);
-    appendBubble('her', 'Beleza — abrindo o checkout seguro pra você finalizar.');
-    window.open('https://go.tribopay.com.br/zfjslqxawh_o2jgcm6gho');
-  } else if(payload === 'end'){
-    await showTyping(300,700);
-    appendBubble('her', 'Beleza, fico por aqui. Me chama quando quiser ❤️');
-  } else {
-    await showTyping(300,700);
-    appendBubble('her', 'Haha adorei! Quer que eu libere a prévia completa por R$9,90?', {
-      withReplies: [
-        {text: 'Sim, libera', payload: 'pix_flow'},
-        {text: 'Não agora', payload: 'no'}
-      ]
-    });
-  }
-  bindPlayButtons();
-}
-
-/* ----------------------
-   Modal + PIX REAL
-   ----------------------*/
-const modalEl = document.getElementById('modal');
-const closeModalBtn = document.getElementById('closeModal');
-const customerFormSection = document.getElementById('customerFormSection');
-const pixSection = document.getElementById('pixSection');
-const generatePixBtn = document.getElementById('generatePixBtn');
-const checkPaymentBtn = document.getElementById('checkPaymentBtn');
-const copyPixButton = document.getElementById('copyPixButton');
-const pixStatus = document.getElementById('pixStatus');
-
-closeModalBtn.addEventListener('click', closeModal);
-
-function openModal(){ 
-  modalEl.classList.remove('hidden');
-  resetPaymentUI();
-  
-  modalEl.addEventListener('click', function(e) {
-    if (e.target === modalEl) {
-      closeModal();
-    }
-  });
-}
-
-function closeModal() {
-  modalEl.classList.add('hidden');
-  if (paymentCheckInterval) {
-    clearInterval(paymentCheckInterval);
-    paymentCheckInterval = null;
-  }
-}
-
-function resetPaymentUI() {
-  customerFormSection.classList.remove('hidden');
-  pixSection.classList.add('hidden');
-  currentTransactionHash = null;
-  document.getElementById('customer-form').reset();
-}
-
-/* ----------------------
-   INTEGRAÇÃO TRIBOPAY REAL
-   ----------------------*/
-
-// Gerar PIX
-generatePixBtn.addEventListener('click', async () => {
-  const form = document.getElementById('customer-form');
-  if (!form.checkValidity()) {
-    alert('Por favor, preencha todos os campos corretamente.');
-    return form.reportValidity();
-  }
-
-  generatePixBtn.textContent = 'Gerando PIX...';
-  generatePixBtn.disabled = true;
-
-  const customerData = {
-    name: document.getElementById('name').value,
-    email: document.getElementById('email').value,
-    phone_number: document.getElementById('phone_number').value.replace(/\D/g, ''),
-    document: document.getElementById('pix_cpf').value.replace(/\D/g, ''),
-    street_name: "Não informado",
-    number: "s/n",
-    complement: "",
-    neighborhood: "Não informado",
-    city: "Não informado",
-    state: "NI",
-    zip_code: "00000000"
-  };
-
-  const paymentPayload = {
-    amount: Math.round(TRIBOPAY_CONFIG.productInfo.productPrice * 100),
-    offer_hash: TRIBOPAY_CONFIG.productInfo.offerHash,
-    payment_method: 'pix',
-    customer: customerData,
-    cart: [{
-      product_hash: TRIBOPAY_CONFIG.productInfo.productHash,
-      title: TRIBOPAY_CONFIG.productInfo.productName,
-      price: Math.round(TRIBOPAY_CONFIG.productInfo.productPrice * 100),
-      quantity: 1,
-      operation_type: 1,
-      tangible: false
-    }],
-    installments: 1,
-    expire_in_days: 1,
-    transaction_origin: 'api'
-  };
-
-  try {
-    // Criar transação
-    const response = await fetch(`${TRIBOPAY_CONFIG.API_ENDPOINT}/public/v1/transactions?api_token=${TRIBOPAY_CONFIG.API_TOKEN}`, {
-      method: 'POST',
-      headers: { 
-        'Accept': 'application/json', 
-        'Content-Type': 'application/json' 
+  <script>
+    const TRIBOPAY_CONFIG = {
+      productInfo: {
+        productName: "Camila Rios - Conteúdo VIP",
+        productPrice: 9.90,
+        productImage: "perfil.jpeg",
+        productHash: "zfjslqxawh",
+        offerHash: "tllcpnze5p"
       },
-      body: JSON.stringify(paymentPayload)
-    });
+      API_ENDPOINT: "https://api.tribopay.com.br/api",
+      API_TOKEN: "BCBnDREbCWL7MPgXSTEnzNppduXGRVI2pg3dGKGTLL965jzySwoKR4R484jm"
+    };
 
-    const text = await response.text();
-    let result;
-    try { 
-      result = JSON.parse(text); 
-    } catch { 
-      result = { raw: text }; 
+    const messagesEl = document.getElementById('messages');
+    const sharedAudio = document.getElementById('sharedAudio');
+    const modalEl = document.getElementById('modal');
+    const closeModalBtn = document.getElementById('closeModal');
+    const pixSection = document.getElementById('pixSection');
+    const checkPaymentBtn = document.getElementById('checkPaymentBtn');
+    const copyPixButton = document.getElementById('copyPixButton');
+    const pixStatus = document.getElementById('pixStatus');
+
+    let currentTransactionHash = null;
+    let paymentCheckInterval = null;
+    let currentAudioElement = null;
+    let secretMessageIndex = 0;
+
+    // Configurar áudio para melhor qualidade
+    sharedAudio.preload = "auto";
+    sharedAudio.volume = 0.8;
+
+    function appendBubble(from, innerHTML, opts = { withReplies: null, timestamp: true, delay: 0 }) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const row = document.createElement('div');
+          row.className = 'msg-row ' + (from === 'me' ? 'me' : '');
+          
+          const bubble = document.createElement('div');
+          bubble.className = 'bubble ' + (from === 'me' ? 'me' : 'her');
+          bubble.innerHTML = innerHTML;
+          row.appendChild(bubble);
+
+          if (opts.timestamp) {
+            const ts = document.createElement('span');
+            ts.className = 'timestamp';
+            const now = new Date();
+            ts.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            bubble.appendChild(ts);
+          }
+
+          messagesEl.appendChild(row);
+          messagesEl.scrollTop = messagesEl.scrollHeight;
+
+          if (Array.isArray(opts.withReplies) && opts.withReplies.length) {
+            const repliesWrap = document.createElement('div');
+            repliesWrap.className = 'quick-replies';
+            
+            opts.withReplies.forEach(r => {
+              const btn = document.createElement('button');
+              btn.className = 'quick-reply';
+              btn.textContent = r.text;
+              btn.addEventListener('click', () => {
+                repliesWrap.remove();
+                userReply(r.text, r.payload);
+              });
+              repliesWrap.appendChild(btn);
+            });
+            
+            // Adicionar delay antes de mostrar as respostas
+            setTimeout(() => {
+              bubble.appendChild(repliesWrap);
+              messagesEl.scrollTop = messagesEl.scrollHeight;
+            }, 500);
+          }
+          
+          resolve(row);
+        }, opts.delay);
+      });
     }
 
-    if (!response.ok) {
-      const msg = result?.message || 'Ocorreu um erro ao gerar o PIX.';
-      const errs = result?.errors ? '\n' + Object.values(result.errors).map(e => e[0]).join('\n') : '';
-      throw new Error(msg + errs);
+    function showTyping(min = 500, max = 1200) {
+      const row = document.createElement('div');
+      row.className = 'msg-row';
+      
+      const t = document.createElement('div');
+      t.className = 'typing';
+      t.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+      row.appendChild(t);
+      
+      messagesEl.appendChild(row);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      
+      const delay = min + Math.random() * (max - min);
+      return new Promise(res => setTimeout(() => {
+        row.style.opacity = '0';
+        row.style.transform = 'translateY(-10px)';
+        setTimeout(() => row.remove(), 300);
+        res();
+      }, delay));
     }
 
-    const hash = result?.hash || result?.data?.hash || result?.transaction_hash || result?.id;
-    if (!hash) throw new Error('Transação criada, mas sem hash na resposta.');
-
-    currentTransactionHash = hash;
-
-    // Buscar dados do PIX
-    const transactionResponse = await fetchTransactionByHash(hash);
-    if (!transactionResponse.ok) throw new Error('Não foi possível obter os dados do PIX.');
-
-    const data = transactionResponse.json.data || transactionResponse.json;
-    const pixData = data.pix || {};
-    const copyPaste = (pixData.pix_qr_code || pixData.qr_code || pixData.copy_paste || pixData.code || '').trim();
-
-    if (!copyPaste) throw new Error('Código PIX não disponível.');
-
-    // Mostrar UI do PIX
-    document.getElementById('pixCopyPaste').value = copyPaste;
-    
-    // Gerar QR Code visual
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(copyPaste)}`;
-    document.getElementById('pixQR').src = qrUrl;
-
-    customerFormSection.classList.add('hidden');
-    pixSection.classList.remove('hidden');
-
-    // Iniciar verificação automática
-    startPaymentChecking();
-
-  } catch (error) {
-    console.error('Erro ao gerar PIX:', error);
-    alert(`Erro: ${error.message || 'Falha na comunicação com o servidor.'}`);
-    generatePixBtn.textContent = 'Gerar PIX';
-    generatePixBtn.disabled = false;
-  }
-});
-
-// Verificar pagamento
-checkPaymentBtn.addEventListener('click', checkPaymentStatus);
-
-// Copiar código PIX
-copyPixButton.addEventListener('click', async () => {
-  const text = document.getElementById('pixCopyPaste').value.trim();
-  if (!text) { 
-    alert('Código PIX não disponível.'); 
-    return; 
-  }
-
-  try {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-    } else {
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.left = '-9999px';
-      document.body.appendChild(ta);
-      ta.focus(); 
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-    }
-    copyPixButton.textContent = 'Copiado!';
-    setTimeout(() => { copyPixButton.textContent = 'Copiar Código'; }, 2000);
-  } catch (e) {
-    console.error(e);
-    copyPixButton.textContent = 'Falhou ao copiar';
-    setTimeout(() => { copyPixButton.textContent = 'Copiar Código'; }, 2000);
-  }
-});
-
-/* ----------------------
-   FUNÇÕES DA API TRIBOPAY
-   ----------------------*/
-async function fetchTransactionByHash(hash) {
-  const url = `${TRIBOPAY_CONFIG.API_ENDPOINT}/public/v1/transactions/${hash}?api_token=${TRIBOPAY_CONFIG.API_TOKEN}`;
-  const response = await fetch(url, { 
-    headers: { 
-      'Accept': 'application/json' 
-    } 
-  });
-  
-  const text = await response.text();
-  let json;
-  try { 
-    json = JSON.parse(text); 
-  } catch { 
-    json = { raw: text }; 
-  }
-  
-  return { 
-    ok: response.ok, 
-    status: response.status, 
-    json: json 
-  };
-}
-
-async function checkPaymentStatus() {
-  if (!currentTransactionHash) return;
-
-  checkPaymentBtn.textContent = 'Verificando...';
-  checkPaymentBtn.disabled = true;
-
-  try {
-    const { ok, json } = await fetchTransactionByHash(currentTransactionHash);
-    
-    if (!ok) {
-      throw new Error('Falha ao verificar pagamento');
+    // Função para mostrar efeito de carregamento do áudio
+    function showAudioLoading() {
+      const loadingHtml = `
+        <div class="audio-loading">
+          <div class="loading-dots">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+          </div>
+          <div class="small">Carregando mensagem de voz (1.3 MB)...</div>
+        </div>
+      `;
+      return appendBubble('her', loadingHtml, { timestamp: false });
     }
 
-    const data = json.data || json;
-    const status = String(data.payment_status || data.status || '').toLowerCase();
+    // Função para criar elemento de áudio com controles
+    function createAudioElement(audioUrl = "audio-humano-natural.mp3") {
+      const audioHtml = `
+        <div class="message-audio" aria-hidden="false">
+          <div class="play-btn" role="button" aria-label="Tocar áudio">▶</div>
+          <div class="audio-meta">
+            <div class="small font-semibold">Áudio de Camila • 0:12 <span class="secret-message-indicator">Secreta</span></div>
+            <div class="small text-white/70">Toque para ouvir</div>
+            <div class="progress-bar">
+              <div class="progress-fill"></div>
+            </div>
+          </div>
+        </div>
+        <div class="audio-controls">
+          <button class="control-btn repeat-btn" onclick="repeatAudio(this)">🔄 Repetir</button>
+          <button class="control-btn next-btn" onclick="nextSecretMessage(this)">🔒 Próxima Secreta</button>
+        </div>
+      `;
+      return audioHtml;
+    }
 
-    if (status === 'paid' || status === 'approved') {
-      // Pagamento confirmado
-      pixStatus.innerHTML = '<div class="text-green-400">✅ Pagamento confirmado! Liberando conteúdo...</div>';
+    // Funções globais para os controles de áudio
+    window.repeatAudio = function(btn) {
+      btn.innerHTML = '⏳ Repetindo...';
+      setTimeout(() => {
+        btn.innerHTML = '🔄 Repetir';
+        if (currentAudioElement) {
+          currentAudioElement.currentTime = 0;
+          currentAudioElement.play().catch(console.error);
+        }
+      }, 300);
+    };
+
+    window.nextSecretMessage = function(btn) {
+      btn.innerHTML = '✨ Buscando...';
+      secretMessageIndex++;
+      const secretMessages = [
+        "Você é muito especial para mim...",
+        "Tenho uma surpresa quente para você...",
+        "Essa noite vai ser inesquecível...",
+        "Só você merece me ver assim..."
+      ];
       
       setTimeout(() => {
-        closeModal();
-        appendBubble('her', 'Prontinho! Pagamento confirmado ✅ Aqui está a prévia exclusiva ❤️');
-        appendBubble('her', '<img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=600&auto=format&fit=crop" class="rounded max-w-full"/>');
-        appendBubble('her', 'Obrigada pelo apoio! Se quiser mais conteúdo especial, é só me chamar 😘');
-      }, 1500);
+        btn.innerHTML = '🔒 Próxima Secreta';
+        appendBubble('her', `
+          <div style="background: rgba(37, 211, 102, 0.1); padding: 12px; border-radius: 12px; border: 1px solid rgba(37, 211, 102, 0.3);">
+            <div class="font-semibold">Mensagem Secreta #${secretMessageIndex + 1}</div>
+            <div class="small mt-1">${secretMessages[secretMessageIndex % secretMessages.length]}</div>
+          </div>
+        `);
+      }, 1000);
+    };
 
+    function bindPlayButtons() {
+      document.querySelectorAll('.play-btn').forEach(btn => {
+        if (btn.dataset.bound === 'true') return;
+        btn.dataset.bound = 'true';
+        
+        btn.addEventListener('click', async (e) => {
+          const isPlaying = btn.classList.contains('playing');
+          stopAllPlaying();
+          
+          if (isPlaying) {
+            sharedAudio.pause();
+            btn.classList.remove('playing');
+            btn.innerHTML = '▶';
+            removeWave(btn);
+            return;
+          }
+          
+          // Mostrar efeito de carregamento
+          const audioContainer = btn.closest('.message-audio');
+          const progressFill = audioContainer.querySelector('.progress-fill');
+          
+          btn.innerHTML = '⏳';
+          btn.disabled = true;
+          
+          // Simular carregamento
+          await new Promise(resolve => setTimeout(resolve, 800));
+          
+          btn.disabled = false;
+          currentAudioElement = sharedAudio;
+          
+          try {
+            sharedAudio.currentTime = 0;
+          } catch (e) { }
+          
+          btn.classList.add('playing');
+          btn.innerHTML = '▮▮';
+          addWave(btn);
+          
+          // Atualizar barra de progresso
+          sharedAudio.ontimeupdate = () => {
+            const progress = (sharedAudio.currentTime / sharedAudio.duration) * 100;
+            progressFill.style.width = progress + '%';
+          };
+          
+          sharedAudio.play().catch(err => {
+            console.warn('playback failed', err);
+            window.open(sharedAudio.src, '_blank');
+            btn.classList.remove('playing');
+            btn.innerHTML = '▶';
+            removeWave(btn);
+          });
+          
+          sharedAudio.onended = () => {
+            btn.classList.remove('playing');
+            btn.innerHTML = '▶';
+            removeWave(btn);
+            progressFill.style.width = '0%';
+          };
+        });
+      });
+    }
+
+    function stopAllPlaying() {
+      document.querySelectorAll('.play-btn.playing').forEach(btn => {
+        btn.classList.remove('playing');
+        btn.innerHTML = '▶';
+        removeWave(btn);
+      });
+      
+      try {
+        sharedAudio.pause();
+        sharedAudio.currentTime = 0;
+      } catch (e) { }
+    }
+
+    function addWave(btn) {
+      if (btn.querySelector('.wave')) return;
+      
+      const wave = document.createElement('span');
+      wave.className = 'wave';
+      wave.innerHTML = '<span></span><span></span><span></span><span></span><span></span>';
+      btn.appendChild(wave);
+    }
+
+    function removeWave(btn) {
+      const w = btn.querySelector('.wave');
+      if (w) w.remove();
+    }
+
+    async function initialSequence() {
+      await showTyping(400, 900);
+      await appendBubble('her', 'Oii amorzinho 💋 acabei de gravar um áudio só pra você.', { delay: 200 });
+      
+      await showTyping(300, 700);
+
+      // Mostrar carregamento do áudio primeiro
+      await showAudioLoading();
+      await new Promise(resolve => setTimeout(resolve, 1200));
+
+      const audioHtml = createAudioElement();
+      await appendBubble('her', audioHtml, { delay: 300 });
+      bindPlayButtons();
+
+      await showTyping(500, 1000);
+      await appendBubble('her', 'Você prefere que eu mande a prévia agora ou quer um trechinho grátis primeiro?', {
+        withReplies: [
+          { text: 'Quero ver agora 🔥', payload: 'want_now' },
+          { text: 'Quero só um trechinho', payload: 'trecho' },
+          { text: 'Depois / Não', payload: 'no' }
+        ],
+        delay: 300
+      });
+      
+      bindPlayButtons();
+    }
+
+    async function userReply(text, payload) {
+      await appendBubble('me', text, { delay: 100 });
+
+      switch (payload) {
+        case 'want_now':
+          await showTyping(400, 900);
+          await appendBubble('her', 'Ain que delícia 😈 vou liberar a prévia completa por R$9,90. Quer pagar via PIX (mais rápido) ou prefere checkout?', { delay: 200 });
+          
+          await showTyping(300, 700);
+          await appendBubble('her', 'Escolha uma opção:', {
+            withReplies: [
+              { text: 'PIX — Quero VIP', payload: 'pix_flow' },
+              { text: 'Ir para checkout', payload: 'checkout_flow' }
+            ],
+            delay: 200
+          });
+          break;
+          
+        case 'trecho':
+          await showTyping(400, 900);
+          await appendBubble('her', 'Ok, vou mandar um trechinho pra você agora ❤', { delay: 200 });
+          
+          await showTyping(400, 900);
+          await appendBubble('her', '<img src="previa2.jpg" class="rounded max-w-full transition-transform duration-500 hover:scale-105"/>', { delay: 300 });
+          
+          await showTyping(400, 900);
+          await appendBubble('her', 'Curtiu? Quer a versão completa por R$9,90?', {
+            withReplies: [
+              { text: 'Quero sim 🔥', payload: 'want_now' },
+              { text: 'Ainda não', payload: 'no' }
+            ],
+            delay: 200
+          });
+          break;
+          
+        case 'no':
+          await showTyping(400, 900);
+          await appendBubble('her', 'Tranquilo 😏 se mudar de ideia me chama aqui. Posso te lembrar mais tarde?', { delay: 200 });
+          await appendBubble('her', 'Enquanto isso, posso mandar um mini trechinho grátis para te convencer 😉', {
+            withReplies: [
+              { text: 'Manda o trechinho', payload: 'trecho' },
+              { text: 'Não, obrigada', payload: 'end' }
+            ],
+            delay: 300
+          });
+          break;
+          
+        case 'pix_flow':
+          await showTyping(300, 700);
+          await appendBubble('her', 'Perfeito! Vou abrir as opções de pagamento — escolhe PIX que é instantâneo e eu libero na hora.', { delay: 200 });
+          openModal();
+          break;
+          
+        case 'checkout_flow':
+          await showTyping(300, 700);
+          await appendBubble('her', 'Beleza — abrindo o checkout seguro pra você finalizar.', { delay: 200 });
+          window.open('https://go.tribopay.com.br/zfjslqxawh_o2jgcm6gho');
+          break;
+          
+        case 'end':
+          await showTyping(300, 700);
+          await appendBubble('her', 'Beleza, fico por aqui. Me chama quando quiser ❤️', { delay: 200 });
+          break;
+          
+        default:
+          await showTyping(300, 700);
+          await appendBubble('her', 'Haha adorei! Quer que eu libere a prévia completa por R$9,90?', {
+            withReplies: [
+              { text: 'Sim, libera', payload: 'pix_flow' },
+              { text: 'Não agora', payload: 'no' }
+            ],
+            delay: 200
+          });
+      }
+      
+      bindPlayButtons();
+    }
+
+    function openModal() {
+      modalEl.classList.remove('hidden');
+      resetPaymentUI();
+      generatePixAutomatically();
+      
+      modalEl.addEventListener('click', function(e) {
+        if (e.target === modalEl) {
+          closeModal();
+        }
+      });
+    }
+
+    function closeModal() {
+      modalEl.classList.add('hidden');
       if (paymentCheckInterval) {
         clearInterval(paymentCheckInterval);
         paymentCheckInterval = null;
       }
-
-    } else if (status === 'waiting_payment' || status === 'pending') {
-      pixStatus.innerHTML = '<div class="text-yellow-400">⏳ Aguardando pagamento...</div>';
-      checkPaymentBtn.textContent = 'Verificar Pagamento';
-      checkPaymentBtn.disabled = false;
-    } else {
-      pixStatus.innerHTML = `<div class="text-red-400">❌ Status: ${status}</div>`;
-      checkPaymentBtn.textContent = 'Verificar Pagamento';
-      checkPaymentBtn.disabled = false;
     }
 
-  } catch (error) {
-    console.error('Erro ao verificar pagamento:', error);
-    pixStatus.innerHTML = '<div class="text-red-400">❌ Erro ao verificar pagamento</div>';
-    checkPaymentBtn.textContent = 'Verificar Pagamento';
-    checkPaymentBtn.disabled = false;
-  }
-}
+    function resetPaymentUI() {
+      pixSection.classList.add('hidden');
+      currentTransactionHash = null;
+      pixStatus.innerHTML = '<div class="text-yellow-400">Status: Gerando PIX...</div>';
+    }
 
-function startPaymentChecking() {
-  // Verificar a cada 10 segundos
-  paymentCheckInterval = setInterval(checkPaymentStatus, 10000);
-}
+    async function fetchTransactionByHash(hash) {
+      const url = `${TRIBOPAY_CONFIG.API_ENDPOINT}/public/v1/transactions/${hash}?api_token=${TRIBOPAY_CONFIG.API_TOKEN}`;
+      try {
+        const response = await fetch(url, {
+          headers: { 'Accept': 'application/json' }
+        });
+        const text = await response.text();
+        let json;
+        try { json = JSON.parse(text); } catch { json = { raw: text }; }
+        return { ok: response.ok, status: response.status, json: json };
+      } catch (error) {
+        return { ok: false, error: error.message };
+      }
+    }
 
-/* ----------------------
-   INICIALIZAÇÃO
-   ----------------------*/
-document.addEventListener('DOMContentLoaded', () => {
-  // Aplicar máscaras
-  IMask(document.getElementById('phone_number'), { mask: '(00) 00000-0000' });
-  IMask(document.getElementById('pix_cpf'), { mask: '000.000.000-00' });
-  
-  // Iniciar conversa
-  initialSequence();
-});
+    async function generatePixAutomatically() {
+      const customerData = {
+        name: 'Cliente', email: 'cliente@email.com', phone_number: '11999999999',
+        document: '00000000000', street_name: "Não informado", number: "s/n",
+        complement: "", neighborhood: "Não informado", city: "Não informado",
+        state: "NI", zip_code: "00000000"
+      };
 
-// Helper: toast notification
-function toast(text){
-  const t = document.createElement('div');
-  t.textContent = text;
-  t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)';
-  t.style.bottom='28px'; t.style.padding='10px 14px'; t.style.borderRadius='999px';
-  t.style.background='rgba(0,0,0,0.6)'; t.style.color='#fff'; t.style.zIndex=9999; t.style.fontSize='13px';
-  document.body.appendChild(t);
-  setTimeout(()=> t.style.opacity = '0',1800);
-  setTimeout(()=> t.remove(),2300);
-}
+      const paymentPayload = {
+        amount: Math.round(TRIBOPAY_CONFIG.productInfo.productPrice * 100),
+        offer_hash: TRIBOPAY_CONFIG.productInfo.offerHash,
+        payment_method: 'pix',
+        customer: customerData,
+        cart: [{
+          product_hash: TRIBOPAY_CONFIG.productInfo.productHash,
+          title: TRIBOPAY_CONFIG.productInfo.productName,
+          price: Math.round(TRIBOPAY_CONFIG.productInfo.productPrice * 100),
+          quantity: 1, operation_type: 1, tangible: false
+        }],
+        installments: 1, expire_in_days: 1, transaction_origin: 'api'
+      };
 
-</script>
+      try {
+        const response = await fetch(`${TRIBOPAY_CONFIG.API_ENDPOINT}/public/v1/transactions?api_token=${TRIBOPAY_CONFIG.API_TOKEN}`, {
+          method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+          body: JSON.stringify(paymentPayload)
+        });
+
+        const text = await response.text();
+        let result; try { result = JSON.parse(text); } catch { result = { raw: text }; }
+
+        if (!response.ok) throw new Error(result?.message || 'Ocorreu um erro ao gerar o PIX.');
+
+        const hash = result?.hash || result?.data?.hash || result?.transaction_hash || result?.id;
+        if (!hash) throw new Error('Transação criada, mas sem hash na resposta.');
+
+        currentTransactionHash = hash;
+        const transactionResponse = await fetchTransactionByHash(hash);
+        if (!transactionResponse.ok) throw new Error('Não foi possível obter os dados do PIX.');
+
+        const data = transactionResponse.json.data || transactionResponse.json;
+        const pixData = data.pix || {};
+        const copyPaste = (pixData.pix_qr_code || pixData.qr_code || pixData.copy_paste || pixData.code || '').trim();
+        if (!copyPaste) throw new Error('Código PIX não disponível.');
+
+        document.getElementById('pixCopyPaste').value = copyPaste;
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(copyPaste)}`;
+        document.getElementById('pixQR').src = qrUrl;
+        pixSection.classList.remove('hidden');
+        pixStatus.innerHTML = '<div class="text-yellow-400">Status: Aguardando pagamento...</div>';
+        startPaymentChecking();
+
+      } catch (error) {
+        console.error('Erro ao gerar PIX:', error);
+        pixStatus.innerHTML = `<div class="text-red-400">❌ Erro: ${error.message || 'Falha na comunicação'}</div>`;
+      }
+    }
+
+    async function checkPaymentStatus() {
+      if (!currentTransactionHash) return;
+      checkPaymentBtn.textContent = 'Verificando...';
+      checkPaymentBtn.disabled = true;
+
+      try {
+        const { ok, json } = await fetchTransactionByHash(currentTransactionHash);
+        if (!ok) throw new Error('Falha ao verificar pagamento');
+        const data = json.data || json;
+        const status = String(data.payment_status || data.status || '').toLowerCase();
+
+        if (status === 'paid' || status === 'approved') {
+          pixStatus.innerHTML = '<div class="text-green-400">✅ Pagamento confirmado! Liberando conteúdo...</div>';
+          setTimeout(() => {
+            closeModal();
+            appendBubble('her', 'Prontinho! Pagamento confirmado ✅ Aqui está a prévia exclusiva ❤️');
+            appendBubble('her', '<img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=600&auto=format&fit=crop" class="rounded max-w-full transition-transform duration-500 hover:scale-105"/>');
+            appendBubble('her', 'Obrigada pelo apoio! Se quiser mais conteúdo especial, é só me chamar 😘');
+          }, 1500);
+          if (paymentCheckInterval) clearInterval(paymentCheckInterval);
+        } else if (status === 'waiting_payment' || status === 'pending') {
+          pixStatus.innerHTML = '<div class="text-yellow-400">⏳ Aguardando pagamento...</div>';
+          checkPaymentBtn.textContent = 'Verificar Pagamento';
+          checkPaymentBtn.disabled = false;
+        } else {
+          pixStatus.innerHTML = `<div class="text-red-400">❌ Status: ${status}</div>`;
+          checkPaymentBtn.textContent = 'Verificar Pagamento';
+          checkPaymentBtn.disabled = false;
+        }
+      } catch (error) {
+        console.error('Erro ao verificar pagamento:', error);
+        pixStatus.innerHTML = '<div class="text-red-400">❌ Erro ao verificar pagamento</div>';
+        checkPaymentBtn.textContent = 'Verificar Pagamento';
+        checkPaymentBtn.disabled = false;
+      }
+    }
+
+    function startPaymentChecking() {
+      paymentCheckInterval = setInterval(checkPaymentStatus, 10000);
+    }
+
+    // Event Listeners
+    closeModalBtn.addEventListener('click', closeModal);
+    checkPaymentBtn.addEventListener('click', checkPaymentStatus);
+    copyPixButton.addEventListener('click', async () => {
+      const text = document.getElementById('pixCopyPaste').value.trim();
+      if (!text) { alert('Código PIX não disponível.'); return; }
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+          document.body.appendChild(ta); ta.focus(); ta.select();
+          document.execCommand('copy'); document.body.removeChild(ta);
+        }
+        copyPixButton.textContent = 'Copiado!';
+        setTimeout(() => { copyPixButton.textContent = 'Copiar Código'; }, 2000);
+      } catch (e) {
+        console.error(e);
+        copyPixButton.textContent = 'Falhou ao copiar';
+        setTimeout(() => { copyPixButton.textContent = 'Copiar Código'; }, 2000);
+      }
+    });
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', () => {
+      initialSequence();
+    });
+
+    function toast(text) {
+      const t = document.createElement('div');
+      t.textContent = text;
+      t.style.position = 'fixed';
+      t.style.left = '50%';
+      t.style.transform = 'translateX(-50%)';
+      t.style.bottom = '28px';
+      t.style.padding = '10px 14px';
+      t.style.borderRadius = '999px';
+      t.style.background = 'rgba(0,0,0,0.6)';
+      t.style.color = '#fff';
+      t.style.zIndex = '9999';
+      t.style.fontSize = '13px';
+      document.body.appendChild(t);
+      setTimeout(() => t.style.opacity = '0', 1800);
+      setTimeout(() => t.remove(), 2300);
+    }
+  </script>
 </body>
 </html>
