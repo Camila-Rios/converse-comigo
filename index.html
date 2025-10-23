@@ -104,7 +104,7 @@
       flex: 1;
       overflow-y: auto;
       padding: 20px 16px;
-      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23111b21' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+      background-image: url("background.jpg");
       background-color: var(--wa-bg);
     }
     
@@ -366,6 +366,12 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .input-container:hover {
+      background: #2d3f48;
     }
     
     .input-placeholder {
@@ -497,6 +503,7 @@
       flex-direction: column;
       transform: translateX(100%);
       transition: transform 0.3s ease;
+      overflow-y: auto;
     }
     
     .profile-overlay.active {
@@ -567,6 +574,125 @@
       color: var(--wa-icon);
     }
     
+    /* Mídias do Perfil */
+    .profile-media {
+      padding: 20px;
+    }
+    
+    .media-section {
+      margin-bottom: 25px;
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 15px;
+      color: var(--wa-text-in);
+    }
+    
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    
+    .media-item {
+      aspect-ratio: 1;
+      background: #2a3942;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .media-item.locked {
+      background: linear-gradient(45deg, #1e2a31, #2a3942);
+    }
+    
+    .media-item.locked::before {
+      content: '🔒';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      z-index: 2;
+    }
+    
+    .media-item.locked::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(11,20,26,0.7);
+      backdrop-filter: blur(2px);
+    }
+    
+    .media-preview {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    
+    .media-item:hover .media-preview {
+      transform: scale(1.05);
+    }
+    
+    .media-count {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+    }
+    
+    .vip-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,168,132,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: var(--wa-green);
+      text-align: center;
+      padding: 15px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .media-item.locked:hover .vip-overlay {
+      opacity: 1;
+    }
+    
+    .vip-badge {
+      background: linear-gradient(45deg, #ffd700, #ffed4e);
+      color: #000;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+    
+    .vip-badge-small {
+      background: linear-gradient(45deg, #ffd700, #ffed4e);
+      color: #000;
+      padding: 1px 6px;
+      border-radius: 8px;
+      font-size: 9px;
+      font-weight: 600;
+    }
+    
     /* Notificações */
     .notification {
       position: fixed;
@@ -580,6 +706,7 @@
       transform: translateX(400px);
       transition: transform 0.3s ease;
       max-width: 300px;
+      cursor: pointer;
     }
     
     .notification.show {
@@ -692,17 +819,6 @@
       object-fit: cover;
     }
     
-    /* VIP Badge */
-    .vip-badge {
-      background: linear-gradient(45deg, #ffd700, #ffed4e);
-      color: #000;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 10px;
-      font-weight: 600;
-      margin-left: 6px;
-    }
-    
     .scrollbar::-webkit-scrollbar {
       width: 6px;
     }
@@ -723,6 +839,41 @@
     .hidden {
       display: none !important;
     }
+    
+    /* Mensagem de Mídia */
+    .media-message {
+      max-width: 300px;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .media-message img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    
+    .media-locked {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .lock-icon {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 
@@ -741,7 +892,7 @@
         <svg viewBox="0 0 24 24" fill="currentColor" id="videoCallBtn">
           <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
         </svg>
-        <svg viewBox="0 0 24 24" fill="currentColor">
+        <svg viewBox="0 0 24 24" fill="currentColor" id="menuBtn">
           <path d="M12 7a2 2 0 1 0-.001-4.001A2 2 0 0 0 12 7zm0 2a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 9zm0 6a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 15z"/>
         </svg>
       </div>
@@ -755,17 +906,17 @@
     <!-- Footer/Input -->
     <div class="footer">
       <div class="footer-icons">
-        <svg viewBox="0 0 24 24" fill="currentColor">
+        <svg viewBox="0 0 24 24" fill="currentColor" id="emojiBtn">
           <path d="M9.153 11.603c.795 0 1.439-.879 1.439-1.962s-.644-1.962-1.439-1.962-1.439.879-1.439 1.962.644 1.962 1.439 1.962zm-3.204 1.362c-.026-.307-.131 5.218 6.063 5.551 6.066-.25 6.066-5.551 6.066-5.551-6.078 1.416-12.129 0-12.129 0zm11.363 1.108s-.669 1.959-5.051 1.959c-3.505 0-5.388-1.164-5.607-1.959 0 0 5.912 1.055 10.658 0zM11.804 1.011C5.609 1.011.978 6.033.978 12.228s4.826 10.761 11.021 10.761S23.02 18.423 23.02 12.228c.001-6.195-5.021-11.217-11.216-11.217zM12 21.354c-5.273 0-9.381-3.886-9.381-9.159s3.942-9.548 9.215-9.548 9.548 4.275 9.548 9.548c-.001 5.272-4.109 9.159-9.382 9.159zm3.108-9.751c.795 0 1.439-.879 1.439-1.962s-.644-1.962-1.439-1.962-1.439.879-1.439 1.962.644 1.962 1.439 1.962z"/>
         </svg>
       </div>
       
-      <div class="input-container">
+      <div class="input-container" id="inputContainer">
         <div class="input-placeholder">Mensagem</div>
       </div>
       
       <div class="footer-icons">
-        <svg viewBox="0 0 24 24" fill="currentColor">
+        <svg viewBox="0 0 24 24" fill="currentColor" id="micBtn">
           <path d="M11.999 14.942c2.001 0 3.531-1.53 3.531-3.531V4.35c0-2.001-1.53-3.531-3.531-3.531S8.469 2.35 8.469 4.35v7.061c0 2.001 1.53 3.531 3.53 3.531zm6.238-3.53c0 3.531-2.942 6.002-6.237 6.002s-6.237-2.471-6.237-6.002H3.761c0 4.001 3.178 7.297 7.061 7.885v3.884h2.354v-3.884c3.884-.588 7.061-3.884 7.061-7.885h-2z"/>
         </svg>
       </div>
@@ -800,7 +951,7 @@
   </div>
 
   <!-- Perfil da Modelo -->
-  <div class="profile-overlay" id="profileOverlay">
+  <div class="profile-overlay scrollbar" id="profileOverlay">
     <div class="profile-header">
       <div class="profile-back" id="profileBack">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -813,6 +964,7 @@
       <div class="profile-name">Camila <span class="vip-badge">VIP</span></div>
       <div class="profile-status">+55 11 98765-4321</div>
     </div>
+    
     <div class="profile-actions">
       <div class="profile-action" id="profileVideoCall">
         <div class="action-icon">
@@ -829,6 +981,99 @@
           </svg>
         </div>
         <div>Dados do contato</div>
+      </div>
+    </div>
+    
+    <!-- Mídias do Perfil -->
+    <div class="profile-media">
+      <div class="media-section">
+        <div class="section-title">Fotos Exclusivas <span class="vip-badge-small">VIP</span></div>
+        <div class="media-grid">
+          <div class="media-item locked" onclick="showVipUpsell('fotos')">
+            <div class="vip-overlay">
+              <div style="font-size: 24px; margin-bottom: 8px;">🔒</div>
+              <div style="font-size: 12px; font-weight: 500;">Conteúdo VIP</div>
+              <div style="font-size: 10px; margin-top: 4px;">Toque para desbloquear</div>
+            </div>
+            <div class="media-count">24</div>
+          </div>
+          <div class="media-item locked" onclick="showVipUpsell('fotos')">
+            <div class="vip-overlay">
+              <div style="font-size: 24px; margin-bottom: 8px;">🔒</div>
+              <div style="font-size: 12px; font-weight: 500;">Conteúdo VIP</div>
+              <div style="font-size: 10px; margin-top: 4px;">Toque para desbloquear</div>
+            </div>
+            <div class="media-count">18</div>
+          </div>
+          <div class="media-item locked" onclick="showVipUpsell('fotos')">
+            <div class="vip-overlay">
+              <div style="font-size: 24px; margin-bottom: 8px;">🔒</div>
+              <div style="font-size: 12px; font-weight: 500;">Conteúdo VIP</div>
+              <div style="font-size: 10px; margin-top: 4px;">Toque para desbloquear</div>
+            </div>
+            <div class="media-count">32</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="media-section">
+        <div class="section-title">Vídeos Privados <span class="vip-badge-small">VIP</span></div>
+        <div class="media-grid">
+          <div class="media-item locked" onclick="showVipUpsell('videos')">
+            <div class="vip-overlay">
+              <div style="font-size: 24px; margin-bottom: 8px;">🎬</div>
+              <div style="font-size: 12px; font-weight: 500;">Vídeos Exclusivos</div>
+              <div style="font-size: 10px; margin-top: 4px;">Toque para desbloquear</div>
+            </div>
+            <div class="media-count">12</div>
+          </div>
+          <div class="media-item locked" onclick="showVipUpsell('videos')">
+            <div class="vip-overlay">
+              <div style="font-size: 24px; margin-bottom: 8px;">🎬</div>
+              <div style="font-size: 12px; font-weight: 500;">Vídeos Exclusivos</div>
+              <div style="font-size: 10px; margin-top: 4px;">Toque para desbloquear</div>
+            </div>
+            <div class="media-count">8</div>
+          </div>
+          <div class="media-item locked" onclick="showVipUpsell('videos')">
+            <div class="vip-overlay">
+              <div style="font-size: 24px; margin-bottom: 8px;">🎬</div>
+              <div style="font-size: 12px; font-weight: 500;">Vídeos Exclusivos</div>
+              <div style="font-size: 10px; margin-top: 4px;">Toque para desbloquear</div>
+            </div>
+            <div class="media-count">15</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="media-section">
+        <div class="section-title">Áudios Quentes <span class="vip-badge-small">VIP</span></div>
+        <div class="media-grid">
+          <div class="media-item locked" onclick="showVipUpsell('audios')">
+            <div class="vip-overlay">
+              <div style="font-size: 24px; margin-bottom: 8px;">🎤</div>
+              <div style="font-size: 12px; font-weight: 500;">Áudios Sensuais</div>
+              <div style="font-size: 10px; margin-top: 4px;">Toque para desbloquear</div>
+            </div>
+            <div class="media-count">45</div>
+          </div>
+          <div class="media-item locked" onclick="showVipUpsell('audios')">
+            <div class="vip-overlay">
+              <div style="font-size: 24px; margin-bottom: 8px;">🎤</div>
+              <div style="font-size: 12px; font-weight: 500;">Áudios Sensuais</div>
+              <div style="font-size: 10px; margin-top: 4px;">Toque para desbloquear</div>
+            </div>
+            <div class="media-count">28</div>
+          </div>
+          <div class="media-item locked" onclick="showVipUpsell('audios')">
+            <div class="vip-overlay">
+              <div style="font-size: 24px; margin-bottom: 8px;">🎤</div>
+              <div style="font-size: 12px; font-weight: 500;">Áudios Sensuais</div>
+              <div style="font-size: 10px; margin-top: 4px;">Toque para desbloquear</div>
+            </div>
+            <div class="media-count">36</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -876,13 +1121,12 @@
   </div>
 
   <!-- Notificações -->
-  <div class="notification hidden" id="notification">
+  <div class="notification hidden" id="notification" onclick="showVipUpsell('notification')">
     <div class="notification-header">Novo VIP 🔥</div>
     <div class="notification-text" id="notificationText">João acabou de adquirir o VIP</div>
   </div>
 
   <audio id="audioPlayer" src="audio.mp3" preload="metadata"></audio>
-  <audio id="callSound" src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==" preload="auto"></audio>
 
   <script>
     // Elementos DOM
@@ -892,13 +1136,50 @@
     const videoCallOverlay = document.getElementById('videoCallOverlay');
     const notification = document.getElementById('notification');
     const audioPlayer = document.getElementById('audioPlayer');
-    const callSound = document.getElementById('callSound');
+    const inputContainer = document.getElementById('inputContainer');
 
     // Estado da aplicação
     let currentAudio = null;
     let isPlaying = false;
-    let vipUsers = ['João', 'Maria', 'Pedro', 'Ana', 'Lucas', 'Julia'];
+    let vipUsers = ['João', 'Maria', 'Pedro', 'Ana', 'Lucas', 'Julia', 'Carlos', 'Fernanda'];
     let notificationInterval;
+    let userMessages = 0;
+
+    // Função para mostrar upsell do VIP
+    function showVipUpsell(context) {
+      let message = '';
+      
+      switch(context) {
+        case 'fotos':
+          message = 'Quer ver minhas fotos mais quentes? 🔥\nCom o VIP você tem acesso a +50 fotos exclusivas que eu nunca mostrei pra ninguém!';
+          break;
+        case 'videos':
+          message = 'Quer me ver em vídeos sensuais? 🎬\nO VIP libera +20 vídeos exclusivos onde eu mostro TUDO!';
+          break;
+        case 'audios':
+          message = 'Quer ouvir meus áudios mais íntimos? 🎤\nCom o VIP você desbloqueia +30 áudios sensuais que vão te deixar louco!';
+          break;
+        case 'videochamada':
+          message = 'Quer videochamada comigo? 📹\nCom o VIP você pode fazer videochamadas privadas onde eu realizo todos os seus desejos!';
+          break;
+        case 'notification':
+          message = 'Você viu? Todo mundo está virando VIP! 🔥\nNão fique de fora, por apenas R$9,90 você tem acesso a TODO meu conteúdo!';
+          break;
+        default:
+          message = 'Quer ter acesso a TODO meu conteúdo exclusivo? 🔥\nPor apenas R$9,90 você desbloqueia fotos, vídeos, áudios e videochamadas privadas!';
+      }
+      
+      const typing = showTypingIndicator();
+      setTimeout(() => {
+        typing.remove();
+        addMessage(message, false, {
+          quickReplies: [
+            { text: 'Quero VIP! 🔥', action: 'pix_payment' },
+            { text: 'Mostrar mais', action: 'more_info' }
+          ]
+        });
+      }, 1500);
+    }
 
     // Função para mostrar notificação
     function showNotification(user) {
@@ -925,13 +1206,12 @@
           index++;
         } else {
           clearInterval(notificationInterval);
-          // Reiniciar depois de um tempo
           setTimeout(() => {
             index = 0;
             startVipNotifications();
           }, 30000);
         }
-      }, 8000); // Notificação a cada 8 segundos
+      }, 8000);
     }
 
     // Função para adicionar mensagem
@@ -944,7 +1224,7 @@
       
       const textDiv = document.createElement('div');
       textDiv.className = 'message-text';
-      textDiv.innerHTML = text;
+      textDiv.innerHTML = text.replace(/\n/g, '<br>');
       
       const timeDiv = document.createElement('div');
       timeDiv.className = 'message-time';
@@ -1041,6 +1321,55 @@
       return { messageDiv, playButton };
     }
 
+    // Função para adicionar mensagem de mídia bloqueada
+    function addLockedMediaMessage(type) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message incoming';
+      
+      const bubbleDiv = document.createElement('div');
+      bubbleDiv.className = 'bubble';
+      
+      const mediaDiv = document.createElement('div');
+      mediaDiv.className = 'media-message';
+      mediaDiv.onclick = () => showVipUpsell(type);
+      
+      const lockedDiv = document.createElement('div');
+      lockedDiv.className = 'media-locked';
+      
+      const lockIcon = document.createElement('div');
+      lockIcon.className = 'lock-icon';
+      lockIcon.textContent = '🔒';
+      
+      const lockText = document.createElement('div');
+      lockText.style.marginTop = '8px';
+      lockText.style.fontWeight = '500';
+      lockText.textContent = 'Conteúdo Bloqueado';
+      
+      const lockSubtext = document.createElement('div');
+      lockSubtext.style.marginTop = '4px';
+      lockSubtext.style.fontSize = '12px';
+      lockSubtext.textContent = 'Toque para desbloquear com VIP';
+      
+      lockedDiv.appendChild(lockIcon);
+      lockedDiv.appendChild(lockText);
+      lockedDiv.appendChild(lockSubtext);
+      mediaDiv.appendChild(lockedDiv);
+      
+      const timeDiv = document.createElement('div');
+      timeDiv.className = 'message-time';
+      timeDiv.textContent = new Date().toLocaleTimeString('pt-BR', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+      
+      bubbleDiv.appendChild(mediaDiv);
+      bubbleDiv.appendChild(timeDiv);
+      messageDiv.appendChild(bubbleDiv);
+      messagesContainer.appendChild(messageDiv);
+      
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
     // Função para mostrar indicador de digitação
     function showTypingIndicator() {
       const typingDiv = document.createElement('div');
@@ -1088,6 +1417,7 @@
 
     // Função para lidar com respostas rápidas
     function handleQuickReply(text, action) {
+      userMessages++;
       addMessage(text, true);
       
       const typing = showTypingIndicator();
@@ -1096,30 +1426,6 @@
         typing.remove();
         
         switch (action) {
-          case 'want_preview':
-            addMessage('Ain que delícia 😈 Vou liberar a prévia completa por R$9,90. Quer pagar via PIX (mais rápido) ou prefere checkout?', false, {
-              quickReplies: [
-                { text: 'PIX - Quero VIP', action: 'pix_payment' },
-                { text: 'Ir para checkout', action: 'checkout' }
-              ]
-            });
-            break;
-            
-          case 'free_preview':
-            addMessage('Ok, vou mandar um trechinho pra você agora ❤', false);
-            setTimeout(() => {
-              addMessage('*imagem da prévia*', false);
-              setTimeout(() => {
-                addMessage('Curtiu? Quer a versão completa por R$9,90?', false, {
-                  quickReplies: [
-                    { text: 'Quero sim 🔥', action: 'want_preview' },
-                    { text: 'Ainda não', action: 'not_now' }
-                  ]
-                });
-              }, 1000);
-            }, 1500);
-            break;
-            
           case 'pix_payment':
             addMessage('Perfeito! Vou abrir as opções de pagamento PIX...', false);
             setTimeout(() => {
@@ -1127,14 +1433,42 @@
             }, 1000);
             break;
             
-          case 'not_now':
-            addMessage('Tudo bem 😊 Me chama quando quiser! Posso te mandar um trechinho grátis?', false, {
+          case 'more_info':
+            addMessage('Com o VIP você tem acesso a:\n\n🔥 +50 fotos exclusivas\n🎬 +20 vídeos sensuais\n🎤 +30 áudios íntimos\n📹 Videochamadas privadas\n💝 Conteúdo personalizado\n\nTudo isso por apenas R$9,90! Vale a pena, né? 😈', false, {
               quickReplies: [
-                { text: 'Manda o trechinho', action: 'free_preview' },
-                { text: 'Agora não', action: 'later' }
+                { text: 'Quero VIP! 🔥', action: 'pix_payment' },
+                { text: 'Mostrar preview', action: 'free_preview' }
               ]
             });
             break;
+            
+          case 'free_preview':
+            addMessage('Tudo bem, vou te dar uma amostrinha... 😊', false);
+            setTimeout(() => {
+              addLockedMediaMessage('fotos');
+              setTimeout(() => {
+                addMessage('Gostou do que viu? Isso é só uma pequena amostra do que você pode ter com o VIP! 🔥', false, {
+                  quickReplies: [
+                    { text: 'Quero VIP Agora!', action: 'pix_payment' },
+                    { text: 'Mostrar mais', action: 'more_info' }
+                  ]
+                });
+              }, 2000);
+            }, 1500);
+            break;
+            
+          default:
+            // Após algumas mensagens, sempre levar para o upsell
+            if (userMessages >= 2) {
+              showVipUpsell('conversation');
+            } else {
+              addMessage('Haha adorei! 😊 Quer ver algo especial? Tenho conteúdos exclusivos que vão te surpreender...', false, {
+                quickReplies: [
+                  { text: 'Mostra! 🔥', action: 'free_preview' },
+                  { text: 'O que você tem?', action: 'more_info' }
+                ]
+              });
+            }
         }
       }, 1500 + Math.random() * 1000);
     }
@@ -1155,10 +1489,13 @@
           
           setTimeout(() => {
             modal.classList.add('hidden');
-            addMessage('Prontinho! Pagamento confirmado ✅ Aqui está sua prévia exclusiva! ❤️', false);
+            addMessage('Prontinho! Pagamento confirmado ✅ Agora você é VIP! 🔥\n\nAqui está seu conteúdo exclusivo:', false);
             setTimeout(() => {
-              addMessage('*conteúdo exclusivo liberado*', false);
-            }, 1000);
+              addMessage('*conteúdo VIP liberado*', false);
+              setTimeout(() => {
+                addMessage('Obrigada por confiar em mim! 💝\nAgora você tem acesso a TODO meu conteúdo especial!', false);
+              }, 1000);
+            }, 1500);
           }, 2000);
         }
       };
@@ -1172,7 +1509,7 @@
       };
     }
 
-    // Event Listeners
+    // Event Listeners para todos os elementos clicáveis
     document.getElementById('profileBtn').addEventListener('click', () => {
       profileOverlay.classList.add('active');
     });
@@ -1182,34 +1519,43 @@
     });
 
     document.getElementById('videoCallBtn').addEventListener('click', () => {
-      // Tentar iniciar videochamada
-      addMessage('📹 Iniciando videochamada...', true);
-      
-      const typing = showTypingIndicator();
-      setTimeout(() => {
-        typing.remove();
-        addMessage('Desculpe, as videochamadas são exclusivas para membros VIP! 😔\n\nPara ter acesso a videochamadas privadas comigo, adquira o VIP por apenas R$9,90! 🔥', false, {
-          quickReplies: [
-            { text: 'Quero VIP!', action: 'pix_payment' },
-            { text: 'Mais informações', action: 'info' }
-          ]
-        });
-      }, 2000);
+      showVipUpsell('videochamada');
+    });
+
+    document.getElementById('menuBtn').addEventListener('click', () => {
+      showVipUpsell('menu');
+    });
+
+    document.getElementById('emojiBtn').addEventListener('click', () => {
+      showVipUpsell('emoji');
+    });
+
+    document.getElementById('micBtn').addEventListener('click', () => {
+      showVipUpsell('audio');
+    });
+
+    inputContainer.addEventListener('click', () => {
+      userMessages++;
+      if (userMessages >= 2) {
+        showVipUpsell('input');
+      } else {
+        addMessage('Oi amor! 😊 Tudo bem?', true);
+        const typing = showTypingIndicator();
+        setTimeout(() => {
+          typing.remove();
+          addMessage('Oi! Tudo sim, querido! 😊\nEstava pensando em você... Quer ver algo especial hoje?', false, {
+            quickReplies: [
+              { text: 'Quero ver! 🔥', action: 'free_preview' },
+              { text: 'O que você tem?', action: 'more_info' }
+            ]
+          });
+        }, 1500);
+      }
     });
 
     document.getElementById('profileVideoCall').addEventListener('click', () => {
       profileOverlay.classList.remove('active');
-      
-      const typing = showTypingIndicator();
-      setTimeout(() => {
-        typing.remove();
-        addMessage('Desculpe, as videochamadas são exclusivas para membros VIP! 😔\n\nPara ter acesso a videochamadas privadas comigo, adquira o VIP por apenas R$9,90! 🔥', false, {
-          quickReplies: [
-            { text: 'Quero VIP!', action: 'pix_payment' },
-            { text: 'Mais informações', action: 'info' }
-          ]
-        });
-      }, 1000);
+      showVipUpsell('videochamada');
     });
 
     document.getElementById('videoEnd').addEventListener('click', () => {
@@ -1233,9 +1579,9 @@
           setTimeout(() => {
             addMessage('Você quer ver a prévia completa agora ou prefere um trechinho grátis primeiro?', false, {
               quickReplies: [
-                { text: 'Quero ver agora 🔥', action: 'want_preview' },
-                { text: 'Quero um trechinho grátis', action: 'free_preview' },
-                { text: 'Depois', action: 'not_now' }
+                { text: 'Quero ver agora 🔥', action: 'free_preview' },
+                { text: 'Me conta mais', action: 'more_info' },
+                { text: 'Depois', action: 'more_info' }
               ]
             });
           }, 1000);
