@@ -3,192 +3,336 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Vem meu amor!!!</title>
+  <title>Camila</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/imask"></script>
-  
-  <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "tsw4hetgak");
-  </script>
-
   <style>
     :root {
-      --wa-green: #25D366;
-      --primary-gradient: linear-gradient(135deg, #25D366 0%, #00a884 100%);
+      --wa-bg: #111b21;
+      --wa-panel: #202c33;
+      --wa-green: #00a884;
+      --wa-message-out: #005c4b;
+      --wa-message-in: #202c33;
+      --wa-text-out: #e9edef;
+      --wa-text-in: #e9edef;
+      --wa-time: #8696a0;
+      --wa-icon: #aebac1;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
     
     html, body {
       height: 100%;
-      overflow-x: hidden;
+      font-family: 'Segoe UI', Helvetica Neue, Helvetica, Lucida Grande, Arial, sans-serif;
+      background: var(--wa-bg);
+      color: #e9edef;
+      overflow: hidden;
     }
     
-    body {
-      background: linear-gradient(180deg, #071322 0%, #021018 100%);
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
-      color: #fff;
-    }
-    
-    .frame {
-      width: 100%;
+    .app {
       height: 100vh;
-      border-radius: 0;
-      border: none;
-      box-shadow: none;
       display: flex;
       flex-direction: column;
+      background: var(--wa-bg);
+      position: relative;
     }
     
-    .top {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      padding: 12px;
-      background: #075e54;
+    /* Header */
+    .header {
+      background: var(--wa-panel);
+      padding: 10px 16px;
       display: flex;
       align-items: center;
-      backdrop-filter: blur(10px);
+      border-left: 1px solid rgba(255,255,255,0.08);
+      min-height: 59px;
     }
     
     .avatar {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       overflow: hidden;
-      border: 2px solid rgba(255, 255, 255, 0.12);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-right: 15px;
+      cursor: pointer;
     }
     
-    .avatar:hover {
-      transform: scale(1.05);
-      border-color: rgba(255, 255, 255, 0.2);
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     
-    .meta .name {
-      font-weight: 600;
-    }
-    
-    .messages {
+    .contact-info {
       flex: 1;
-      padding: 16px;
-      overflow: auto;
-      background-image: 
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.005)),
-        radial-gradient(circle at 20% 80%, rgba(37, 211, 102, 0.03) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(7, 94, 84, 0.02) 0%, transparent 50%);
     }
     
-    .msg-row {
+    .contact-name {
+      font-size: 16px;
+      font-weight: 500;
+      color: #e9edef;
+    }
+    
+    .contact-status {
+      font-size: 13px;
+      color: var(--wa-time);
+      margin-top: 2px;
+    }
+    
+    .header-icons {
       display: flex;
-      margin-bottom: 10px;
-      align-items: flex-end;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: messageSlideIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      gap: 24px;
+      color: var(--wa-icon);
     }
     
-    @keyframes messageSlideIn {
+    .header-icons svg {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    
+    .header-icons svg:hover {
+      opacity: 0.8;
+    }
+    
+    /* Área de mensagens */
+    .messages-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 16px;
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23111b21' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+      background-color: var(--wa-bg);
+    }
+    
+    .message {
+      display: flex;
+      margin-bottom: 2px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: messageAppear 0.3s ease forwards;
+    }
+    
+    @keyframes messageAppear {
       to {
         opacity: 1;
         transform: translateY(0);
       }
     }
     
-    .msg-row.me {
+    .message.outgoing {
       justify-content: flex-end;
     }
     
+    .message.incoming {
+      justify-content: flex-start;
+    }
+    
     .bubble {
-      display: inline-block;
-      padding: 12px 16px;
-      border-radius: 18px;
-      max-width: 78%;
-      line-height: 1.4;
-      font-size: 14.5px;
+      max-width: 65%;
+      padding: 6px 7px 8px 9px;
+      border-radius: 7.5px;
       position: relative;
-      transform: scale(0.9);
-      opacity: 0;
-      animation: bubblePopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      word-wrap: break-word;
+      line-height: 1.4;
+    }
+    
+    .message.outgoing .bubble {
+      background: var(--wa-message-out);
+      color: var(--wa-text-out);
+      border-top-right-radius: 0;
+    }
+    
+    .message.incoming .bubble {
+      background: var(--wa-message-in);
+      color: var(--wa-text-in);
+      border-top-left-radius: 0;
+    }
+    
+    .message-text {
+      font-size: 14.2px;
+      margin-bottom: 2px;
+    }
+    
+    .message-time {
+      font-size: 11px;
+      color: var(--wa-time);
+      text-align: right;
+      float: right;
+      margin-left: 8px;
+      margin-top: 2px;
+    }
+    
+    .message.outgoing .message-time {
+      color: #86c7b9;
+    }
+    
+    /* Áudio message */
+    .audio-message {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 0;
+      min-width: 240px;
+    }
+    
+    .play-button {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: transparent;
+      border: 1.5px solid var(--wa-time);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .play-button.playing {
+      border-color: var(--wa-green);
+    }
+    
+    .play-icon {
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 5px 0 5px 8px;
+      border-color: transparent transparent transparent var(--wa-time);
+      margin-left: 2px;
+    }
+    
+    .play-button.playing .play-icon {
+      border-width: 6px 0 6px 6px;
+      border-color: transparent transparent transparent var(--wa-green);
+    }
+    
+    .pause-icon {
+      display: none;
+      width: 12px;
+      height: 12px;
+      position: relative;
+    }
+    
+    .play-button.playing .pause-icon {
+      display: block;
+    }
+    
+    .play-button.playing .play-icon {
+      display: none;
+    }
+    
+    .pause-icon::before,
+    .pause-icon::after {
+      content: '';
+      position: absolute;
+      width: 3px;
+      height: 12px;
+      background: var(--wa-green);
+      border-radius: 1px;
+    }
+    
+    .pause-icon::before {
+      left: 3px;
+    }
+    
+    .pause-icon::after {
+      right: 3px;
+    }
+    
+    .audio-info {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .audio-wave {
+      height: 20px;
+      display: flex;
+      align-items: end;
+      gap: 2px;
+      margin-bottom: 2px;
+    }
+    
+    .wave-bar {
+      width: 2px;
+      background: var(--wa-time);
+      border-radius: 1px;
       transition: all 0.3s ease;
     }
     
-    @keyframes bubblePopIn {
-      0% {
-        transform: scale(0.9) translateY(10px);
-        opacity: 0;
-      }
-      70% {
-        transform: scale(1.02);
-      }
-      100% {
-        transform: scale(1) translateY(0);
-        opacity: 1;
-      }
+    .play-button.playing ~ .audio-info .wave-bar {
+      background: var(--wa-green);
+      animation: wavePulse 1.2s ease-in-out infinite;
     }
     
-    .bubble.me {
-      background: var(--primary-gradient);
-      color: #06331f;
-      border-bottom-right-radius: 6px;
-      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+    @keyframes wavePulse {
+      0%, 100% { height: 4px; }
+      50% { height: 12px; }
     }
     
-    .bubble.her {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      border-bottom-left-radius: 6px;
+    .audio-duration {
+      font-size: 12.5px;
+      color: var(--wa-time);
+    }
+    
+    .play-button.playing ~ .audio-info .audio-duration {
+      color: var(--wa-green);
+    }
+    
+    /* Quick replies */
+    .quick-replies {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .quick-reply {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #e9edef;
+      padding: 8px 12px;
+      border-radius: 18px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     
-    .bubble:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.25);
+    .quick-reply:hover {
+      background: rgba(255,255,255,0.15);
     }
     
-    .timestamp {
-      font-size: 11px;
-      opacity: 0.7;
-      margin-left: 8px;
-      display: block;
-      margin-top: 6px;
-      transition: opacity 0.3s ease;
-    }
-    
-    .bubble:hover .timestamp {
-      opacity: 0.9;
-    }
-    
-    .typing {
+    /* Typing indicator */
+    .typing-indicator {
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 10px 14px;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.08);
-      width: 120px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 8px 12px;
+      background: var(--wa-message-in);
+      border-radius: 7.5px;
+      border-top-left-radius: 0;
+      max-width: 65px;
+      margin-bottom: 2px;
     }
     
-    .dot {
-      width: 7px;
-      height: 7px;
-      background: #fff;
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--wa-time);
       border-radius: 50%;
-      animation: typingBounce 1.4s infinite ease-in-out;
+      animation: typingBounce 1.4s ease-in-out infinite;
     }
     
-    .dot:nth-child(2) {
+    .typing-dot:nth-child(2) {
       animation-delay: 0.16s;
     }
     
-    .dot:nth-child(3) {
+    .typing-dot:nth-child(3) {
       animation-delay: 0.32s;
     }
     
@@ -198,1133 +342,914 @@
         opacity: 0.5;
       }
       40% {
-        transform: scale(1.2);
+        transform: scale(1);
         opacity: 1;
       }
     }
     
-    .composer {
+    /* Footer/Input area */
+    .footer {
+      background: var(--wa-panel);
+      padding: 5px 16px;
+      min-height: 62px;
       display: flex;
-      gap: 10px;
-      padding: 12px;
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.02));
+      align-items: end;
+      border-left: 1px solid rgba(255,255,255,0.08);
+    }
+    
+    .input-container {
+      flex: 1;
+      background: #2a3942;
+      border-radius: 8px;
+      margin: 5px 8px;
+      padding: 9px 12px;
+      display: flex;
       align-items: center;
-      backdrop-filter: blur(10px);
+      gap: 8px;
     }
     
-    .btn {
-      padding: 10px 16px;
-      border-radius: 999px;
-      font-weight: 600;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
+    .input-placeholder {
+      color: #8696a0;
+      font-size: 15px;
+      flex: 1;
     }
     
-    .btn::before {
-      content: '';
-      position: absolute;
+    .footer-icons {
+      display: flex;
+      gap: 16px;
+      color: var(--wa-icon);
+      margin-bottom: 5px;
+    }
+    
+    .footer-icons svg {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    
+    .footer-icons svg:hover {
+      opacity: 0.8;
+    }
+    
+    /* Modal de pagamento */
+    .modal-overlay {
+      position: fixed;
       top: 0;
-      left: -100%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(11,20,26,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      backdrop-filter: blur(5px);
+    }
+    
+    .modal-content {
+      background: var(--wa-panel);
+      border-radius: 8px;
+      max-width: 400px;
       width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.5s;
+      overflow: hidden;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.5);
     }
     
-    .btn:hover::before {
-      left: 100%;
-    }
-    
-    .btn-primary {
-      background: var(--primary-gradient);
-      color: #06331f;
-      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
-    }
-    
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
-    }
-    
-    .btn-ghost {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #fff;
-    }
-    
-    .btn-ghost:hover {
-      background: rgba(255, 255, 255, 0.12);
-      transform: translateY(-1px);
-    }
-    
-    .message-audio {
+    .modal-header {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 12px 16px;
-      background: rgba(0, 0, 0, 0.15);
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
     }
     
-    .message-audio::before {
-      content: '';
+    .modal-title {
+      font-size: 16px;
+      font-weight: 500;
+    }
+    
+    .modal-body {
+      padding: 16px;
+    }
+    
+    .pix-section {
+      text-align: center;
+    }
+    
+    .pix-qr {
+      width: 200px;
+      height: 200px;
+      background: #fff;
+      border-radius: 8px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-size: 14px;
+    }
+    
+    .pix-code {
+      background: #2a3942;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      word-break: break-all;
+      text-align: left;
+    }
+    
+    .modal-button {
+      width: 100%;
+      padding: 12px;
+      background: var(--wa-green);
+      border: none;
+      border-radius: 6px;
+      color: #111b21;
+      font-weight: 500;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: opacity 0.2s;
+    }
+    
+    .modal-button:hover {
+      opacity: 0.9;
+    }
+    
+    .modal-button.secondary {
+      background: transparent;
+      color: var(--wa-green);
+      border: 1px solid var(--wa-green);
+    }
+    
+    /* Perfil da Modelo */
+    .profile-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(11,20,26,0.95);
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .profile-overlay.active {
+      transform: translateX(0);
+    }
+    
+    .profile-header {
+      background: var(--wa-panel);
+      padding: 60px 20px 20px;
+      text-align: center;
+      position: relative;
+    }
+    
+    .profile-back {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: var(--wa-icon);
+      cursor: pointer;
+    }
+    
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 0 auto 15px;
+      border: 3px solid var(--wa-green);
+    }
+    
+    .profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .profile-name {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    
+    .profile-status {
+      color: var(--wa-time);
+      font-size: 14px;
+    }
+    
+    .profile-actions {
+      padding: 20px;
+    }
+    
+    .profile-action {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer;
+    }
+    
+    .profile-action:last-child {
+      border-bottom: none;
+    }
+    
+    .action-icon {
+      width: 24px;
+      height: 24px;
+      color: var(--wa-icon);
+    }
+    
+    /* Notificações */
+    .notification {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: var(--wa-message-out);
+      padding: 12px 16px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 3000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      max-width: 300px;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+    
+    .notification-header {
+      font-weight: 500;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+    
+    .notification-text {
+      font-size: 13px;
+      color: var(--wa-time);
+    }
+    
+    /* Modal de Video Chamada */
+    .video-call-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #000;
+      z-index: 4000;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .video-header {
+      background: rgba(0,0,0,0.5);
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
-      height: 2px;
-      background: var(--primary-gradient);
-      transform: scaleX(0);
-      transition: transform 0.3s ease;
+      z-index: 10;
     }
     
-    .message-audio:hover::before {
-      transform: scaleX(1);
+    .video-caller {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
     }
     
-    .message-audio:hover {
-      background: rgba(0, 0, 0, 0.2);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    }
-    
-    .play-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: rgba(255, 255, 255, 0.1);
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .play-btn::before {
-      content: '';
+    .video-controls {
       position: absolute;
-      top: 50%;
+      bottom: 30px;
       left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      z-index: 10;
+    }
+    
+    .video-control {
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
-      transform: translate(-50%, -50%);
-      transition: width 0.3s, height 0.3s;
-    }
-    
-    .play-btn:hover::before {
-      width: 100%;
-      height: 100%;
-    }
-    
-    .play-btn:hover {
-      transform: scale(1.1);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-    
-    .play-btn.playing {
-      background: var(--primary-gradient);
-      color: #032c22;
-      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
-    }
-    
-    .audio-meta {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-    
-    .small {
-      font-size: 12px;
-      opacity: 0.85;
-    }
-    
-    .quick-replies {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
-    
-    .quick-reply {
-      background: rgba(255, 255, 255, 0.08);
-      padding: 10px 14px;
-      border-radius: 999px;
-      cursor: pointer;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      font-size: 13px;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .quick-reply::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-      transition: left 0.5s;
-    }
-    
-    .quick-reply:hover::before {
-      left: 100%;
-    }
-    
-    .quick-reply:hover {
-      background: rgba(255, 255, 255, 0.12);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-    
-    .modal-wrap {
-      position: fixed;
-      inset: 0;
+      background: rgba(255,255,255,0.2);
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(2, 6, 23, 0.8);
-      z-index: 60;
-      padding: 16px;
-      opacity: 0;
-      animation: modalFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-      backdrop-filter: blur(8px);
+      cursor: pointer;
+      transition: background 0.2s;
     }
     
-    @keyframes modalFadeIn {
-      to {
-        opacity: 1;
-      }
+    .video-control.end {
+      background: #f15c6d;
     }
     
-    .modal {
-      width: 100%;
-      max-width: 880px;
-      max-height: 90vh;
-      overflow-y: auto;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-      border-radius: 20px;
-      padding: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(20px);
-      transform: scale(0.9) translateY(20px);
-      animation: modalSlideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    .video-control:hover {
+      background: rgba(255,255,255,0.3);
     }
     
-    @keyframes modalSlideUp {
-      to {
-        transform: scale(1) translateY(0);
-      }
+    .video-control.end:hover {
+      background: #ff7b8a;
     }
     
-    .modal-grid {
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      gap: 20px;
+    .video-preview {
+      flex: 1;
+      background: var(--wa-panel);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
     }
     
-    .preview-img {
+    .video-placeholder {
+      text-align: center;
+      color: var(--wa-time);
+    }
+    
+    .video-placeholder-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 0 auto 20px;
+    }
+    
+    .video-placeholder-avatar img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 12px;
-      transition: transform 0.5s ease;
     }
     
-    .preview-img:hover {
-      transform: scale(1.02);
+    /* VIP Badge */
+    .vip-badge {
+      background: linear-gradient(45deg, #ffd700, #ffed4e);
+      color: #000;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+      margin-left: 6px;
     }
     
-    .pix-card {
-      padding: 16px;
-      border-radius: 12px;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(10px);
+    .scrollbar::-webkit-scrollbar {
+      width: 6px;
     }
     
-    .pix-qr {
-      width: 150px;
-      height: 150px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.02);
-      display: block;
-      transition: transform 0.3s ease;
+    .scrollbar::-webkit-scrollbar-track {
+      background: transparent;
     }
     
-    .pix-qr:hover {
-      transform: scale(1.05);
+    .scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.2);
+      border-radius: 3px;
     }
     
-    .form-input {
-      display: block;
-      width: 100%;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 12px 14px;
-      background: rgba(0, 0, 0, 0.3);
-      color: white;
-      margin-bottom: 12px;
-      transition: all 0.3s ease;
-    }
-    
-    .form-input:focus {
-      outline: none;
-      border-color: #25D366;
-      box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+    .scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.3);
     }
     
     .hidden {
       display: none !important;
     }
-    
-    .wave {
-      width: 36px;
-      height: 16px;
-      display: inline-block;
-      position: relative;
-    }
-    
-    .wave span {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 4px;
-      height: 6px;
-      background: #fff;
-      opacity: 0.7;
-      border-radius: 2px;
-      animation: wave 800ms infinite ease-in-out;
-    }
-    
-    .wave span:nth-child(2) {
-      left: 6px;
-      animation-delay: 100ms;
-    }
-    
-    .wave span:nth-child(3) {
-      left: 12px;
-      animation-delay: 200ms;
-    }
-    
-    .wave span:nth-child(4) {
-      left: 18px;
-      animation-delay: 300ms;
-    }
-    
-    .wave span:nth-child(5) {
-      left: 24px;
-      animation-delay: 400ms;
-    }
-    
-    @keyframes wave {
-      0% {
-        height: 6px;
-        opacity: 0.6;
-      }
-      50% {
-        height: 14px;
-        opacity: 1;
-      }
-      100% {
-        height: 6px;
-        opacity: 0.6;
-      }
-    }
-    
-    /* Novos estilos para as melhorias */
-    .audio-loading {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      background: rgba(0, 0, 0, 0.1);
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      margin-bottom: 8px;
-    }
-    
-    .loading-dots {
-      display: flex;
-      gap: 4px;
-    }
-    
-    .loading-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #25D366;
-      animation: loadingPulse 1.4s infinite ease-in-out;
-    }
-    
-    .loading-dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-    
-    .loading-dot:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-    
-    @keyframes loadingPulse {
-      0%, 80%, 100% {
-        transform: scale(0.8);
-        opacity: 0.5;
-      }
-      40% {
-        transform: scale(1.2);
-        opacity: 1;
-      }
-    }
-    
-    .audio-controls {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-      opacity: 0;
-      transform: translateY(10px);
-      animation: controlsSlideIn 0.5s ease 0.3s forwards;
-    }
-    
-    @keyframes controlsSlideIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    .control-btn {
-      padding: 6px 12px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #fff;
-      font-size: 11px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    
-    .control-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
-      transform: translateY(-1px);
-    }
-    
-    .progress-bar {
-      width: 100%;
-      height: 3px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 2px;
-      overflow: hidden;
-      margin-top: 8px;
-    }
-    
-    .progress-fill {
-      height: 100%;
-      background: var(--primary-gradient);
-      width: 0%;
-      transition: width 0.1s linear;
-    }
-    
-    .secret-message-indicator {
-      display: inline-block;
-      padding: 2px 6px;
-      background: rgba(37, 211, 102, 0.2);
-      border-radius: 8px;
-      font-size: 10px;
-      margin-left: 6px;
-      animation: pulseGlow 2s infinite;
-    }
-    
-    @keyframes pulseGlow {
-      0%, 100% {
-        box-shadow: 0 0 5px rgba(37, 211, 102, 0.3);
-      }
-      50% {
-        box-shadow: 0 0 15px rgba(37, 211, 102, 0.6);
-      }
-    }
-    
-    /* Media Queries */
-    @media (max-width: 880px) {
-      .modal-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .modal {
-        max-height: 95vh;
-        padding: 16px;
-      }
-      
-      .modal-wrap {
-        padding: 8px;
-      }
-    }
-    
-    @media (max-width: 640px) {
-      .modal-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-      }
-      
-      .pix-card {
-        padding: 12px;
-      }
-      
-      .modal {
-        max-height: 98vh;
-        border-radius: 16px;
-      }
-      
-      .bubble {
-        max-width: 85%;
-        padding: 10px 14px;
-      }
-    }
   </style>
 </head>
 
-<body class="flex items-center justify-center min-h-screen p-4">
-  <div class="frame" role="region" aria-label="Simulador WhatsApp - Interativo">
-    <div class="top">
-      <div class="avatar">
-        <img id="modelAvatarTop" src="perfil.jpeg" alt="Camila" class="w-full h-full object-cover">
+<body>
+  <div class="app">
+    <!-- Header -->
+    <div class="header">
+      <div class="avatar" id="profileBtn">
+        <img src="perfil.jpeg" alt="Camila">
       </div>
-      <div class="meta">
-        <div class="name">Camila ✨</div>
-        <div class="small">• online</div>
+      <div class="contact-info">
+        <div class="contact-name">Camila <span class="vip-badge">VIP</span></div>
+        <div class="contact-status">online • Conteúdo exclusivo</div>
       </div>
-      <div class="ml-auto text-right">
-        <div class="text-xs">VIP • R$9,90</div>
+      <div class="header-icons">
+        <svg viewBox="0 0 24 24" fill="currentColor" id="videoCallBtn">
+          <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+        </svg>
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 7a2 2 0 1 0-.001-4.001A2 2 0 0 0 12 7zm0 2a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 9zm0 6a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 15z"/>
+        </svg>
       </div>
     </div>
 
-    <div id="messages" class="messages" aria-live="polite"></div>
+    <!-- Área de Mensagens -->
+    <div class="messages-container scrollbar" id="messages">
+      <!-- Mensagens serão inseridas aqui via JavaScript -->
+    </div>
 
-    <div class="composer" id="composerStatic">
-      <div class="small text-white/80">Responda usando os botões que aparecem nas mensagens.</div>
+    <!-- Footer/Input -->
+    <div class="footer">
+      <div class="footer-icons">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9.153 11.603c.795 0 1.439-.879 1.439-1.962s-.644-1.962-1.439-1.962-1.439.879-1.439 1.962.644 1.962 1.439 1.962zm-3.204 1.362c-.026-.307-.131 5.218 6.063 5.551 6.066-.25 6.066-5.551 6.066-5.551-6.078 1.416-12.129 0-12.129 0zm11.363 1.108s-.669 1.959-5.051 1.959c-3.505 0-5.388-1.164-5.607-1.959 0 0 5.912 1.055 10.658 0zM11.804 1.011C5.609 1.011.978 6.033.978 12.228s4.826 10.761 11.021 10.761S23.02 18.423 23.02 12.228c.001-6.195-5.021-11.217-11.216-11.217zM12 21.354c-5.273 0-9.381-3.886-9.381-9.159s3.942-9.548 9.215-9.548 9.548 4.275 9.548 9.548c-.001 5.272-4.109 9.159-9.382 9.159zm3.108-9.751c.795 0 1.439-.879 1.439-1.962s-.644-1.962-1.439-1.962-1.439.879-1.439 1.962.644 1.962 1.439 1.962z"/>
+        </svg>
+      </div>
+      
+      <div class="input-container">
+        <div class="input-placeholder">Mensagem</div>
+      </div>
+      
+      <div class="footer-icons">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M11.999 14.942c2.001 0 3.531-1.53 3.531-3.531V4.35c0-2.001-1.53-3.531-3.531-3.531S8.469 2.35 8.469 4.35v7.061c0 2.001 1.53 3.531 3.53 3.531zm6.238-3.53c0 3.531-2.942 6.002-6.237 6.002s-6.237-2.471-6.237-6.002H3.761c0 4.001 3.178 7.297 7.061 7.885v3.884h2.354v-3.884c3.884-.588 7.061-3.884 7.061-7.885h-2z"/>
+        </svg>
+      </div>
     </div>
   </div>
 
-  <div id="modal" class="modal-wrap hidden" role="dialog" aria-modal="true" aria-label="Prévia e pagamento">
-    <div class="modal">
-      <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center gap-3">
-          <div class="avatar" style="width:44px;height:44px">
-            <img src="perfil.jpeg" alt="Camila" class="w-full h-full object-cover rounded-full">
-          </div>
-          <div>
-            <div class="font-semibold">Camila</div>
-            <div class="text-xs text-white/80">Prévia escolhida a dedo</div>
-          </div>
+  <!-- Modal de Pagamento -->
+  <div class="modal-overlay hidden" id="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="avatar">
+          <img src="perfil.jpeg" alt="Camila">
         </div>
-        <button id="closeModal" class="btn btn-ghost">Fechar</button>
+        <div class="modal-title">Prévia Exclusiva - R$ 9,90</div>
       </div>
-
-      <div class="modal-grid">
-        <div class="rounded overflow-hidden">
-          <img id="previewImage" src="previa.jpg" alt="Prévia" class="preview-img">
-        </div>
-
-        <div class="flex flex-col gap-4">
-          <div id="pixSection" class="pix-card">
-            <div class="flex items-center justify-between mb-3">
-              <div>
-                <div class="font-semibold">Pagar via PIX (recomendado)</div>
-                <div class="text-xs text-white/80">R$9,90 • chave única gerada</div>
-              </div>
-              <div class="text-xs text-white/70">Seguro • Instantâneo</div>
-            </div>
-
-            <div class="flex gap-4 items-start">
-              <img id="pixQR" src="" alt="QR PIX" class="pix-qr" />
-              <div class="flex-1">
-                <div class="text-xs text-white/80 mb-2">Código PIX Copia e Cola</div>
-                <textarea id="pixCopyPaste" class="form-input text-xs" rows="3" readonly></textarea>
-
-                <div class="flex gap-2 mt-3">
-                  <button id="copyPixButton" class="btn btn-ghost flex-1">Copiar Código</button>
-                </div>
-
-                <div class="mt-4">
-                  <button id="checkPaymentBtn" class="btn btn-primary w-full">Verificar Pagamento</button>
-                </div>
-
-                <div id="pixStatus" class="text-xs mt-4">
-                  <div class="text-yellow-400">Status: Gerando PIX...</div>
-                  <div class="text-white/60 text-xs mt-1">Pague via PIX e clique em "Verificar Pagamento"</div>
-                </div>
-              </div>
-            </div>
+      <div class="modal-body">
+        <div class="pix-section">
+          <div class="pix-qr" id="pixQR">
+            QR Code será gerado aqui
           </div>
-
-          <div class="text-xs text-white/80 text-center">Pagamento 100% seguro via TriboPay</div>
+          <div class="pix-code" id="pixCode">
+            Código PIX copia e cola aparecerá aqui...
+          </div>
+          <button class="modal-button" id="copyPixBtn">Copiar Código PIX</button>
+          <button class="modal-button secondary" id="checkPaymentBtn">Verificar Pagamento</button>
+          <div style="font-size: 12px; color: var(--wa-time); margin-top: 12px;" id="paymentStatus">
+            Aguardando pagamento...
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <audio id="sharedAudio" src="audio-humano-natural.mp3"></audio>
+  <!-- Perfil da Modelo -->
+  <div class="profile-overlay" id="profileOverlay">
+    <div class="profile-header">
+      <div class="profile-back" id="profileBack">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 4l1.4 1.4L7.8 11H20v2H7.8l5.6 5.6L12 20l-8-8 8-8z"/>
+        </svg>
+      </div>
+      <div class="profile-avatar">
+        <img src="perfil.jpeg" alt="Camila">
+      </div>
+      <div class="profile-name">Camila <span class="vip-badge">VIP</span></div>
+      <div class="profile-status">+55 11 98765-4321</div>
+    </div>
+    <div class="profile-actions">
+      <div class="profile-action" id="profileVideoCall">
+        <div class="action-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+          </svg>
+        </div>
+        <div>Videochamada</div>
+      </div>
+      <div class="profile-action">
+        <div class="action-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+        </div>
+        <div>Dados do contato</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Video Chamada -->
+  <div class="video-call-overlay hidden" id="videoCallOverlay">
+    <div class="video-header">
+      <div class="video-caller">
+        <div class="avatar">
+          <img src="perfil.jpeg" alt="Camila">
+        </div>
+        <div>
+          <div>Camila</div>
+          <div style="font-size: 12px; color: var(--wa-time);">Chamada de vídeo</div>
+        </div>
+      </div>
+      <div style="color: white;">00:32</div>
+    </div>
+    <div class="video-preview">
+      <div class="video-placeholder">
+        <div class="video-placeholder-avatar">
+          <img src="perfil.jpeg" alt="Camila">
+        </div>
+        <div>Camila</div>
+        <div style="font-size: 14px; margin-top: 8px; color: var(--wa-time);">Videochamada</div>
+      </div>
+    </div>
+    <div class="video-controls">
+      <div class="video-control" id="videoMute">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+          <path d="M12 3.7v6.8l-2.5 2.5V6.7L5.3 3.7 4 5l3 3H3v8h5.5l4.5 4.5v-5.3l2.5 2.5v-6.8L12 3.7z"/>
+        </svg>
+      </div>
+      <div class="video-control end" id="videoEnd">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+          <path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28a11.27 11.27 0 0 0-2.67-1.85.996.996 0 0 1-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/>
+        </svg>
+      </div>
+      <div class="video-control" id="videoFlip">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+          <path d="M15 15.5V13H9v2.5L5.5 12 9 8.5V11h6V8.5l3.5 3.5-3.5 3.5z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notificações -->
+  <div class="notification hidden" id="notification">
+    <div class="notification-header">Novo VIP 🔥</div>
+    <div class="notification-text" id="notificationText">João acabou de adquirir o VIP</div>
+  </div>
+
+  <audio id="audioPlayer" src="audio.mp3" preload="metadata"></audio>
+  <audio id="callSound" src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==" preload="auto"></audio>
 
   <script>
-    const TRIBOPAY_CONFIG = {
-      productInfo: {
-        productName: "Camila Rios - Conteúdo VIP",
-        productPrice: 9.90,
-        productImage: "perfil.jpeg",
-        productHash: "zfjslqxawh",
-        offerHash: "tllcpnze5p"
-      },
-      API_ENDPOINT: "https://api.tribopay.com.br/api",
-      API_TOKEN: "BCBnDREbCWL7MPgXSTEnzNppduXGRVI2pg3dGKGTLL965jzySwoKR4R484jm"
-    };
+    // Elementos DOM
+    const messagesContainer = document.getElementById('messages');
+    const modal = document.getElementById('modal');
+    const profileOverlay = document.getElementById('profileOverlay');
+    const videoCallOverlay = document.getElementById('videoCallOverlay');
+    const notification = document.getElementById('notification');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const callSound = document.getElementById('callSound');
 
-    const messagesEl = document.getElementById('messages');
-    const sharedAudio = document.getElementById('sharedAudio');
-    const modalEl = document.getElementById('modal');
-    const closeModalBtn = document.getElementById('closeModal');
-    const pixSection = document.getElementById('pixSection');
-    const checkPaymentBtn = document.getElementById('checkPaymentBtn');
-    const copyPixButton = document.getElementById('copyPixButton');
-    const pixStatus = document.getElementById('pixStatus');
+    // Estado da aplicação
+    let currentAudio = null;
+    let isPlaying = false;
+    let vipUsers = ['João', 'Maria', 'Pedro', 'Ana', 'Lucas', 'Julia'];
+    let notificationInterval;
 
-    let currentTransactionHash = null;
-    let paymentCheckInterval = null;
-    let currentAudioElement = null;
-    let secretMessageIndex = 0;
-
-    // Configurar áudio para melhor qualidade
-    sharedAudio.preload = "auto";
-    sharedAudio.volume = 0.8;
-
-    function appendBubble(from, innerHTML, opts = { withReplies: null, timestamp: true, delay: 0 }) {
-      return new Promise((resolve) => {
+    // Função para mostrar notificação
+    function showNotification(user) {
+      const notificationText = document.getElementById('notificationText');
+      notificationText.textContent = `${user} acabou de adquirir o VIP`;
+      
+      notification.classList.remove('hidden');
+      notification.classList.add('show');
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
         setTimeout(() => {
-          const row = document.createElement('div');
-          row.className = 'msg-row ' + (from === 'me' ? 'me' : '');
-          
-          const bubble = document.createElement('div');
-          bubble.className = 'bubble ' + (from === 'me' ? 'me' : 'her');
-          bubble.innerHTML = innerHTML;
-          row.appendChild(bubble);
-
-          if (opts.timestamp) {
-            const ts = document.createElement('span');
-            ts.className = 'timestamp';
-            const now = new Date();
-            ts.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            bubble.appendChild(ts);
-          }
-
-          messagesEl.appendChild(row);
-          messagesEl.scrollTop = messagesEl.scrollHeight;
-
-          if (Array.isArray(opts.withReplies) && opts.withReplies.length) {
-            const repliesWrap = document.createElement('div');
-            repliesWrap.className = 'quick-replies';
-            
-            opts.withReplies.forEach(r => {
-              const btn = document.createElement('button');
-              btn.className = 'quick-reply';
-              btn.textContent = r.text;
-              btn.addEventListener('click', () => {
-                repliesWrap.remove();
-                userReply(r.text, r.payload);
-              });
-              repliesWrap.appendChild(btn);
-            });
-            
-            // Adicionar delay antes de mostrar as respostas
-            setTimeout(() => {
-              bubble.appendChild(repliesWrap);
-              messagesEl.scrollTop = messagesEl.scrollHeight;
-            }, 500);
-          }
-          
-          resolve(row);
-        }, opts.delay);
-      });
+          notification.classList.add('hidden');
+        }, 300);
+      }, 3000);
     }
 
-    function showTyping(min = 500, max = 1200) {
-      const row = document.createElement('div');
-      row.className = 'msg-row';
-      
-      const t = document.createElement('div');
-      t.className = 'typing';
-      t.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
-      row.appendChild(t);
-      
-      messagesEl.appendChild(row);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-      
-      const delay = min + Math.random() * (max - min);
-      return new Promise(res => setTimeout(() => {
-        row.style.opacity = '0';
-        row.style.transform = 'translateY(-10px)';
-        setTimeout(() => row.remove(), 300);
-        res();
-      }, delay));
-    }
-
-    // Função para mostrar efeito de carregamento do áudio
-    function showAudioLoading() {
-      const loadingHtml = `
-        <div class="audio-loading">
-          <div class="loading-dots">
-            <div class="loading-dot"></div>
-            <div class="loading-dot"></div>
-            <div class="loading-dot"></div>
-          </div>
-          <div class="small">Carregando mensagem de voz (1.3 MB)...</div>
-        </div>
-      `;
-      return appendBubble('her', loadingHtml, { timestamp: false });
-    }
-
-    // Função para criar elemento de áudio com controles
-    function createAudioElement(audioUrl = "audio-humano-natural.mp3") {
-      const audioHtml = `
-        <div class="message-audio" aria-hidden="false">
-          <div class="play-btn" role="button" aria-label="Tocar áudio">▶</div>
-          <div class="audio-meta">
-            <div class="small font-semibold">Áudio de Camila • 0:12 <span class="secret-message-indicator">Secreta</span></div>
-            <div class="small text-white/70">Toque para ouvir</div>
-            <div class="progress-bar">
-              <div class="progress-fill"></div>
-            </div>
-          </div>
-        </div>
-        <div class="audio-controls">
-          <button class="control-btn repeat-btn" onclick="repeatAudio(this)">🔄 Repetir</button>
-          <button class="control-btn next-btn" onclick="nextSecretMessage(this)">🔒 Próxima Secreta</button>
-        </div>
-      `;
-      return audioHtml;
-    }
-
-    // Funções globais para os controles de áudio
-    window.repeatAudio = function(btn) {
-      btn.innerHTML = '⏳ Repetindo...';
-      setTimeout(() => {
-        btn.innerHTML = '🔄 Repetir';
-        if (currentAudioElement) {
-          currentAudioElement.currentTime = 0;
-          currentAudioElement.play().catch(console.error);
-        }
-      }, 300);
-    };
-
-    window.nextSecretMessage = function(btn) {
-      btn.innerHTML = '✨ Buscando...';
-      secretMessageIndex++;
-      const secretMessages = [
-        "Você é muito especial para mim...",
-        "Tenho uma surpresa quente para você...",
-        "Essa noite vai ser inesquecível...",
-        "Só você merece me ver assim..."
-      ];
-      
-      setTimeout(() => {
-        btn.innerHTML = '🔒 Próxima Secreta';
-        appendBubble('her', `
-          <div style="background: rgba(37, 211, 102, 0.1); padding: 12px; border-radius: 12px; border: 1px solid rgba(37, 211, 102, 0.3);">
-            <div class="font-semibold">Mensagem Secreta #${secretMessageIndex + 1}</div>
-            <div class="small mt-1">${secretMessages[secretMessageIndex % secretMessages.length]}</div>
-          </div>
-        `);
-      }, 1000);
-    };
-
-    function bindPlayButtons() {
-      document.querySelectorAll('.play-btn').forEach(btn => {
-        if (btn.dataset.bound === 'true') return;
-        btn.dataset.bound = 'true';
-        
-        btn.addEventListener('click', async (e) => {
-          const isPlaying = btn.classList.contains('playing');
-          stopAllPlaying();
-          
-          if (isPlaying) {
-            sharedAudio.pause();
-            btn.classList.remove('playing');
-            btn.innerHTML = '▶';
-            removeWave(btn);
-            return;
-          }
-          
-          // Mostrar efeito de carregamento
-          const audioContainer = btn.closest('.message-audio');
-          const progressFill = audioContainer.querySelector('.progress-fill');
-          
-          btn.innerHTML = '⏳';
-          btn.disabled = true;
-          
-          // Simular carregamento
-          await new Promise(resolve => setTimeout(resolve, 800));
-          
-          btn.disabled = false;
-          currentAudioElement = sharedAudio;
-          
-          try {
-            sharedAudio.currentTime = 0;
-          } catch (e) { }
-          
-          btn.classList.add('playing');
-          btn.innerHTML = '▮▮';
-          addWave(btn);
-          
-          // Atualizar barra de progresso
-          sharedAudio.ontimeupdate = () => {
-            const progress = (sharedAudio.currentTime / sharedAudio.duration) * 100;
-            progressFill.style.width = progress + '%';
-          };
-          
-          sharedAudio.play().catch(err => {
-            console.warn('playback failed', err);
-            window.open(sharedAudio.src, '_blank');
-            btn.classList.remove('playing');
-            btn.innerHTML = '▶';
-            removeWave(btn);
-          });
-          
-          sharedAudio.onended = () => {
-            btn.classList.remove('playing');
-            btn.innerHTML = '▶';
-            removeWave(btn);
-            progressFill.style.width = '0%';
-          };
-        });
-      });
-    }
-
-    function stopAllPlaying() {
-      document.querySelectorAll('.play-btn.playing').forEach(btn => {
-        btn.classList.remove('playing');
-        btn.innerHTML = '▶';
-        removeWave(btn);
-      });
-      
-      try {
-        sharedAudio.pause();
-        sharedAudio.currentTime = 0;
-      } catch (e) { }
-    }
-
-    function addWave(btn) {
-      if (btn.querySelector('.wave')) return;
-      
-      const wave = document.createElement('span');
-      wave.className = 'wave';
-      wave.innerHTML = '<span></span><span></span><span></span><span></span><span></span>';
-      btn.appendChild(wave);
-    }
-
-    function removeWave(btn) {
-      const w = btn.querySelector('.wave');
-      if (w) w.remove();
-    }
-
-    async function initialSequence() {
-      await showTyping(400, 900);
-      await appendBubble('her', 'Oii amorzinho 💋 acabei de gravar um áudio só pra você.', { delay: 200 });
-      
-      await showTyping(300, 700);
-
-      // Mostrar carregamento do áudio primeiro
-      await showAudioLoading();
-      await new Promise(resolve => setTimeout(resolve, 1200));
-
-      const audioHtml = createAudioElement();
-      await appendBubble('her', audioHtml, { delay: 300 });
-      bindPlayButtons();
-
-      await showTyping(500, 1000);
-      await appendBubble('her', 'Você prefere que eu mande a prévia agora ou quer um trechinho grátis primeiro?', {
-        withReplies: [
-          { text: 'Quero ver agora 🔥', payload: 'want_now' },
-          { text: 'Quero só um trechinho', payload: 'trecho' },
-          { text: 'Depois / Não', payload: 'no' }
-        ],
-        delay: 300
-      });
-      
-      bindPlayButtons();
-    }
-
-    async function userReply(text, payload) {
-      await appendBubble('me', text, { delay: 100 });
-
-      switch (payload) {
-        case 'want_now':
-          await showTyping(400, 900);
-          await appendBubble('her', 'Ain que delícia 😈 vou liberar a prévia completa por R$9,90. Quer pagar via PIX (mais rápido) ou prefere checkout?', { delay: 200 });
-          
-          await showTyping(300, 700);
-          await appendBubble('her', 'Escolha uma opção:', {
-            withReplies: [
-              { text: 'PIX — Quero VIP', payload: 'pix_flow' },
-              { text: 'Ir para checkout', payload: 'checkout_flow' }
-            ],
-            delay: 200
-          });
-          break;
-          
-        case 'trecho':
-          await showTyping(400, 900);
-          await appendBubble('her', 'Ok, vou mandar um trechinho pra você agora ❤', { delay: 200 });
-          
-          await showTyping(400, 900);
-          await appendBubble('her', '<img src="previa2.jpg" class="rounded max-w-full transition-transform duration-500 hover:scale-105"/>', { delay: 300 });
-          
-          await showTyping(400, 900);
-          await appendBubble('her', 'Curtiu? Quer a versão completa por R$9,90?', {
-            withReplies: [
-              { text: 'Quero sim 🔥', payload: 'want_now' },
-              { text: 'Ainda não', payload: 'no' }
-            ],
-            delay: 200
-          });
-          break;
-          
-        case 'no':
-          await showTyping(400, 900);
-          await appendBubble('her', 'Tranquilo 😏 se mudar de ideia me chama aqui. Posso te lembrar mais tarde?', { delay: 200 });
-          await appendBubble('her', 'Enquanto isso, posso mandar um mini trechinho grátis para te convencer 😉', {
-            withReplies: [
-              { text: 'Manda o trechinho', payload: 'trecho' },
-              { text: 'Não, obrigada', payload: 'end' }
-            ],
-            delay: 300
-          });
-          break;
-          
-        case 'pix_flow':
-          await showTyping(300, 700);
-          await appendBubble('her', 'Perfeito! Vou abrir as opções de pagamento — escolhe PIX que é instantâneo e eu libero na hora.', { delay: 200 });
-          openModal();
-          break;
-          
-        case 'checkout_flow':
-          await showTyping(300, 700);
-          await appendBubble('her', 'Beleza — abrindo o checkout seguro pra você finalizar.', { delay: 200 });
-          window.open('https://go.tribopay.com.br/zfjslqxawh_o2jgcm6gho');
-          break;
-          
-        case 'end':
-          await showTyping(300, 700);
-          await appendBubble('her', 'Beleza, fico por aqui. Me chama quando quiser ❤️', { delay: 200 });
-          break;
-          
-        default:
-          await showTyping(300, 700);
-          await appendBubble('her', 'Haha adorei! Quer que eu libere a prévia completa por R$9,90?', {
-            withReplies: [
-              { text: 'Sim, libera', payload: 'pix_flow' },
-              { text: 'Não agora', payload: 'no' }
-            ],
-            delay: 200
-          });
-      }
-      
-      bindPlayButtons();
-    }
-
-    function openModal() {
-      modalEl.classList.remove('hidden');
-      resetPaymentUI();
-      generatePixAutomatically();
-      
-      modalEl.addEventListener('click', function(e) {
-        if (e.target === modalEl) {
-          closeModal();
-        }
-      });
-    }
-
-    function closeModal() {
-      modalEl.classList.add('hidden');
-      if (paymentCheckInterval) {
-        clearInterval(paymentCheckInterval);
-        paymentCheckInterval = null;
-      }
-    }
-
-    function resetPaymentUI() {
-      pixSection.classList.add('hidden');
-      currentTransactionHash = null;
-      pixStatus.innerHTML = '<div class="text-yellow-400">Status: Gerando PIX...</div>';
-    }
-
-    async function fetchTransactionByHash(hash) {
-      const url = `${TRIBOPAY_CONFIG.API_ENDPOINT}/public/v1/transactions/${hash}?api_token=${TRIBOPAY_CONFIG.API_TOKEN}`;
-      try {
-        const response = await fetch(url, {
-          headers: { 'Accept': 'application/json' }
-        });
-        const text = await response.text();
-        let json;
-        try { json = JSON.parse(text); } catch { json = { raw: text }; }
-        return { ok: response.ok, status: response.status, json: json };
-      } catch (error) {
-        return { ok: false, error: error.message };
-      }
-    }
-
-    async function generatePixAutomatically() {
-      const customerData = {
-        name: 'Cliente', email: 'cliente@email.com', phone_number: '11999999999',
-        document: '00000000000', street_name: "Não informado", number: "s/n",
-        complement: "", neighborhood: "Não informado", city: "Não informado",
-        state: "NI", zip_code: "00000000"
-      };
-
-      const paymentPayload = {
-        amount: Math.round(TRIBOPAY_CONFIG.productInfo.productPrice * 100),
-        offer_hash: TRIBOPAY_CONFIG.productInfo.offerHash,
-        payment_method: 'pix',
-        customer: customerData,
-        cart: [{
-          product_hash: TRIBOPAY_CONFIG.productInfo.productHash,
-          title: TRIBOPAY_CONFIG.productInfo.productName,
-          price: Math.round(TRIBOPAY_CONFIG.productInfo.productPrice * 100),
-          quantity: 1, operation_type: 1, tangible: false
-        }],
-        installments: 1, expire_in_days: 1, transaction_origin: 'api'
-      };
-
-      try {
-        const response = await fetch(`${TRIBOPAY_CONFIG.API_ENDPOINT}/public/v1/transactions?api_token=${TRIBOPAY_CONFIG.API_TOKEN}`, {
-          method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-          body: JSON.stringify(paymentPayload)
-        });
-
-        const text = await response.text();
-        let result; try { result = JSON.parse(text); } catch { result = { raw: text }; }
-
-        if (!response.ok) throw new Error(result?.message || 'Ocorreu um erro ao gerar o PIX.');
-
-        const hash = result?.hash || result?.data?.hash || result?.transaction_hash || result?.id;
-        if (!hash) throw new Error('Transação criada, mas sem hash na resposta.');
-
-        currentTransactionHash = hash;
-        const transactionResponse = await fetchTransactionByHash(hash);
-        if (!transactionResponse.ok) throw new Error('Não foi possível obter os dados do PIX.');
-
-        const data = transactionResponse.json.data || transactionResponse.json;
-        const pixData = data.pix || {};
-        const copyPaste = (pixData.pix_qr_code || pixData.qr_code || pixData.copy_paste || pixData.code || '').trim();
-        if (!copyPaste) throw new Error('Código PIX não disponível.');
-
-        document.getElementById('pixCopyPaste').value = copyPaste;
-        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(copyPaste)}`;
-        document.getElementById('pixQR').src = qrUrl;
-        pixSection.classList.remove('hidden');
-        pixStatus.innerHTML = '<div class="text-yellow-400">Status: Aguardando pagamento...</div>';
-        startPaymentChecking();
-
-      } catch (error) {
-        console.error('Erro ao gerar PIX:', error);
-        pixStatus.innerHTML = `<div class="text-red-400">❌ Erro: ${error.message || 'Falha na comunicação'}</div>`;
-      }
-    }
-
-    async function checkPaymentStatus() {
-      if (!currentTransactionHash) return;
-      checkPaymentBtn.textContent = 'Verificando...';
-      checkPaymentBtn.disabled = true;
-
-      try {
-        const { ok, json } = await fetchTransactionByHash(currentTransactionHash);
-        if (!ok) throw new Error('Falha ao verificar pagamento');
-        const data = json.data || json;
-        const status = String(data.payment_status || data.status || '').toLowerCase();
-
-        if (status === 'paid' || status === 'approved') {
-          pixStatus.innerHTML = '<div class="text-green-400">✅ Pagamento confirmado! Liberando conteúdo...</div>';
-          setTimeout(() => {
-            closeModal();
-            appendBubble('her', 'Prontinho! Pagamento confirmado ✅ Aqui está a prévia exclusiva ❤️');
-            appendBubble('her', '<img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?q=80&w=600&auto=format&fit=crop" class="rounded max-w-full transition-transform duration-500 hover:scale-105"/>');
-            appendBubble('her', 'Obrigada pelo apoio! Se quiser mais conteúdo especial, é só me chamar 😘');
-          }, 1500);
-          if (paymentCheckInterval) clearInterval(paymentCheckInterval);
-        } else if (status === 'waiting_payment' || status === 'pending') {
-          pixStatus.innerHTML = '<div class="text-yellow-400">⏳ Aguardando pagamento...</div>';
-          checkPaymentBtn.textContent = 'Verificar Pagamento';
-          checkPaymentBtn.disabled = false;
+    // Simular notificações de novos VIPs
+    function startVipNotifications() {
+      let index = 0;
+      notificationInterval = setInterval(() => {
+        if (index < vipUsers.length) {
+          showNotification(vipUsers[index]);
+          index++;
         } else {
-          pixStatus.innerHTML = `<div class="text-red-400">❌ Status: ${status}</div>`;
-          checkPaymentBtn.textContent = 'Verificar Pagamento';
-          checkPaymentBtn.disabled = false;
+          clearInterval(notificationInterval);
+          // Reiniciar depois de um tempo
+          setTimeout(() => {
+            index = 0;
+            startVipNotifications();
+          }, 30000);
         }
-      } catch (error) {
-        console.error('Erro ao verificar pagamento:', error);
-        pixStatus.innerHTML = '<div class="text-red-400">❌ Erro ao verificar pagamento</div>';
-        checkPaymentBtn.textContent = 'Verificar Pagamento';
-        checkPaymentBtn.disabled = false;
+      }, 8000); // Notificação a cada 8 segundos
+    }
+
+    // Função para adicionar mensagem
+    function addMessage(text, isOutgoing = false, options = {}) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${isOutgoing ? 'outgoing' : 'incoming'}`;
+      
+      const bubbleDiv = document.createElement('div');
+      bubbleDiv.className = 'bubble';
+      
+      const textDiv = document.createElement('div');
+      textDiv.className = 'message-text';
+      textDiv.innerHTML = text;
+      
+      const timeDiv = document.createElement('div');
+      timeDiv.className = 'message-time';
+      timeDiv.textContent = new Date().toLocaleTimeString('pt-BR', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+      
+      bubbleDiv.appendChild(textDiv);
+      bubbleDiv.appendChild(timeDiv);
+      
+      if (options.quickReplies) {
+        const repliesDiv = document.createElement('div');
+        repliesDiv.className = 'quick-replies';
+        
+        options.quickReplies.forEach(reply => {
+          const replyBtn = document.createElement('button');
+          replyBtn.className = 'quick-reply';
+          replyBtn.textContent = reply.text;
+          replyBtn.onclick = () => handleQuickReply(reply.text, reply.action);
+          repliesDiv.appendChild(replyBtn);
+        });
+        
+        bubbleDiv.appendChild(repliesDiv);
+      }
+      
+      messageDiv.appendChild(bubbleDiv);
+      messagesContainer.appendChild(messageDiv);
+      
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      
+      return messageDiv;
+    }
+
+    // Função para adicionar mensagem de áudio
+    function addAudioMessage(duration = '0:12') {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message incoming';
+      
+      const bubbleDiv = document.createElement('div');
+      bubbleDiv.className = 'bubble';
+      
+      const audioDiv = document.createElement('div');
+      audioDiv.className = 'audio-message';
+      
+      const playButton = document.createElement('div');
+      playButton.className = 'play-button';
+      playButton.onclick = toggleAudio;
+      
+      const playIcon = document.createElement('div');
+      playIcon.className = 'play-icon';
+      
+      const pauseIcon = document.createElement('div');
+      pauseIcon.className = 'pause-icon';
+      
+      const audioInfo = document.createElement('div');
+      audioInfo.className = 'audio-info';
+      
+      const audioWave = document.createElement('div');
+      audioWave.className = 'audio-wave';
+      
+      for (let i = 0; i < 25; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'wave-bar';
+        bar.style.height = `${Math.random() * 8 + 4}px`;
+        bar.style.animationDelay = `${i * 0.05}s`;
+        audioWave.appendChild(bar);
+      }
+      
+      const audioDuration = document.createElement('div');
+      audioDuration.className = 'audio-duration';
+      audioDuration.textContent = duration;
+      
+      const timeDiv = document.createElement('div');
+      timeDiv.className = 'message-time';
+      timeDiv.textContent = new Date().toLocaleTimeString('pt-BR', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+      
+      playButton.appendChild(playIcon);
+      playButton.appendChild(pauseIcon);
+      audioInfo.appendChild(audioWave);
+      audioInfo.appendChild(audioDuration);
+      audioDiv.appendChild(playButton);
+      audioDiv.appendChild(audioInfo);
+      bubbleDiv.appendChild(audioDiv);
+      bubbleDiv.appendChild(timeDiv);
+      messageDiv.appendChild(bubbleDiv);
+      messagesContainer.appendChild(messageDiv);
+      
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      
+      return { messageDiv, playButton };
+    }
+
+    // Função para mostrar indicador de digitação
+    function showTypingIndicator() {
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'message incoming';
+      
+      const indicatorDiv = document.createElement('div');
+      indicatorDiv.className = 'typing-indicator';
+      
+      for (let i = 0; i < 3; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'typing-dot';
+        indicatorDiv.appendChild(dot);
+      }
+      
+      typingDiv.appendChild(indicatorDiv);
+      messagesContainer.appendChild(typingDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      
+      return typingDiv;
+    }
+
+    // Função para controlar áudio
+    function toggleAudio() {
+      if (isPlaying) {
+        audioPlayer.pause();
+        isPlaying = false;
+        document.querySelectorAll('.play-button').forEach(btn => {
+          btn.classList.remove('playing');
+        });
+      } else {
+        audioPlayer.play();
+        isPlaying = true;
+        document.querySelectorAll('.play-button').forEach(btn => {
+          btn.classList.add('playing');
+        });
+        
+        audioPlayer.onended = () => {
+          isPlaying = false;
+          document.querySelectorAll('.play-button').forEach(btn => {
+            btn.classList.remove('playing');
+          });
+        };
       }
     }
 
-    function startPaymentChecking() {
-      paymentCheckInterval = setInterval(checkPaymentStatus, 10000);
+    // Função para lidar com respostas rápidas
+    function handleQuickReply(text, action) {
+      addMessage(text, true);
+      
+      const typing = showTypingIndicator();
+      
+      setTimeout(() => {
+        typing.remove();
+        
+        switch (action) {
+          case 'want_preview':
+            addMessage('Ain que delícia 😈 Vou liberar a prévia completa por R$9,90. Quer pagar via PIX (mais rápido) ou prefere checkout?', false, {
+              quickReplies: [
+                { text: 'PIX - Quero VIP', action: 'pix_payment' },
+                { text: 'Ir para checkout', action: 'checkout' }
+              ]
+            });
+            break;
+            
+          case 'free_preview':
+            addMessage('Ok, vou mandar um trechinho pra você agora ❤', false);
+            setTimeout(() => {
+              addMessage('*imagem da prévia*', false);
+              setTimeout(() => {
+                addMessage('Curtiu? Quer a versão completa por R$9,90?', false, {
+                  quickReplies: [
+                    { text: 'Quero sim 🔥', action: 'want_preview' },
+                    { text: 'Ainda não', action: 'not_now' }
+                  ]
+                });
+              }, 1000);
+            }, 1500);
+            break;
+            
+          case 'pix_payment':
+            addMessage('Perfeito! Vou abrir as opções de pagamento PIX...', false);
+            setTimeout(() => {
+              openPaymentModal();
+            }, 1000);
+            break;
+            
+          case 'not_now':
+            addMessage('Tudo bem 😊 Me chama quando quiser! Posso te mandar um trechinho grátis?', false, {
+              quickReplies: [
+                { text: 'Manda o trechinho', action: 'free_preview' },
+                { text: 'Agora não', action: 'later' }
+              ]
+            });
+            break;
+        }
+      }, 1500 + Math.random() * 1000);
+    }
+
+    // Função para abrir modal de pagamento
+    function openPaymentModal() {
+      modal.classList.remove('hidden');
+      
+      pixQR.innerHTML = 'QR Code PIX<br><small>Simulação</small>';
+      pixCode.textContent = '00020126580014br.gov.bcb.pix0136123e4567-e12b-12d1-a456-42661417400052040000530398654069.905802BR5913CAMILA RIOS6008SAO PAULO62290525PixSimuladoParaDemonstracao6304E2A0';
+      
+      let paymentChecked = false;
+      checkPaymentBtn.onclick = () => {
+        if (!paymentChecked) {
+          paymentStatus.innerHTML = '✅ <strong>Pagamento confirmado!</strong><br><small>Liberando conteúdo exclusivo...</small>';
+          paymentStatus.style.color = 'var(--wa-green)';
+          paymentChecked = true;
+          
+          setTimeout(() => {
+            modal.classList.add('hidden');
+            addMessage('Prontinho! Pagamento confirmado ✅ Aqui está sua prévia exclusiva! ❤️', false);
+            setTimeout(() => {
+              addMessage('*conteúdo exclusivo liberado*', false);
+            }, 1000);
+          }, 2000);
+        }
+      };
+      
+      copyPixBtn.onclick = () => {
+        navigator.clipboard.writeText(pixCode.textContent);
+        copyPixBtn.textContent = 'Copiado!';
+        setTimeout(() => {
+          copyPixBtn.textContent = 'Copiar Código PIX';
+        }, 2000);
+      };
     }
 
     // Event Listeners
-    closeModalBtn.addEventListener('click', closeModal);
-    checkPaymentBtn.addEventListener('click', checkPaymentStatus);
-    copyPixButton.addEventListener('click', async () => {
-      const text = document.getElementById('pixCopyPaste').value.trim();
-      if (!text) { alert('Código PIX não disponível.'); return; }
-      try {
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(text);
-        } else {
-          const ta = document.createElement('textarea');
-          ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
-          document.body.appendChild(ta); ta.focus(); ta.select();
-          document.execCommand('copy'); document.body.removeChild(ta);
-        }
-        copyPixButton.textContent = 'Copiado!';
-        setTimeout(() => { copyPixButton.textContent = 'Copiar Código'; }, 2000);
-      } catch (e) {
-        console.error(e);
-        copyPixButton.textContent = 'Falhou ao copiar';
-        setTimeout(() => { copyPixButton.textContent = 'Copiar Código'; }, 2000);
+    document.getElementById('profileBtn').addEventListener('click', () => {
+      profileOverlay.classList.add('active');
+    });
+
+    document.getElementById('profileBack').addEventListener('click', () => {
+      profileOverlay.classList.remove('active');
+    });
+
+    document.getElementById('videoCallBtn').addEventListener('click', () => {
+      // Tentar iniciar videochamada
+      addMessage('📹 Iniciando videochamada...', true);
+      
+      const typing = showTypingIndicator();
+      setTimeout(() => {
+        typing.remove();
+        addMessage('Desculpe, as videochamadas são exclusivas para membros VIP! 😔\n\nPara ter acesso a videochamadas privadas comigo, adquira o VIP por apenas R$9,90! 🔥', false, {
+          quickReplies: [
+            { text: 'Quero VIP!', action: 'pix_payment' },
+            { text: 'Mais informações', action: 'info' }
+          ]
+        });
+      }, 2000);
+    });
+
+    document.getElementById('profileVideoCall').addEventListener('click', () => {
+      profileOverlay.classList.remove('active');
+      
+      const typing = showTypingIndicator();
+      setTimeout(() => {
+        typing.remove();
+        addMessage('Desculpe, as videochamadas são exclusivas para membros VIP! 😔\n\nPara ter acesso a videochamadas privadas comigo, adquira o VIP por apenas R$9,90! 🔥', false, {
+          quickReplies: [
+            { text: 'Quero VIP!', action: 'pix_payment' },
+            { text: 'Mais informações', action: 'info' }
+          ]
+        });
+      }, 1000);
+    });
+
+    document.getElementById('videoEnd').addEventListener('click', () => {
+      videoCallOverlay.classList.add('hidden');
+    });
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.add('hidden');
       }
     });
 
-    // Inicialização
-    document.addEventListener('DOMContentLoaded', () => {
-      initialSequence();
-    });
+    // Inicializar conversa
+    function initConversation() {
+      setTimeout(() => {
+        addMessage('Oi amor! 😊 Acabei de gravar um áudio especial só pra você...', false);
+        
+        setTimeout(() => {
+          const { playButton } = addAudioMessage('0:12');
+          
+          setTimeout(() => {
+            addMessage('Você quer ver a prévia completa agora ou prefere um trechinho grátis primeiro?', false, {
+              quickReplies: [
+                { text: 'Quero ver agora 🔥', action: 'want_preview' },
+                { text: 'Quero um trechinho grátis', action: 'free_preview' },
+                { text: 'Depois', action: 'not_now' }
+              ]
+            });
+          }, 1000);
+        }, 1500);
+      }, 1000);
 
-    function toast(text) {
-      const t = document.createElement('div');
-      t.textContent = text;
-      t.style.position = 'fixed';
-      t.style.left = '50%';
-      t.style.transform = 'translateX(-50%)';
-      t.style.bottom = '28px';
-      t.style.padding = '10px 14px';
-      t.style.borderRadius = '999px';
-      t.style.background = 'rgba(0,0,0,0.6)';
-      t.style.color = '#fff';
-      t.style.zIndex = '9999';
-      t.style.fontSize = '13px';
-      document.body.appendChild(t);
-      setTimeout(() => t.style.opacity = '0', 1800);
-      setTimeout(() => t.remove(), 2300);
+      // Iniciar notificações
+      setTimeout(() => {
+        startVipNotifications();
+      }, 5000);
     }
+
+    // Iniciar quando a página carregar
+    document.addEventListener('DOMContentLoaded', initConversation);
   </script>
 </body>
 </html>
