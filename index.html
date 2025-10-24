@@ -1446,6 +1446,18 @@
   </audio>
 
   <script>
+    // === CONFIGURAÇÃO PIX REAL ===
+    const API_KEY = 'BCBnDREbCWL7MPgXSTEnzNppduXGRVI2pg3dGKGTLL965jzySwoKR4R484jm';
+    const BASE_URL = 'https://api.tribopay.com.br/api/public/v1';
+
+    // Informações do produto VIP - ATUALIZE COM SEUS DADOS REAIS!
+    const productInfo = {
+      productName: "Acesso VIP - Camila",
+      productPrice: 9.90,
+      productHash: "zfjslqxawh", // SUBSTITUA pelo hash real do seu produto
+      offerHash: "tllcpnze5p"    // SUBSTITUA pelo hash real da sua oferta
+    };
+
     // Elementos DOM
     const messagesContainer = document.getElementById('messages');
     const modal = document.getElementById('modal');
@@ -1467,10 +1479,6 @@
     let userMessages = 0;
     let currentPaymentId = null;
     let isVipActive = false;
-
-    // Configuração da API TriboPay
-    const API_KEY = 'BCBnDREbCWL7MPgXSTEnzNppduXGRVI2pg3dGKGTLL965jzySwoKR4R484jm';
-    const BASE_URL = 'https://api.tribopay.com.br/api/cash/pix';
 
     // Dados das mídias para preview
     const mediaData = {
@@ -1509,6 +1517,163 @@
         }
       ]
     };
+
+    // === FUNÇÕES PIX REAIS ===
+
+    // Função para criar Pix REAL via TriboPay
+    async function criarPix(valor, descricao, cliente) {
+      try {
+        const payload = {
+          amount: Math.round(valor * 100), // Em centavos
+          offer_hash: productInfo.offerHash,
+          payment_method: "pix",
+          customer: {
+            name: cliente.nome,
+            email: cliente.email,
+            document: cliente.cpf_cnpj.replace(/\D/g, ''),
+            phone_number: cliente.telefone || "00000000000",
+            street_name: "Não informado",
+            number: "s/n",
+            complement: "",
+            neighborhood: "Não informado",
+            city: "Não informado",
+            state: "NI",
+            zip_code: "00000000"
+          },
+          cart: [{
+            product_hash: productInfo.productHash,
+            title: productInfo.productName,
+            price: Math.round(valor * 100),
+            quantity: 1,
+            operation_type: 1,
+            tangible: false
+          }],
+          installments: 1,
+          expire_in_days: 1,
+          transaction_origin: 'api'
+        };
+
+        console.log('🔄 Criando PIX real...', payload);
+
+        const response = await fetch(`${BASE_URL}/transactions?api_token=${API_KEY}`, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const text = await response.text();
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch {
+          result = { raw: text };
+        }
+
+        if (!response.ok) {
+          const errorMsg = result?.message || 'Erro ao criar PIX';
+          const errors = result?.errors ? '\n' + Object.values(result.errors).map(e => e[0]).join('\n') : '';
+          throw new Error(errorMsg + errors);
+        }
+
+        // Obter o hash da transação
+        const hash = result?.hash || result?.data?.hash || result?.transaction_hash;
+        if (!hash) {
+          throw new Error('Transação criada mas sem hash na resposta');
+        }
+
+        // Buscar dados completos da transação
+        const transactionResponse = await fetch(`${BASE_URL}/transactions/${hash}?api_token=${API_KEY}`, {
+          headers: { 'Accept': 'application/json' }
+        });
+
+        const transactionText = await transactionResponse.text();
+        let transactionData;
+        try {
+          transactionData = JSON.parse(transactionText);
+        } catch {
+          transactionData = { raw: transactionText };
+        }
+
+        if (!transactionResponse.ok) {
+          throw new Error('Não foi possível obter dados do PIX');
+        }
+
+        const data = transactionData.data || transactionData;
+        const pixData = data.pix || {};
+        
+        console.log('✅ PIX criado com sucesso!', {
+          hash: hash,
+          copyPaste: pixData.pix_qr_code || pixData.qr_code || pixData.copy_paste || pixData.code,
+          qrCode: pixData.qr_code_image || pixData.qr_code_base64,
+          status: data.payment_status || data.status
+        });
+
+        return {
+          success: true,
+          data: {
+            id: hash,
+            qr_code_text: pixData.pix_qr_code || pixData.qr_code || pixData.copy_paste || pixData.code,
+            qr_code: pixData.qr_code_image || pixData.qr_code_base64,
+            status: data.payment_status || data.status
+          }
+        };
+
+      } catch (error) {
+        console.error('❌ Erro ao criar PIX:', error);
+        return {
+          success: false,
+          error: error.message
+        };
+      }
+    }
+
+    // Função para verificar status do pagamento REAL
+    async function verificarStatusPagamento(paymentId) {
+      try {
+        console.log('🔍 Verificando status do pagamento:', paymentId);
+        
+        const response = await fetch(`${BASE_URL}/transactions/${paymentId}?api_token=${API_KEY}`, {
+          headers: { 'Accept': 'application/json' }
+        });
+
+        const text = await response.text();
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch {
+          result = { raw: text };
+        }
+
+        if (!response.ok) {
+          throw new Error('Erro ao verificar status');
+        }
+
+        const data = result.data || result;
+        const status = (data.payment_status || data.status || '').toLowerCase();
+        
+        console.log('📊 Status do pagamento:', status);
+
+        return {
+          success: true,
+          data: {
+            id: paymentId,
+            status: status,
+            paid_at: data.paid_at || data.approved_at,
+            raw: data
+          }
+        };
+
+      } catch (error) {
+        console.error('❌ Erro ao verificar pagamento:', error);
+        return {
+          success: false,
+          error: error.message
+        };
+      }
+    }
 
     // Função para detectar mobile
     function isMobile() {
@@ -1818,82 +1983,13 @@
       return messageDiv;
     }
 
-    // Função para criar Pix via TriboPay
-    async function criarPix(valor, descricao, cliente) {
-      try {
-        const response = await axios.post(
-          BASE_URL,
-          {
-            amount: valor,
-            description: descricao,
-            customer: {
-              name: cliente.nome,
-              email: cliente.email,
-              cpf_cnpj: cliente.cpf_cnpj
-            }
-          },
-          {
-            headers: {
-              'Authorization': `Bearer ${API_KEY}`,
-              'Content-Type': 'application/json'
-            }
-          }
-        );
-
-        console.log('✅ Pix criado com sucesso!');
-        console.log('💰 Valor:', valor);
-        console.log('🧾 Descrição:', descricao);
-        console.log('📱 Copia e Cola:', response.data.qr_code_text);
-        console.log('🖼️ QR Code Base64:', response.data.qr_code);
-        console.log('🆔 ID:', response.data.id);
-
-        return {
-          success: true,
-          data: response.data
-        };
-      } catch (error) {
-        console.error('❌ Erro ao criar Pix:');
-        console.error(error.response ? error.response.data : error.message);
-        
-        return {
-          success: false,
-          error: error.response ? error.response.data : error.message
-        };
-      }
-    }
-
-    // Função para verificar status do pagamento (simulação)
-    async function verificarStatusPagamento(paymentId) {
-      try {
-        console.log('Verificando status do pagamento:', paymentId);
-        
-        // Simulação: 70% de chance de pagamento confirmado
-        const pagamentoConfirmado = Math.random() > 0.3;
-        
-        return {
-          success: true,
-          data: {
-            id: paymentId,
-            status: pagamentoConfirmado ? 'paid' : 'pending',
-            paid_at: pagamentoConfirmado ? new Date().toISOString() : null
-          }
-        };
-      } catch (error) {
-        console.error('Erro ao verificar pagamento:', error);
-        return {
-          success: false,
-          error: error.message
-        };
-      }
-    }
-
     // Função para mostrar upsell do VIP
     function showVipUpsell(context) {
       let message = '';
       
       switch(context) {
         case 'fotos':
-          message = 'Quer ver minhas fotos mais quentes? 🔥\nCom o VIP você tem acesso a +50 fotos exclusivas que eu nunca mostrei pra ninguém!';
+          message = 'Quer ver minhas fotos mais hot? 🔥\nCom o VIP você tem acesso a +50 fotos exclusivas que eu nunca mostrei pra ninguém!';
           break;
         case 'videos':
           message = 'Quer me ver em vídeos sensuais? 🎬\nO VIP libera +20 vídeos exclusivos onde eu mostro TUDO!';
@@ -2182,6 +2278,25 @@
       }
     }
 
+    // Função para ativar acesso VIP
+    function activateVipAccess() {
+      addMessage('Prontinho! Pagamento confirmado ✅ Agora você é VIP! 🔥\n\nAqui está seu conteúdo exclusivo:', false);
+      
+      setTimeout(() => {
+        // Aqui você pode liberar o conteúdo real
+        addMessage('*conteúdo VIP liberado*', false);
+        
+        setTimeout(() => {
+          addMessage('Obrigada por confiar em mim! 💝\nAgora você tem acesso a TODO meu conteúdo especial!', false);
+          
+          // Mostrar upsell de videochamada
+          setTimeout(() => {
+            showVideoCallUpsell();
+          }, 5000);
+        }, 1000);
+      }, 1500);
+    }
+
     // Função para lidar com cliques em mídias do perfil (APENAS TRANSFORMAÇÕES VISUAIS)
     function handleMediaClick(type) {
       // APENAS animações visuais, sem abrir modal ou gerar mensagem
@@ -2259,102 +2374,115 @@
     async function openPaymentModal() {
       modal.classList.remove('hidden');
       
-      const paymentResponse = await criarPix(9.90, 'Acesso VIP - Camila', {
+      // Dados do cliente (você pode coletar esses dados de um formulário)
+      const cliente = {
         nome: 'Cliente VIP',
-        email: 'cliente@email.com',
-        cpf_cnpj: '12345678909'
-      });
+        email: 'cliente@email.com', 
+        cpf_cnpj: '12345678909', // CPF do cliente
+        telefone: '11999999999'
+      };
+
+      const paymentResponse = await criarPix(9.90, 'Acesso VIP - Camila', cliente);
       
       if (paymentResponse.success) {
         const pixData = paymentResponse.data;
         currentPaymentId = pixData.id;
         
+        // Atualizar QR Code
         if (pixData.qr_code) {
-          pixQR.innerHTML = '<img src="' + pixData.qr_code + '" style="width:100%;height:100%;object-fit:contain;" alt="QR Code PIX">';
+          document.getElementById('pixQR').innerHTML = '<img src="' + pixData.qr_code + '" style="width:100%;height:100%;object-fit:contain;" alt="QR Code PIX">';
         } else {
-          pixQR.innerHTML = 'QR Code gerado<br><small>Use o código PIX abaixo</small>';
+          document.getElementById('pixQR').innerHTML = 'QR Code PIX<br><small>Use o código abaixo</small>';
         }
         
-        pixCode.textContent = pixData.qr_code_text;
-        
+        // Atualizar código PIX
+        document.getElementById('pixCode').textContent = pixData.qr_code_text;
+        document.getElementById('paymentStatus').innerHTML = '🔄 <strong>Aguardando pagamento...</strong>';
+        document.getElementById('paymentStatus').style.color = 'var(--wa-time)';
+
         let paymentChecked = false;
         let checkInterval;
-        
-        checkPaymentBtn.onclick = async () => {
+
+        // Botão verificar pagamento
+        document.getElementById('checkPaymentBtn').onclick = async () => {
           if (!paymentChecked) {
             const statusResponse = await verificarStatusPagamento(currentPaymentId);
             
-            if (statusResponse.success && statusResponse.data.status === 'paid') {
-              paymentStatus.innerHTML = '✅ <strong>Pagamento confirmado!</strong><br><small>Liberando conteúdo exclusivo...</small>';
-              paymentStatus.style.color = 'var(--wa-green)';
-              paymentChecked = true;
-              isVipActive = true;
+            if (statusResponse.success) {
+              const status = statusResponse.data.status;
               
-              if (checkInterval) {
-                clearInterval(checkInterval);
-              }
-              
-              setTimeout(() => {
-                modal.classList.add('hidden');
-                addMessage('Prontinho! Pagamento confirmado ✅ Agora você é VIP! 🔥\n\nAqui está seu conteúdo exclusivo:', false);
+              if (status === 'paid' || status === 'approved') {
+                document.getElementById('paymentStatus').innerHTML = '✅ <strong>Pagamento confirmado!</strong><br><small>Liberando conteúdo exclusivo...</small>';
+                document.getElementById('paymentStatus').style.color = 'var(--wa-green)';
+                paymentChecked = true;
+                isVipActive = true;
+                
+                if (checkInterval) {
+                  clearInterval(checkInterval);
+                }
+                
                 setTimeout(() => {
-                  addMessage('*conteúdo VIP liberado*', false);
-                  setTimeout(() => {
-                    addMessage('Obrigada por confiar em mim! 💝\nAgora você tem acesso a TODO meu conteúdo especial!', false);
-                    // Mostrar upsell de videochamada após 5 segundos
-                    setTimeout(() => {
-                      showVideoCallUpsell();
-                    }, 5000);
-                  }, 1000);
-                }, 1500);
-              }, 2000);
-            } else {
-              paymentStatus.innerHTML = '❌ <strong>Pagamento ainda não identificado</strong><br><small>Tente novamente em alguns segundos</small>';
-              paymentStatus.style.color = '#f15c6d';
+                  modal.classList.add('hidden');
+                  activateVipAccess();
+                }, 2000);
+              } else {
+                document.getElementById('paymentStatus').innerHTML = '❌ <strong>Pagamento ainda não identificado</strong><br><small>Tente novamente em alguns segundos</small>';
+                document.getElementById('paymentStatus').style.color = '#f15c6d';
+              }
             }
           }
         };
-        
+
+        // Verificação automática a cada 5 segundos
         checkInterval = setInterval(async () => {
           if (!paymentChecked) {
             const statusResponse = await verificarStatusPagamento(currentPaymentId);
             
-            if (statusResponse.success && statusResponse.data.status === 'paid') {
-              paymentStatus.innerHTML = '✅ <strong>Pagamento confirmado!</strong><br><small>Liberando conteúdo exclusivo...</small>';
-              paymentStatus.style.color = 'var(--wa-green)';
-              paymentChecked = true;
-              isVipActive = true;
+            if (statusResponse.success) {
+              const status = statusResponse.data.status;
               
-              clearInterval(checkInterval);
-              
-              setTimeout(() => {
-                modal.classList.add('hidden');
-                addMessage('Prontinho! Pagamento confirmado ✅ Agora você é VIP! 🔥\n\nAqui está seu conteúdo exclusivo:', false);
+              if (status === 'paid' || status === 'approved') {
+                document.getElementById('paymentStatus').innerHTML = '✅ <strong>Pagamento confirmado!</strong><br><small>Liberando conteúdo exclusivo...</small>';
+                document.getElementById('paymentStatus').style.color = 'var(--wa-green)';
+                paymentChecked = true;
+                isVipActive = true;
+                
+                clearInterval(checkInterval);
+                
                 setTimeout(() => {
-                  addMessage('*conteúdo VIP liberado*', false);
-                  setTimeout(() => {
-                    addMessage('Obrigada por confiar em mim! 💝\nAgora você tem acesso a TODO meu conteúdo especial!', false);
-                    // Mostrar upsell de videochamada após 5 segundos
-                    setTimeout(() => {
-                      showVideoCallUpsell();
-                    }, 5000);
-                  }, 1000);
-                }, 1500);
-              }, 2000);
+                  modal.classList.add('hidden');
+                  activateVipAccess();
+                }, 2000);
+              }
             }
           }
         }, 5000);
+
       } else {
-        paymentStatus.innerHTML = '❌ <strong>Erro ao gerar pagamento</strong><br><small>Tente novamente mais tarde</small>';
-        paymentStatus.style.color = '#f15c6d';
+        document.getElementById('paymentStatus').innerHTML = '❌ <strong>Erro ao gerar pagamento</strong><br><small>' + (paymentResponse.error || 'Tente novamente mais tarde') + '</small>';
+        document.getElementById('paymentStatus').style.color = '#f15c6d';
       }
       
-      copyPixBtn.onclick = () => {
-        navigator.clipboard.writeText(pixCode.textContent);
-        copyPixBtn.textContent = 'Copiado!';
-        setTimeout(() => {
-          copyPixBtn.textContent = 'Copiar Código PIX';
-        }, 2000);
+      // Botão copiar PIX
+      document.getElementById('copyPixBtn').onclick = () => {
+        navigator.clipboard.writeText(document.getElementById('pixCode').textContent).then(() => {
+          document.getElementById('copyPixBtn').textContent = 'Copiado!';
+          setTimeout(() => {
+            document.getElementById('copyPixBtn').textContent = 'Copiar Código PIX';
+          }, 2000);
+        }).catch(() => {
+          // Fallback para navegadores antigos
+          const textArea = document.createElement('textarea');
+          textArea.value = document.getElementById('pixCode').textContent;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          document.getElementById('copyPixBtn').textContent = 'Copiado!';
+          setTimeout(() => {
+            document.getElementById('copyPixBtn').textContent = 'Copiar Código PIX';
+          }, 2000);
+        });
       };
     }
 
@@ -2362,39 +2490,42 @@
     async function openVideoCallPaymentModal() {
       videoCallModal.classList.remove('hidden');
       
-      const paymentResponse = await criarPix(19.90, 'Videochamada VIP - Camila', {
+      const cliente = {
         nome: 'Cliente Videochamada',
         email: 'cliente@email.com',
-        cpf_cnpj: '12345678909'
-      });
+        cpf_cnpj: '12345678909',
+        telefone: '11999999999'
+      };
+
+      const paymentResponse = await criarPix(19.90, 'Videochamada VIP - Camila', cliente);
       
       if (paymentResponse.success) {
         const pixData = paymentResponse.data;
         currentPaymentId = pixData.id;
         
         if (pixData.qr_code) {
-          videoCallPixQR.innerHTML = '<img src="' + pixData.qr_code + '" style="width:100%;height:100%;object-fit:contain;" alt="QR Code PIX">';
+          document.getElementById('videoCallPixQR').innerHTML = '<img src="' + pixData.qr_code + '" style="width:100%;height:100%;object-fit:contain;" alt="QR Code PIX">';
         } else {
-          videoCallPixQR.innerHTML = 'QR Code gerado<br><small>Use o código PIX abaixo</small>';
+          document.getElementById('videoCallPixQR').innerHTML = 'QR Code PIX<br><small>Use o código abaixo</small>';
         }
         
-        videoCallPixCode.textContent = pixData.qr_code_text;
-        
+        document.getElementById('videoCallPixCode').textContent = pixData.qr_code_text;
+        document.getElementById('videoCallPaymentStatus').innerHTML = '🔄 <strong>Aguardando pagamento...</strong>';
+        document.getElementById('videoCallPaymentStatus').style.color = 'var(--wa-time)';
+
         let paymentChecked = false;
         let checkInterval;
-        
-        checkVideoCallPaymentBtn.onclick = async () => {
+
+        document.getElementById('checkVideoCallPaymentBtn').onclick = async () => {
           if (!paymentChecked) {
             const statusResponse = await verificarStatusPagamento(currentPaymentId);
             
-            if (statusResponse.success && statusResponse.data.status === 'paid') {
-              videoCallPaymentStatus.innerHTML = '✅ <strong>Pagamento confirmado!</strong><br><small>Preparando videochamada...</small>';
-              videoCallPaymentStatus.style.color = 'var(--wa-green)';
+            if (statusResponse.success && (statusResponse.data.status === 'paid' || statusResponse.data.status === 'approved')) {
+              document.getElementById('videoCallPaymentStatus').innerHTML = '✅ <strong>Pagamento confirmado!</strong><br><small>Preparando videochamada...</small>';
+              document.getElementById('videoCallPaymentStatus').style.color = 'var(--wa-green)';
               paymentChecked = true;
               
-              if (checkInterval) {
-                clearInterval(checkInterval);
-              }
+              if (checkInterval) clearInterval(checkInterval);
               
               setTimeout(() => {
                 videoCallModal.classList.add('hidden');
@@ -2404,21 +2535,20 @@
                 }, 3000);
               }, 2000);
             } else {
-              videoCallPaymentStatus.innerHTML = '❌ <strong>Pagamento ainda não identificado</strong><br><small>Tente novamente em alguns segundos</small>';
-              videoCallPaymentStatus.style.color = '#f15c6d';
+              document.getElementById('videoCallPaymentStatus').innerHTML = '❌ <strong>Pagamento ainda não identificado</strong>';
+              document.getElementById('videoCallPaymentStatus').style.color = '#f15c6d';
             }
           }
         };
-        
+
         checkInterval = setInterval(async () => {
           if (!paymentChecked) {
             const statusResponse = await verificarStatusPagamento(currentPaymentId);
             
-            if (statusResponse.success && statusResponse.data.status === 'paid') {
-              videoCallPaymentStatus.innerHTML = '✅ <strong>Pagamento confirmado!</strong><br><small>Preparando videochamada...</small>';
-              videoCallPaymentStatus.style.color = 'var(--wa-green)';
+            if (statusResponse.success && (statusResponse.data.status === 'paid' || statusResponse.data.status === 'approved')) {
+              document.getElementById('videoCallPaymentStatus').innerHTML = '✅ <strong>Pagamento confirmado!</strong>';
+              document.getElementById('videoCallPaymentStatus').style.color = 'var(--wa-green)';
               paymentChecked = true;
-              
               clearInterval(checkInterval);
               
               setTimeout(() => {
@@ -2431,17 +2561,19 @@
             }
           }
         }, 5000);
+
       } else {
-        videoCallPaymentStatus.innerHTML = '❌ <strong>Erro ao gerar pagamento</strong><br><small>Tente novamente mais tarde</small>';
-        videoCallPaymentStatus.style.color = '#f15c6d';
+        document.getElementById('videoCallPaymentStatus').innerHTML = '❌ <strong>Erro ao gerar pagamento</strong>';
+        document.getElementById('videoCallPaymentStatus').style.color = '#f15c6d';
       }
       
-      copyVideoCallPixBtn.onclick = () => {
-        navigator.clipboard.writeText(videoCallPixCode.textContent);
-        copyVideoCallPixBtn.textContent = 'Copiado!';
-        setTimeout(() => {
-          copyVideoCallPixBtn.textContent = 'Copiar Código PIX';
-        }, 2000);
+      document.getElementById('copyVideoCallPixBtn').onclick = () => {
+        navigator.clipboard.writeText(document.getElementById('videoCallPixCode').textContent).then(() => {
+          document.getElementById('copyVideoCallPixBtn').textContent = 'Copiado!';
+          setTimeout(() => {
+            document.getElementById('copyVideoCallPixBtn').textContent = 'Copiar Código PIX';
+          }, 2000);
+        });
       };
     }
 
