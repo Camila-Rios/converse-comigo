@@ -357,27 +357,30 @@
       }
     }
     
-    /* Footer/Input area */
+    /* Footer/Input area - CORRIGIDO PARA MOBILE */
     .footer {
       background: var(--wa-panel);
-      padding: 5px 16px;
+      padding: 8px 16px;
       min-height: 62px;
       display: flex;
-      align-items: end;
+      align-items: center;
       border-left: 1px solid rgba(255,255,255,0.08);
+      position: relative;
+      z-index: 10;
     }
     
     .input-container {
       flex: 1;
       background: #2a3942;
       border-radius: 8px;
-      margin: 5px 8px;
+      margin: 0 8px;
       padding: 9px 12px;
       display: flex;
       align-items: center;
       gap: 8px;
       cursor: pointer;
       transition: background 0.2s;
+      min-height: 42px;
     }
     
     .input-container:hover {
@@ -394,7 +397,7 @@
       display: flex;
       gap: 16px;
       color: var(--wa-icon);
-      margin-bottom: 5px;
+      align-items: center;
     }
     
     .footer-icons svg {
@@ -402,6 +405,7 @@
       height: 24px;
       cursor: pointer;
       transition: opacity 0.2s;
+      flex-shrink: 0;
     }
     
     .footer-icons svg:hover {
@@ -1006,6 +1010,68 @@
       font-size: 14px;
       padding: 10px;
     }
+
+    /* Responsividade para Mobile */
+    @media (max-width: 768px) {
+      .header {
+        padding: 10px 12px;
+        min-height: 56px;
+      }
+      
+      .messages-container {
+        padding: 15px 12px;
+      }
+      
+      .footer {
+        padding: 8px 12px;
+        min-height: 60px;
+      }
+      
+      .input-container {
+        margin: 0 6px;
+        padding: 8px 10px;
+        min-height: 40px;
+      }
+      
+      .footer-icons {
+        gap: 12px;
+      }
+      
+      .bubble {
+        max-width: 85%;
+      }
+      
+      .modal-overlay {
+        padding: 15px;
+      }
+      
+      .modal-content {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-icons {
+        gap: 16px;
+      }
+      
+      .footer-icons {
+        gap: 10px;
+      }
+      
+      .footer-icons svg {
+        width: 20px;
+        height: 20px;
+      }
+      
+      .input-placeholder {
+        font-size: 14px;
+      }
+      
+      .bubble {
+        max-width: 90%;
+      }
+    }
   </style>
 </head>
 
@@ -1037,7 +1103,7 @@
       <!-- Mensagens serão inseridas aqui via JavaScript -->
     </div>
 
-    <!-- Footer/Input -->
+    <!-- Footer/Input - CORRIGIDO -->
     <div class="footer">
       <div class="footer-icons">
         <svg viewBox="0 0 24 24" fill="currentColor" id="emojiBtn">
@@ -1150,7 +1216,7 @@
       <div class="media-section">
         <div class="section-title">Fotos Exclusivas <span class="vip-badge-small">VIP</span></div>
         <div class="media-grid">
-          <div class="media-item locked" onclick="handleMediaClick('fotos')">
+          <div class="media-item locked">
             <img src="https://media.giphy.com/media/l0HlGMc2cacYibKdy/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🔒</div>
@@ -1159,7 +1225,7 @@
             </div>
             <div class="media-count">24</div>
           </div>
-          <div class="media-item locked" onclick="handleMediaClick('fotos')">
+          <div class="media-item locked">
             <img src="https://media.giphy.com/media/26uf759LlDftqZNVm/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🔒</div>
@@ -1168,7 +1234,7 @@
             </div>
             <div class="media-count">18</div>
           </div>
-          <div class="media-item locked" onclick="handleMediaClick('fotos')">
+          <div class="media-item locked">
             <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🔒</div>
@@ -1183,7 +1249,7 @@
       <div class="media-section">
         <div class="section-title">Vídeos Privados <span class="vip-badge-small">VIP</span></div>
         <div class="media-grid">
-          <div class="media-item locked" onclick="handleMediaClick('videos')">
+          <div class="media-item locked">
             <img src="https://media.giphy.com/media/xT5LMHxhOfscxPfIfm/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🎬</div>
@@ -1192,7 +1258,7 @@
             </div>
             <div class="media-count">12</div>
           </div>
-          <div class="media-item locked" onclick="handleMediaClick('videos')">
+          <div class="media-item locked">
             <img src="https://media.giphy.com/media/3o72FfM5HJydzafgUE/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🎬</div>
@@ -1201,7 +1267,7 @@
             </div>
             <div class="media-count">8</div>
           </div>
-          <div class="media-item locked" onclick="handleMediaClick('videos')">
+          <div class="media-item locked">
             <img src="https://media.giphy.com/media/l0MYEqEzwMWFCg8rm/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🎬</div>
@@ -1216,7 +1282,7 @@
       <div class="media-section">
         <div class="section-title">Áudios Quentes <span class="vip-badge-small">VIP</span></div>
         <div class="media-grid">
-          <div class="media-item locked" onclick="handleMediaClick('audios')">
+          <div class="media-item locked">
             <img src="https://media.giphy.com/media/3o7aD2saQhRlztXYdy/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🎤</div>
@@ -1225,7 +1291,7 @@
             </div>
             <div class="media-count">45</div>
           </div>
-          <div class="media-item locked" onclick="handleMediaClick('audios')">
+          <div class="media-item locked">
             <img src="https://media.giphy.com/media/l41lSsxM0va2w2BvW/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🎤</div>
@@ -1234,7 +1300,7 @@
             </div>
             <div class="media-count">28</div>
           </div>
-          <div class="media-item locked" onclick="handleMediaClick('audios')">
+          <div class="media-item locked">
             <img src="https://media.giphy.com/media/3o7abGQa0aRsohveX6/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🎤</div>
@@ -2035,10 +2101,14 @@
       }
     }
 
-    // Função para lidar com cliques em mídias do perfil (NÃO GERA MENSAGEM)
+    // Função para lidar com cliques em mídias do perfil (APENAS TRANSFORMAÇÕES VISUAIS)
     function handleMediaClick(type) {
-      // APENAS abre o modal de pagamento diretamente, sem gerar mensagem
-      openPaymentModal();
+      // APENAS animações visuais, sem abrir modal ou gerar mensagem
+      const mediaItem = event.currentTarget;
+      mediaItem.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        mediaItem.style.transform = 'scale(1)';
+      }, 150);
     }
 
     // Função para lidar com respostas rápidas
@@ -2378,6 +2448,21 @@
         previewOverlay.classList.add('hidden');
         document.getElementById('previewVideo').pause();
       }
+    });
+
+    // Adicionar event listeners para os media-items (apenas animações)
+    document.addEventListener('DOMContentLoaded', function() {
+      const mediaItems = document.querySelectorAll('.media-item');
+      mediaItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+          e.preventDefault();
+          // Apenas animação visual, sem ação
+          this.style.transform = 'scale(0.95)';
+          setTimeout(() => {
+            this.style.transform = 'scale(1)';
+          }, 150);
+        });
+      });
     });
 
     // Inicializar conversa
