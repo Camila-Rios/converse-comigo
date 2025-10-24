@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Camila</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
@@ -24,6 +24,7 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
     
     html, body {
@@ -32,10 +33,13 @@
       background: var(--wa-bg);
       color: #e9edef;
       overflow: hidden;
+      position: fixed;
+      width: 100%;
     }
     
     .app {
       height: 100vh;
+      height: -webkit-fill-available;
       display: flex;
       flex-direction: column;
       background: var(--wa-bg);
@@ -52,6 +56,7 @@
       min-height: 59px;
       cursor: pointer;
       position: relative;
+      flex-shrink: 0;
     }
     
     .header-clickable {
@@ -109,13 +114,15 @@
       opacity: 0.8;
     }
     
-    /* Área de mensagens */
+    /* Área de mensagens - CORRIGIDA PARA MOBILE */
     .messages-container {
       flex: 1;
       overflow-y: auto;
       padding: 20px 16px;
       background-image: url("background.jpg");
       background-color: var(--wa-bg);
+      -webkit-overflow-scrolling: touch;
+      min-height: 0;
     }
     
     .message {
@@ -311,6 +318,7 @@
       cursor: pointer;
       transition: all 0.2s;
       backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
     
     .quick-reply:hover {
@@ -357,7 +365,7 @@
       }
     }
     
-    /* Footer/Input area - CORRIGIDO PARA MOBILE */
+    /* Footer/Input area - CORRIGIDO PARA MOBILE REAL */
     .footer {
       background: var(--wa-panel);
       padding: 8px 16px;
@@ -367,6 +375,8 @@
       border-left: 1px solid rgba(255,255,255,0.08);
       position: relative;
       z-index: 10;
+      flex-shrink: 0;
+      width: 100%;
     }
     
     .input-container {
@@ -426,6 +436,7 @@
       z-index: 1000;
       padding: 20px;
       backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
     }
     
     .modal-content {
@@ -1011,8 +1022,20 @@
       padding: 10px;
     }
 
-    /* Responsividade para Mobile */
+    /* CORREÇÕES CRÍTICAS PARA MOBILE */
     @media (max-width: 768px) {
+      html, body {
+        height: 100vh;
+        height: -webkit-fill-available;
+        position: fixed;
+        overflow: hidden;
+      }
+      
+      .app {
+        height: 100vh;
+        height: -webkit-fill-available;
+      }
+      
       .header {
         padding: 10px 12px;
         min-height: 56px;
@@ -1020,11 +1043,16 @@
       
       .messages-container {
         padding: 15px 12px;
+        flex: 1;
+        min-height: 0;
+        -webkit-overflow-scrolling: touch;
       }
       
       .footer {
         padding: 8px 12px;
         min-height: 60px;
+        position: relative;
+        flex-shrink: 0;
       }
       
       .input-container {
@@ -1048,6 +1076,13 @@
       .modal-content {
         max-width: 100%;
       }
+      
+      /* Garantir que o footer fique visível */
+      .footer {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
     }
 
     @media (max-width: 480px) {
@@ -1070,6 +1105,33 @@
       
       .bubble {
         max-width: 90%;
+      }
+      
+      .quick-replies {
+        gap: 4px;
+      }
+      
+      .quick-reply {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+    }
+
+    /* Correção específica para Safari iOS */
+    @supports (-webkit-touch-callout: none) {
+      .app {
+        height: -webkit-fill-available;
+      }
+      
+      .messages-container {
+        padding-bottom: 80px;
+      }
+    }
+
+    /* Prevenir zoom em inputs no iOS */
+    @media screen and (max-width: 768px) {
+      input, textarea {
+        font-size: 16px;
       }
     }
   </style>
@@ -1103,7 +1165,7 @@
       <!-- Mensagens serão inseridas aqui via JavaScript -->
     </div>
 
-    <!-- Footer/Input - CORRIGIDO -->
+    <!-- Footer/Input - CORRIGIDO PARA MOBILE -->
     <div class="footer">
       <div class="footer-icons">
         <svg viewBox="0 0 24 24" fill="currentColor" id="emojiBtn">
@@ -1447,6 +1509,25 @@
         }
       ]
     };
+
+    // Função para detectar mobile
+    function isMobile() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    }
+
+    // Ajustar altura para mobile
+    function adjustMobileHeight() {
+      if (isMobile()) {
+        const app = document.querySelector('.app');
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+        
+        // Forçar redimensionamento
+        setTimeout(() => {
+          app.style.height = window.innerHeight + 'px';
+        }, 100);
+      }
+    }
 
     // Função para abrir preview em tela cheia (APENAS para previews do chat)
     function openFullscreenPreview(type, index = 0) {
@@ -2467,6 +2548,13 @@
 
     // Inicializar conversa
     function initConversation() {
+      // Ajustar altura para mobile
+      adjustMobileHeight();
+      
+      // Adicionar listener para redimensionamento
+      window.addEventListener('resize', adjustMobileHeight);
+      window.addEventListener('orientationchange', adjustMobileHeight);
+      
       setTimeout(() => {
         addMessage('Oi amor! 😊 Acabei de gravar um áudio especial só pra você...', false);
         
