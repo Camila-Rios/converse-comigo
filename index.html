@@ -6,6 +6,7 @@
   <title>Camila</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <style>
     :root {
       --wa-bg: #111b21;
@@ -49,6 +50,15 @@
       align-items: center;
       border-left: 1px solid rgba(255,255,255,0.08);
       min-height: 59px;
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .header-clickable {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      cursor: pointer;
     }
     
     .avatar {
@@ -697,6 +707,19 @@
       font-weight: 600;
     }
     
+    /* GIF Blurrado */
+    .blurred-gif {
+      filter: blur(15px) brightness(0.8);
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: filter 0.3s ease;
+    }
+    
+    .media-item:hover .blurred-gif {
+      filter: blur(12px) brightness(0.9);
+    }
+    
     /* Notificações */
     .notification {
       position: fixed;
@@ -878,19 +901,126 @@
       font-size: 32px;
       margin-bottom: 10px;
     }
+
+    /* Preview de Mídia */
+    .preview-image {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .preview-video {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .preview-audio {
+      width: 100%;
+      margin-bottom: 8px;
+    }
+
+    /* Modal de Preview em Tela Cheia */
+    .preview-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 5000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .preview-content {
+      max-width: 90vw;
+      max-height: 90vh;
+      position: relative;
+    }
+
+    .preview-image-full {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .preview-video-full {
+      width: 100%;
+      height: auto;
+      max-height: 80vh;
+      border-radius: 8px;
+    }
+
+    .preview-close {
+      position: absolute;
+      top: -40px;
+      right: 0;
+      color: white;
+      background: rgba(0,0,0,0.7);
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .preview-navigation {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+      padding: 0 20px;
+    }
+
+    .nav-button {
+      background: rgba(0,0,0,0.7);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .preview-caption {
+      position: absolute;
+      bottom: -40px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: white;
+      font-size: 14px;
+      padding: 10px;
+    }
   </style>
 </head>
 
 <body>
   <div class="app">
     <!-- Header -->
-    <div class="header">
-      <div class="avatar" id="profileBtn">
-        <img src="perfil.jpeg" alt="Camila">
-      </div>
-      <div class="contact-info">
-        <div class="contact-name">Camila <span class="vip-badge">VIP</span></div>
-        <div class="contact-status">online • Conteúdo exclusivo</div>
+    <div class="header" id="headerClickable">
+      <div class="header-clickable">
+        <div class="avatar">
+          <img src="perfil.jpeg" alt="Camila">
+        </div>
+        <div class="contact-info">
+          <div class="contact-name">Camila <span class="vip-badge">VIP</span></div>
+          <div class="contact-status">online • Conteúdo exclusivo</div>
+        </div>
       </div>
       <div class="header-icons">
         <svg viewBox="0 0 24 24" fill="currentColor" id="videoCallBtn">
@@ -954,6 +1084,33 @@
     </div>
   </div>
 
+  <!-- Modal de Videochamada VIP -->
+  <div class="modal-overlay hidden" id="videoCallModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="avatar">
+          <img src="perfil.jpeg" alt="Camila">
+        </div>
+        <div class="modal-title">Videochamada VIP - R$ 19,90</div>
+      </div>
+      <div class="modal-body">
+        <div class="pix-section">
+          <div class="pix-qr" id="videoCallPixQR">
+            QR Code será gerado aqui
+          </div>
+          <div class="pix-code" id="videoCallPixCode">
+            Código PIX copia e cola aparecerá aqui...
+          </div>
+          <button class="modal-button" id="copyVideoCallPixBtn">Copiar Código PIX</button>
+          <button class="modal-button secondary" id="checkVideoCallPaymentBtn">Verificar Pagamento</button>
+          <div style="font-size: 12px; color: var(--wa-time); margin-top: 12px;" id="videoCallPaymentStatus">
+            Aguardando pagamento...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Perfil da Modelo -->
   <div class="profile-overlay scrollbar" id="profileOverlay">
     <div class="profile-header">
@@ -993,7 +1150,8 @@
       <div class="media-section">
         <div class="section-title">Fotos Exclusivas <span class="vip-badge-small">VIP</span></div>
         <div class="media-grid">
-          <div class="media-item locked" onclick="showVipUpsell('fotos')">
+          <div class="media-item locked" onclick="handleMediaClick('fotos')">
+            <img src="https://media.giphy.com/media/l0HlGMc2cacYibKdy/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🔒</div>
               <div style="font-size: 12px; font-weight: 500;">Conteúdo VIP</div>
@@ -1001,7 +1159,8 @@
             </div>
             <div class="media-count">24</div>
           </div>
-          <div class="media-item locked" onclick="showVipUpsell('fotos')">
+          <div class="media-item locked" onclick="handleMediaClick('fotos')">
+            <img src="https://media.giphy.com/media/26uf759LlDftqZNVm/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🔒</div>
               <div style="font-size: 12px; font-weight: 500;">Conteúdo VIP</div>
@@ -1009,7 +1168,8 @@
             </div>
             <div class="media-count">18</div>
           </div>
-          <div class="media-item locked" onclick="showVipUpsell('fotos')">
+          <div class="media-item locked" onclick="handleMediaClick('fotos')">
+            <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🔒</div>
               <div style="font-size: 12px; font-weight: 500;">Conteúdo VIP</div>
@@ -1023,7 +1183,8 @@
       <div class="media-section">
         <div class="section-title">Vídeos Privados <span class="vip-badge-small">VIP</span></div>
         <div class="media-grid">
-          <div class="media-item locked" onclick="showVipUpsell('videos')">
+          <div class="media-item locked" onclick="handleMediaClick('videos')">
+            <img src="https://media.giphy.com/media/xT5LMHxhOfscxPfIfm/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🎬</div>
               <div style="font-size: 12px; font-weight: 500;">Vídeos Exclusivos</div>
@@ -1031,7 +1192,8 @@
             </div>
             <div class="media-count">12</div>
           </div>
-          <div class="media-item locked" onclick="showVipUpsell('videos')">
+          <div class="media-item locked" onclick="handleMediaClick('videos')">
+            <img src="https://media.giphy.com/media/3o72FfM5HJydzafgUE/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🎬</div>
               <div style="font-size: 12px; font-weight: 500;">Vídeos Exclusivos</div>
@@ -1039,7 +1201,8 @@
             </div>
             <div class="media-count">8</div>
           </div>
-          <div class="media-item locked" onclick="showVipUpsell('videos')">
+          <div class="media-item locked" onclick="handleMediaClick('videos')">
+            <img src="https://media.giphy.com/media/l0MYEqEzwMWFCg8rm/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🎬</div>
               <div style="font-size: 12px; font-weight: 500;">Vídeos Exclusivos</div>
@@ -1053,7 +1216,8 @@
       <div class="media-section">
         <div class="section-title">Áudios Quentes <span class="vip-badge-small">VIP</span></div>
         <div class="media-grid">
-          <div class="media-item locked" onclick="showVipUpsell('audios')">
+          <div class="media-item locked" onclick="handleMediaClick('audios')">
+            <img src="https://media.giphy.com/media/3o7aD2saQhRlztXYdy/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🎤</div>
               <div style="font-size: 12px; font-weight: 500;">Áudios Sensuais</div>
@@ -1061,7 +1225,8 @@
             </div>
             <div class="media-count">45</div>
           </div>
-          <div class="media-item locked" onclick="showVipUpsell('audios')">
+          <div class="media-item locked" onclick="handleMediaClick('audios')">
+            <img src="https://media.giphy.com/media/l41lSsxM0va2w2BvW/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🎤</div>
               <div style="font-size: 12px; font-weight: 500;">Áudios Sensuais</div>
@@ -1069,7 +1234,8 @@
             </div>
             <div class="media-count">28</div>
           </div>
-          <div class="media-item locked" onclick="showVipUpsell('audios')">
+          <div class="media-item locked" onclick="handleMediaClick('audios')">
+            <img src="https://media.giphy.com/media/3o7abGQa0aRsohveX6/giphy.gif" class="blurred-gif" alt="Preview">
             <div class="vip-overlay">
               <div style="font-size: 24px; margin-bottom: 8px;">🎤</div>
               <div style="font-size: 12px; font-weight: 500;">Áudios Sensuais</div>
@@ -1127,27 +1293,452 @@
   <!-- Notificações -->
   <div class="notification hidden" id="notification" onclick="showVipUpsell('notification')">
     <div class="notification-header">Novo VIP 🔥</div>
-    <div class="notification-text" id="notificationText">João acabou de adquirir o VIP</div>
+    <div class="notification-text" id="notificationText">Carlos acabou de adquirir o VIP</div>
   </div>
 
+  <!-- Modal de Preview em Tela Cheia -->
+  <div class="preview-overlay hidden" id="previewOverlay">
+    <div class="preview-content">
+      <button class="preview-close" id="previewClose">×</button>
+      <div class="preview-navigation">
+        <button class="nav-button" id="prevButton">‹</button>
+        <button class="nav-button" id="nextButton">›</button>
+      </div>
+      <img id="previewImage" class="preview-image-full hidden" alt="Preview">
+      <video id="previewVideo" class="preview-video-full hidden" controls></video>
+      <div class="preview-caption" id="previewCaption"></div>
+    </div>
+  </div>
+
+  <!-- Áudios -->
   <audio id="audioPlayer" src="audio.mp3" preload="metadata"></audio>
+  <audio id="messageSound" preload="auto">
+    <!-- Som de teste - você pode substituir por qualquer arquivo de áudio -->
+    <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==" type="audio/wav">
+  </audio>
 
   <script>
     // Elementos DOM
     const messagesContainer = document.getElementById('messages');
     const modal = document.getElementById('modal');
+    const videoCallModal = document.getElementById('videoCallModal');
     const profileOverlay = document.getElementById('profileOverlay');
     const videoCallOverlay = document.getElementById('videoCallOverlay');
     const notification = document.getElementById('notification');
+    const previewOverlay = document.getElementById('previewOverlay');
     const audioPlayer = document.getElementById('audioPlayer');
+    const messageSound = document.getElementById('messageSound');
     const inputContainer = document.getElementById('inputContainer');
+    const headerClickable = document.getElementById('headerClickable');
 
     // Estado da aplicação
     let currentAudio = null;
     let isPlaying = false;
-    let vipUsers = ['João', 'Maria', 'Pedro', 'Ana', 'Lucas', 'Julia', 'Carlos', 'Fernanda'];
+    let vipUsers = ['Carlos', 'João', 'Pedro', 'Miguel', 'Lucas', 'Rafael', 'Daniel', 'Bruno'];
     let notificationInterval;
     let userMessages = 0;
+    let currentPaymentId = null;
+    let isVipActive = false;
+
+    // Configuração da API TriboPay
+    const API_KEY = 'BCBnDREbCWL7MPgXSTEnzNppduXGRVI2pg3dGKGTLL965jzySwoKR4R484jm';
+    const BASE_URL = 'https://api.tribopay.com.br/api/cash/pix';
+
+    // Dados das mídias para preview
+    const mediaData = {
+      fotos: [
+        {
+          url: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&h=600&fit=crop',
+          caption: 'Preview exclusiva - Com VIP você vê muito mais! 🔥'
+        },
+        {
+          url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&h=600&fit=crop',
+          caption: 'Mais de 50 fotos sensuais esperando por você! 💝'
+        },
+        {
+          url: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600&h=600&fit=crop',
+          caption: 'Conteúdo VIP - Desbloqueie todas as experiências! 😈'
+        }
+      ],
+      videos: [
+        {
+          url: 'https://assets.mixkit.co/videos/preview/mixkit-woman-in-a-swimsuit-doing-stretches-48995-large.mp4',
+          caption: 'Vídeos exclusivos - Momentos íntimos apenas para VIPs 🎬'
+        },
+        {
+          url: 'https://assets.mixkit.co/videos/preview/mixkit-woman-dancing-in-a-field-of-flowers-47959-large.mp4',
+          caption: '+20 vídeos sensuais - Experiências únicas! 🔥'
+        }
+      ],
+      audios: [
+        {
+          url: 'https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3',
+          caption: 'Áudios sensuais - Histórias quentes apenas para você 🎤'
+        },
+        {
+          url: 'https://assets.mixkit.co/music/preview/mixkit-driving-ambition-32.mp3',
+          caption: '+30 áudios íntimos - Desejos secretos revelados! 💋'
+        }
+      ]
+    };
+
+    // Função para abrir preview em tela cheia (APENAS para previews do chat)
+    function openFullscreenPreview(type, index = 0) {
+      const previewOverlay = document.getElementById('previewOverlay');
+      const previewImage = document.getElementById('previewImage');
+      const previewVideo = document.getElementById('previewVideo');
+      const previewCaption = document.getElementById('previewCaption');
+      
+      const mediaArray = mediaData[type];
+      if (!mediaArray || mediaArray.length === 0) return;
+      
+      let currentIndex = index;
+      
+      function showMedia(index) {
+        const media = mediaArray[index];
+        
+        if (type === 'videos') {
+          previewImage.classList.add('hidden');
+          previewVideo.classList.remove('hidden');
+          previewVideo.src = media.url;
+          previewVideo.poster = 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&h=600&fit=crop';
+        } else {
+          previewVideo.classList.add('hidden');
+          previewImage.classList.remove('hidden');
+          previewImage.src = media.url;
+        }
+        
+        previewCaption.textContent = media.caption;
+      }
+      
+      // Mostrar mídia atual
+      showMedia(currentIndex);
+      
+      // Navegação
+      document.getElementById('prevButton').onclick = () => {
+        currentIndex = (currentIndex - 1 + mediaArray.length) % mediaArray.length;
+        showMedia(currentIndex);
+      };
+      
+      document.getElementById('nextButton').onclick = () => {
+        currentIndex = (currentIndex + 1) % mediaArray.length;
+        showMedia(currentIndex);
+      };
+      
+      // Fechar preview
+      document.getElementById('previewClose').onclick = () => {
+        previewOverlay.classList.add('hidden');
+        previewVideo.pause();
+      };
+      
+      // Fechar com ESC
+      const handleKeydown = (e) => {
+        if (e.key === 'Escape') {
+          previewOverlay.classList.add('hidden');
+          previewVideo.pause();
+          document.removeEventListener('keydown', handleKeydown);
+        }
+      };
+      
+      document.addEventListener('keydown', handleKeydown);
+      
+      // Mostrar overlay
+      previewOverlay.classList.remove('hidden');
+    }
+
+    // Função para tocar som de mensagem
+    function playMessageSound() {
+      try {
+        // CRIE UM NOVO ELEMENTO DE ÁUDIO COM SEU ARQUIVO
+        const customSound = new Audio('sound.mp3');
+        
+        // CONFIGURE O VOLUME (0.0 a 1.0)
+        customSound.volume = 0.3;
+        
+        // TENTE REPRODUZIR O SOM
+        customSound.play().catch(error => {
+          console.log('Não foi possível reproduzir o som personalizado:', error);
+          
+          // FALLBACK: usar o som padrão se o personalizado falhar
+          playDefaultSound();
+        });
+        
+      } catch (error) {
+        console.log('Erro no som personalizado, usando fallback:', error);
+        playDefaultSound();
+      }
+    }
+
+    // Função fallback com som padrão
+    function playDefaultSound() {
+      try {
+        const context = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = context.createOscillator();
+        const gainNode = context.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(context.destination);
+        
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.3, context.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.5);
+        
+        oscillator.start(context.currentTime);
+        oscillator.stop(context.currentTime + 0.5);
+        
+      } catch (fallbackError) {
+        console.log('Fallback de som também falhou');
+      }
+    }
+
+    // Função para mostrar prévia real (MANTÉM O FUNIL DE VENDAS)
+    function showPreview(type) {
+      const typing = showTypingIndicator();
+      
+      setTimeout(() => {
+        typing.remove();
+        
+        switch(type) {
+          case 'fotos':
+            // Prévia de fotos
+            addMessage('Aqui está uma prévia do que você pode ver com o VIP! 😈', false);
+            
+            setTimeout(() => {
+              // Adicionar imagem de prévia
+              const previewMessage = addMediaPreview(
+                'https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=300&h=300&fit=crop&crop=center',
+                'foto',
+                'Essa é só uma amostrinha... Com o VIP você vê MUITO mais! 🔥'
+              );
+              
+              // Tornar a imagem clicável para abrir em tela cheia
+              const img = previewMessage.querySelector('img');
+              img.style.cursor = 'pointer';
+              img.onclick = () => openFullscreenPreview('fotos');
+              
+              setTimeout(() => {
+                addMessage('Gostou do que viu? Isso é só 1% do que eu tenho pra te mostrar! 😏\nCom o VIP você desbloqueia +50 fotos sensuais!', false, {
+                  quickReplies: [
+                    { text: 'Quero Ver Tudo! 🔥', action: 'pix_payment' }
+                  ]
+                });
+              }, 2000);
+            }, 1000);
+            break;
+            
+          case 'videos':
+            // Prévia de vídeos
+            addMessage('Preparei uma prévia especial dos meus vídeos... 🎬', false);
+            
+            setTimeout(() => {
+              // Adicionar vídeo de prévia
+              const previewMessage = addVideoPreview(
+                'https://assets.mixkit.co/videos/preview/mixkit-woman-in-a-swimsuit-doing-stretches-48995-large.mp4',
+                'Esse é só o começo... Com o VIP você me vê fazendo coisas MUITO mais quentes! 😈'
+              );
+              
+              // Tornar o vídeo clicável para abrir em tela cheia
+              const video = previewMessage.querySelector('video');
+              video.style.cursor = 'pointer';
+              video.onclick = () => openFullscreenPreview('videos');
+              
+              setTimeout(() => {
+                addMessage('Imagina me ver em vídeos ainda mais ousados? 😏\nCom o VIP você tem acesso a +20 vídeos exclusivos!', false, {
+                  quickReplies: [
+                    { text: 'Quero Ver Todos! 🎥', action: 'pix_payment' }
+                  ]
+                });
+              }, 3000);
+            }, 1000);
+            break;
+            
+          case 'audios':
+            // Prévia de áudios
+            addMessage('Vou te dar uma amostra dos meus áudios mais íntimos... 🎤', false);
+            
+            setTimeout(() => {
+              const { messageDiv, playButton } = addAudioMessage('0:45');
+              
+              setTimeout(() => {
+                addMessage('Essa foi só uma pequena demonstração... 😊\nCom o VIP você ouve +30 áudios onde eu conto tudo o que eu faria com você!', false, {
+                  quickReplies: [
+                    { text: 'Quero Ouvir Tudo! 🎧', action: 'pix_payment' }
+                  ]
+                });
+              }, 4000);
+            }, 1000);
+            break;
+        }
+      }, 1500);
+    }
+
+    // Função para adicionar prévia de imagem
+    function addMediaPreview(imageUrl, type, caption = '') {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message incoming';
+      
+      const bubbleDiv = document.createElement('div');
+      bubbleDiv.className = 'bubble';
+      
+      const mediaDiv = document.createElement('div');
+      mediaDiv.className = 'media-message';
+      
+      const img = document.createElement('img');
+      img.src = imageUrl;
+      img.alt = 'Preview';
+      img.className = 'preview-image';
+      img.style.cursor = 'pointer';
+      // Abre preview em tela cheia
+      img.onclick = () => openFullscreenPreview('fotos');
+      
+      const captionDiv = document.createElement('div');
+      captionDiv.className = 'message-text';
+      captionDiv.style.marginTop = '8px';
+      captionDiv.style.fontSize = '13px';
+      captionDiv.style.color = 'var(--wa-time)';
+      captionDiv.textContent = caption;
+      
+      const timeDiv = document.createElement('div');
+      timeDiv.className = 'message-time';
+      timeDiv.textContent = new Date().toLocaleTimeString('pt-BR', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+      
+      mediaDiv.appendChild(img);
+      if (caption) {
+        mediaDiv.appendChild(captionDiv);
+      }
+      bubbleDiv.appendChild(mediaDiv);
+      bubbleDiv.appendChild(timeDiv);
+      messageDiv.appendChild(bubbleDiv);
+      messagesContainer.appendChild(messageDiv);
+      
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      playMessageSound();
+      
+      return messageDiv;
+    }
+
+    // Função para adicionar prévia de vídeo
+    function addVideoPreview(videoUrl, caption = '') {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message incoming';
+      
+      const bubbleDiv = document.createElement('div');
+      bubbleDiv.className = 'bubble';
+      
+      const mediaDiv = document.createElement('div');
+      mediaDiv.className = 'media-message';
+      
+      const video = document.createElement('video');
+      video.src = videoUrl;
+      video.className = 'preview-video';
+      video.controls = true;
+      video.muted = true;
+      video.style.cursor = 'pointer';
+      // Abre preview em tela cheia
+      video.onclick = () => openFullscreenPreview('videos');
+      
+      const captionDiv = document.createElement('div');
+      captionDiv.className = 'message-text';
+      captionDiv.style.marginTop = '8px';
+      captionDiv.style.fontSize = '13px';
+      captionDiv.style.color = 'var(--wa-time)';
+      captionDiv.textContent = caption;
+      
+      const timeDiv = document.createElement('div');
+      timeDiv.className = 'message-time';
+      timeDiv.textContent = new Date().toLocaleTimeString('pt-BR', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+      
+      mediaDiv.appendChild(video);
+      if (caption) {
+        mediaDiv.appendChild(captionDiv);
+      }
+      bubbleDiv.appendChild(mediaDiv);
+      bubbleDiv.appendChild(timeDiv);
+      messageDiv.appendChild(bubbleDiv);
+      messagesContainer.appendChild(messageDiv);
+      
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      playMessageSound();
+      
+      return messageDiv;
+    }
+
+    // Função para criar Pix via TriboPay
+    async function criarPix(valor, descricao, cliente) {
+      try {
+        const response = await axios.post(
+          BASE_URL,
+          {
+            amount: valor,
+            description: descricao,
+            customer: {
+              name: cliente.nome,
+              email: cliente.email,
+              cpf_cnpj: cliente.cpf_cnpj
+            }
+          },
+          {
+            headers: {
+              'Authorization': `Bearer ${API_KEY}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+
+        console.log('✅ Pix criado com sucesso!');
+        console.log('💰 Valor:', valor);
+        console.log('🧾 Descrição:', descricao);
+        console.log('📱 Copia e Cola:', response.data.qr_code_text);
+        console.log('🖼️ QR Code Base64:', response.data.qr_code);
+        console.log('🆔 ID:', response.data.id);
+
+        return {
+          success: true,
+          data: response.data
+        };
+      } catch (error) {
+        console.error('❌ Erro ao criar Pix:');
+        console.error(error.response ? error.response.data : error.message);
+        
+        return {
+          success: false,
+          error: error.response ? error.response.data : error.message
+        };
+      }
+    }
+
+    // Função para verificar status do pagamento (simulação)
+    async function verificarStatusPagamento(paymentId) {
+      try {
+        console.log('Verificando status do pagamento:', paymentId);
+        
+        // Simulação: 70% de chance de pagamento confirmado
+        const pagamentoConfirmado = Math.random() > 0.3;
+        
+        return {
+          success: true,
+          data: {
+            id: paymentId,
+            status: pagamentoConfirmado ? 'paid' : 'pending',
+            paid_at: pagamentoConfirmado ? new Date().toISOString() : null
+          }
+        };
+      } catch (error) {
+        console.error('Erro ao verificar pagamento:', error);
+        return {
+          success: false,
+          error: error.message
+        };
+      }
+    }
 
     // Função para mostrar upsell do VIP
     function showVipUpsell(context) {
@@ -1180,6 +1771,20 @@
           quickReplies: [
             { text: 'Quero VIP! 🔥', action: 'pix_payment' },
             { text: 'Mostrar mais', action: 'more_info' }
+          ]
+        });
+      }, 1500);
+    }
+
+    // Função para mostrar upsell de videochamada pós-compra
+    function showVideoCallUpsell() {
+      const typing = showTypingIndicator();
+      setTimeout(() => {
+        typing.remove();
+        addMessage('Agora que você é VIP, que tal uma videochamada privada comigo? 📹\n\nPor apenas R$19,90 você pode:\n\n• Me ver ao vivo\n• Conversar intimamente\n• Pedir o que quiser\n• 15 minutos de pura diversão\n\nÉ uma experiência única! 😈', false, {
+          quickReplies: [
+            { text: 'Quero Videochamada! 🎥', action: 'video_call_payment' },
+            { text: 'Mais tarde', action: 'later' }
           ]
         });
       }, 1500);
@@ -1260,6 +1865,11 @@
       
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
       
+      // Tocar som para mensagens recebidas (da modelo)
+      if (!isOutgoing) {
+        playMessageSound();
+      }
+      
       return messageDiv;
     }
 
@@ -1322,6 +1932,9 @@
       
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
       
+      // Tocar som de mensagem
+      playMessageSound();
+      
       return { messageDiv, playButton };
     }
 
@@ -1372,6 +1985,9 @@
       messagesContainer.appendChild(messageDiv);
       
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      
+      // Tocar som de mensagem
+      playMessageSound();
     }
 
     // Função para mostrar indicador de digitação
@@ -1419,6 +2035,12 @@
       }
     }
 
+    // Função para lidar com cliques em mídias do perfil (NÃO GERA MENSAGEM)
+    function handleMediaClick(type) {
+      // APENAS abre o modal de pagamento diretamente, sem gerar mensagem
+      openPaymentModal();
+    }
+
     // Função para lidar com respostas rápidas
     function handleQuickReply(text, action) {
       userMessages++;
@@ -1437,6 +2059,13 @@
             }, 1000);
             break;
             
+          case 'video_call_payment':
+            addMessage('Ótima escolha! Vou preparar a videochamada...', false);
+            setTimeout(() => {
+              openVideoCallPaymentModal();
+            }, 1000);
+            break;
+            
           case 'more_info':
             addMessage('Com o VIP você tem acesso a:\n\n🔥 +50 fotos exclusivas\n🎬 +20 vídeos sensuais\n🎤 +30 áudios íntimos\n📹 Videochamadas privadas\n💝 Conteúdo personalizado\n\nTudo isso por apenas R$9,90! Vale a pena, né? 😈', false, {
               quickReplies: [
@@ -1447,22 +2076,20 @@
             break;
             
           case 'free_preview':
-            addMessage('Tudo bem, vou te dar uma amostrinha... 😊', false);
-            setTimeout(() => {
-              addLockedMediaMessage('fotos');
-              setTimeout(() => {
-                addMessage('Gostou do que viu? Isso é só uma pequena amostra do que você pode ter com o VIP! 🔥', false, {
-                  quickReplies: [
-                    { text: 'Quero VIP Agora!', action: 'pix_payment' },
-                    { text: 'Mostrar mais', action: 'more_info' }
-                  ]
-                });
-              }, 2000);
-            }, 1500);
+            // AGORA MOSTRA PREVIEW REAL EM VEZ DE MENSAGEM VAZIA
+            showPreview('fotos');
+            break;
+            
+          case 'later':
+            addMessage('Tudo bem, querido! Quando quiser, é só me chamar 😘\nEnquanto isso, posso te mostrar mais do meu conteúdo...', false, {
+              quickReplies: [
+                { text: 'Mostrar conteúdo', action: 'more_info' },
+                { text: 'Videochamada depois', action: 'video_call_payment' }
+              ]
+            });
             break;
             
           default:
-            // Após algumas mensagens, sempre levar para o upsell
             if (userMessages >= 2) {
               showVipUpsell('conversation');
             } else {
@@ -1477,32 +2104,99 @@
       }, 1500 + Math.random() * 1000);
     }
 
-    // Função para abrir modal de pagamento
-    function openPaymentModal() {
+    // Função para abrir modal de pagamento VIP
+    async function openPaymentModal() {
       modal.classList.remove('hidden');
       
-      pixQR.innerHTML = 'QR Code PIX<br><small>Simulação</small>';
-      pixCode.textContent = '00020126580014br.gov.bcb.pix0136123e4567-e12b-12d1-a456-42661417400052040000530398654069.905802BR5913CAMILA RIOS6008SAO PAULO62290525PixSimuladoParaDemonstracao6304E2A0';
+      const paymentResponse = await criarPix(9.90, 'Acesso VIP - Camila', {
+        nome: 'Cliente VIP',
+        email: 'cliente@email.com',
+        cpf_cnpj: '12345678909'
+      });
       
-      let paymentChecked = false;
-      checkPaymentBtn.onclick = () => {
-        if (!paymentChecked) {
-          paymentStatus.innerHTML = '✅ <strong>Pagamento confirmado!</strong><br><small>Liberando conteúdo exclusivo...</small>';
-          paymentStatus.style.color = 'var(--wa-green)';
-          paymentChecked = true;
-          
-          setTimeout(() => {
-            modal.classList.add('hidden');
-            addMessage('Prontinho! Pagamento confirmado ✅ Agora você é VIP! 🔥\n\nAqui está seu conteúdo exclusivo:', false);
-            setTimeout(() => {
-              addMessage('*conteúdo VIP liberado*', false);
-              setTimeout(() => {
-                addMessage('Obrigada por confiar em mim! 💝\nAgora você tem acesso a TODO meu conteúdo especial!', false);
-              }, 1000);
-            }, 1500);
-          }, 2000);
+      if (paymentResponse.success) {
+        const pixData = paymentResponse.data;
+        currentPaymentId = pixData.id;
+        
+        if (pixData.qr_code) {
+          pixQR.innerHTML = '<img src="' + pixData.qr_code + '" style="width:100%;height:100%;object-fit:contain;" alt="QR Code PIX">';
+        } else {
+          pixQR.innerHTML = 'QR Code gerado<br><small>Use o código PIX abaixo</small>';
         }
-      };
+        
+        pixCode.textContent = pixData.qr_code_text;
+        
+        let paymentChecked = false;
+        let checkInterval;
+        
+        checkPaymentBtn.onclick = async () => {
+          if (!paymentChecked) {
+            const statusResponse = await verificarStatusPagamento(currentPaymentId);
+            
+            if (statusResponse.success && statusResponse.data.status === 'paid') {
+              paymentStatus.innerHTML = '✅ <strong>Pagamento confirmado!</strong><br><small>Liberando conteúdo exclusivo...</small>';
+              paymentStatus.style.color = 'var(--wa-green)';
+              paymentChecked = true;
+              isVipActive = true;
+              
+              if (checkInterval) {
+                clearInterval(checkInterval);
+              }
+              
+              setTimeout(() => {
+                modal.classList.add('hidden');
+                addMessage('Prontinho! Pagamento confirmado ✅ Agora você é VIP! 🔥\n\nAqui está seu conteúdo exclusivo:', false);
+                setTimeout(() => {
+                  addMessage('*conteúdo VIP liberado*', false);
+                  setTimeout(() => {
+                    addMessage('Obrigada por confiar em mim! 💝\nAgora você tem acesso a TODO meu conteúdo especial!', false);
+                    // Mostrar upsell de videochamada após 5 segundos
+                    setTimeout(() => {
+                      showVideoCallUpsell();
+                    }, 5000);
+                  }, 1000);
+                }, 1500);
+              }, 2000);
+            } else {
+              paymentStatus.innerHTML = '❌ <strong>Pagamento ainda não identificado</strong><br><small>Tente novamente em alguns segundos</small>';
+              paymentStatus.style.color = '#f15c6d';
+            }
+          }
+        };
+        
+        checkInterval = setInterval(async () => {
+          if (!paymentChecked) {
+            const statusResponse = await verificarStatusPagamento(currentPaymentId);
+            
+            if (statusResponse.success && statusResponse.data.status === 'paid') {
+              paymentStatus.innerHTML = '✅ <strong>Pagamento confirmado!</strong><br><small>Liberando conteúdo exclusivo...</small>';
+              paymentStatus.style.color = 'var(--wa-green)';
+              paymentChecked = true;
+              isVipActive = true;
+              
+              clearInterval(checkInterval);
+              
+              setTimeout(() => {
+                modal.classList.add('hidden');
+                addMessage('Prontinho! Pagamento confirmado ✅ Agora você é VIP! 🔥\n\nAqui está seu conteúdo exclusivo:', false);
+                setTimeout(() => {
+                  addMessage('*conteúdo VIP liberado*', false);
+                  setTimeout(() => {
+                    addMessage('Obrigada por confiar em mim! 💝\nAgora você tem acesso a TODO meu conteúdo especial!', false);
+                    // Mostrar upsell de videochamada após 5 segundos
+                    setTimeout(() => {
+                      showVideoCallUpsell();
+                    }, 5000);
+                  }, 1000);
+                }, 1500);
+              }, 2000);
+            }
+          }
+        }, 5000);
+      } else {
+        paymentStatus.innerHTML = '❌ <strong>Erro ao gerar pagamento</strong><br><small>Tente novamente mais tarde</small>';
+        paymentStatus.style.color = '#f15c6d';
+      }
       
       copyPixBtn.onclick = () => {
         navigator.clipboard.writeText(pixCode.textContent);
@@ -1513,20 +2207,116 @@
       };
     }
 
+    // Função para abrir modal de pagamento de videochamada
+    async function openVideoCallPaymentModal() {
+      videoCallModal.classList.remove('hidden');
+      
+      const paymentResponse = await criarPix(19.90, 'Videochamada VIP - Camila', {
+        nome: 'Cliente Videochamada',
+        email: 'cliente@email.com',
+        cpf_cnpj: '12345678909'
+      });
+      
+      if (paymentResponse.success) {
+        const pixData = paymentResponse.data;
+        currentPaymentId = pixData.id;
+        
+        if (pixData.qr_code) {
+          videoCallPixQR.innerHTML = '<img src="' + pixData.qr_code + '" style="width:100%;height:100%;object-fit:contain;" alt="QR Code PIX">';
+        } else {
+          videoCallPixQR.innerHTML = 'QR Code gerado<br><small>Use o código PIX abaixo</small>';
+        }
+        
+        videoCallPixCode.textContent = pixData.qr_code_text;
+        
+        let paymentChecked = false;
+        let checkInterval;
+        
+        checkVideoCallPaymentBtn.onclick = async () => {
+          if (!paymentChecked) {
+            const statusResponse = await verificarStatusPagamento(currentPaymentId);
+            
+            if (statusResponse.success && statusResponse.data.status === 'paid') {
+              videoCallPaymentStatus.innerHTML = '✅ <strong>Pagamento confirmado!</strong><br><small>Preparando videochamada...</small>';
+              videoCallPaymentStatus.style.color = 'var(--wa-green)';
+              paymentChecked = true;
+              
+              if (checkInterval) {
+                clearInterval(checkInterval);
+              }
+              
+              setTimeout(() => {
+                videoCallModal.classList.add('hidden');
+                addMessage('Perfeito! Videochamada confirmada 🎥\nVou te chamar em 2 minutos...', false);
+                setTimeout(() => {
+                  videoCallOverlay.classList.remove('hidden');
+                }, 3000);
+              }, 2000);
+            } else {
+              videoCallPaymentStatus.innerHTML = '❌ <strong>Pagamento ainda não identificado</strong><br><small>Tente novamente em alguns segundos</small>';
+              videoCallPaymentStatus.style.color = '#f15c6d';
+            }
+          }
+        };
+        
+        checkInterval = setInterval(async () => {
+          if (!paymentChecked) {
+            const statusResponse = await verificarStatusPagamento(currentPaymentId);
+            
+            if (statusResponse.success && statusResponse.data.status === 'paid') {
+              videoCallPaymentStatus.innerHTML = '✅ <strong>Pagamento confirmado!</strong><br><small>Preparando videochamada...</small>';
+              videoCallPaymentStatus.style.color = 'var(--wa-green)';
+              paymentChecked = true;
+              
+              clearInterval(checkInterval);
+              
+              setTimeout(() => {
+                videoCallModal.classList.add('hidden');
+                addMessage('Perfeito! Videochamada confirmada 🎥\nVou te chamar em 2 minutos...', false);
+                setTimeout(() => {
+                  videoCallOverlay.classList.remove('hidden');
+                }, 3000);
+              }, 2000);
+            }
+          }
+        }, 5000);
+      } else {
+        videoCallPaymentStatus.innerHTML = '❌ <strong>Erro ao gerar pagamento</strong><br><small>Tente novamente mais tarde</small>';
+        videoCallPaymentStatus.style.color = '#f15c6d';
+      }
+      
+      copyVideoCallPixBtn.onclick = () => {
+        navigator.clipboard.writeText(videoCallPixCode.textContent);
+        copyVideoCallPixBtn.textContent = 'Copiado!';
+        setTimeout(() => {
+          copyVideoCallPixBtn.textContent = 'Copiar Código PIX';
+        }, 2000);
+      };
+    }
+
     // Event Listeners para todos os elementos clicáveis
-    document.getElementById('profileBtn').addEventListener('click', () => {
-      profileOverlay.classList.add('active');
+    headerClickable.addEventListener('click', (e) => {
+      // Prevenir que o clique nos ícones dispare a abertura do perfil
+      if (!e.target.closest('.header-icons')) {
+        profileOverlay.classList.add('active');
+      }
     });
 
     document.getElementById('profileBack').addEventListener('click', () => {
       profileOverlay.classList.remove('active');
     });
 
-    document.getElementById('videoCallBtn').addEventListener('click', () => {
-      showVipUpsell('videochamada');
+    document.getElementById('videoCallBtn').addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevenir que o clique propague para o header
+      if (isVipActive) {
+        openVideoCallPaymentModal();
+      } else {
+        showVipUpsell('videochamada');
+      }
     });
 
-    document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('menuBtn').addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevenir que o clique propague para o header
       showVipUpsell('menu');
     });
 
@@ -1559,16 +2349,34 @@
 
     document.getElementById('profileVideoCall').addEventListener('click', () => {
       profileOverlay.classList.remove('active');
-      showVipUpsell('videochamada');
+      if (isVipActive) {
+        openVideoCallPaymentModal();
+      } else {
+        showVipUpsell('videochamada');
+      }
     });
 
     document.getElementById('videoEnd').addEventListener('click', () => {
       videoCallOverlay.classList.add('hidden');
+      addMessage('Foi incrível conversar com você! 😘\nSempre que quiser, estarei aqui...', false);
     });
 
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
         modal.classList.add('hidden');
+      }
+    });
+
+    videoCallModal.addEventListener('click', (e) => {
+      if (e.target === videoCallModal) {
+        videoCallModal.classList.add('hidden');
+      }
+    });
+
+    previewOverlay.addEventListener('click', (e) => {
+      if (e.target === previewOverlay) {
+        previewOverlay.classList.add('hidden');
+        document.getElementById('previewVideo').pause();
       }
     });
 
